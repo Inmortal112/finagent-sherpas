@@ -1,0 +1,171 @@
+{
+  "$defs": {
+    "Fact": {
+      "description": "One figure taken from the Sherpas diagnostic. Narration may only quote facts.",
+      "properties": {
+        "id": {
+          "description": "Stable slug, e.g. 'savings_rate'",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "default": "",
+          "title": "Unit",
+          "type": "string"
+        },
+        "source": {
+          "description": "MCP tool and field the value came from",
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value",
+        "source"
+      ],
+      "title": "Fact",
+      "type": "object"
+    },
+    "Scene": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "narration": {
+          "description": "What the presenter says, in `Presentation.language`",
+          "title": "Narration",
+          "type": "string"
+        },
+        "visual": {
+          "$ref": "#/$defs/Visual"
+        },
+        "fact_ids": {
+          "description": "Facts quoted in the narration",
+          "items": {
+            "type": "string"
+          },
+          "title": "Fact Ids",
+          "type": "array"
+        },
+        "audio_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filled by the voice stage",
+          "title": "Audio Path"
+        },
+        "duration_s": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filled by the voice stage",
+          "title": "Duration S"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "narration",
+        "visual"
+      ],
+      "title": "Scene",
+      "type": "object"
+    },
+    "Visual": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "title",
+            "score",
+            "kpi",
+            "bar",
+            "line",
+            "text"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": true,
+          "title": "Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "Visual",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "client_name": {
+      "title": "Client Name",
+      "type": "string"
+    },
+    "language": {
+      "default": "es",
+      "enum": [
+        "es",
+        "en"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "facts": {
+      "items": {
+        "$ref": "#/$defs/Fact"
+      },
+      "title": "Facts",
+      "type": "array"
+    },
+    "scenes": {
+      "items": {
+        "$ref": "#/$defs/Scene"
+      },
+      "title": "Scenes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "client_name",
+    "facts",
+    "scenes"
+  ],
+  "title": "Presentation",
+  "type": "object"
+}

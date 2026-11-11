@@ -1,0 +1,10 @@
+{
+  "_warning": "INVENTED placeholder. Replace with a real test diagnostic from the Sherpas MCP after the kick-off (2026-11-12).",
+  "client": {"name": "Laura Pérez", "age": 38},
+  "score": 72,
+  "metrics": {
+    "savings_rate": {"label": "Tasa de ahorro", "value": 14, "unit": "%"},
+    "emergency_fund_months": {"label": "Fondo de emergencia", "value": 2.5, "unit": "meses"},
+    "debt_to_income": {"label": "Deuda sobre ingresos", "value": 31, "unit": "%"}
+  }
+}
