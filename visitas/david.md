@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-12 18:00 — docs/idea-david — Claude Code
+- **Hecho:** `idea-david.md`, mi propuesta de idea: **Your Financial Home** (el plan como la casa de la familia;
+  cada parte de la casa es un pilar de la nota). Incluye las ideas que descarté y por qué, para la nota del viernes.
+  PR #5 (`visitas/`) fusionado por mí, como pidió Samuel.
+- **Estado:** `./check.sh` pasa (4 tests). Solo documentación.
+- **Decisiones:** la fase 2 de la voz (normalización en inglés) queda aparcada hasta elegir la idea entre los tres.
+- **Bloqueos:** ninguno.
+- **Para Samuel y Raúl:** leed `idea-david.md`; cada uno trae la suya y elegimos la mejor antes del vie 13, 22:00.
+  Datos comprobados en `cases/`: en los Weah las acciones sueltas casi no mueven la nota (60→62); solo combinadas
+  llegan a 73 y 78.
+- **Siguiente:** votar la idea en equipo y redactar la nota de `/idea`.
+
 ## 2026-11-12 (tarde) · David (`daviid-sc`) · Ya no hace falta permiso de Samuel para subir
 
 - **PR #3 (`check.sh` en Windows) fusionado en `main`.** `./check.sh` funciona en Windows tal cual.
