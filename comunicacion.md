@@ -16,6 +16,15 @@ sepan qué ha cambiado cada uno y lo tengan en cuenta antes de trabajar.
 
 ---
 
+## 2026-11-12 (tarde) · David (`daviid-sc`) · Ya no hace falta permiso de Samuel para subir
+
+- **PR #3 (`check.sh` en Windows) fusionado en `main`.** `./check.sh` funciona en Windows tal cual.
+- `CLAUDE.md` (rama `docs/equal-team-push`): se quita "No hacer push sin permiso de Samuel".
+  Acordado por los tres: **trabajamos de igual a igual**. Cada uno sube sus ramas y fusiona sus
+  PRs cuando `./check.sh` pasa. Sigue prohibido el push directo o force-push a `main`, y los
+  cambios en archivos de otro o en el contrato se avisan antes y se anotan aquí.
+- `02-DOCS/ftd/voz-edge-tts.md`: actualizada (ya no espera el OK de Samuel; `check.sh` OK en Windows).
+
 ## 2026-11-12 (tarde) · David (`daviid-sc`) · Arreglo de `check.sh` en Windows
 
 - **PR #1 (voz) y PR #2 (este archivo) ya están fusionados en `main`.** Tras `git pull`:
@@ -65,7 +74,6 @@ https://github.com/Inmortal112/finagent-sherpas/pull/1
   Los casos ya son públicos en el repo de Sherpas, así que no hay datos secretos en `cases/`.
 - `fixtures/diagnostic_sample.json` sigue siendo el inventado; ya están los casos reales en `cases/`.
 - ~~`check.sh` no funciona en Windows~~ → arreglado en PR #3 (ver entrada de arriba).
-- `CLAUDE.md` del repo dice "No hacer push sin permiso de Samuel"; acordamos trabajar de igual a
-  igual. Si estáis de acuerdo, se puede quitar esa línea (no la he tocado: es compartida).
+- ~~`CLAUDE.md` del repo dice "No hacer push sin permiso de Samuel"~~ → cambiado (ver entrada de arriba).
 - Propuesta: añadir a `AGENTS.md` una línea tipo "Leer `comunicacion.md` al empezar" para que
   todas las IA lo carguen solas. No la he añadido: `AGENTS.md` es compartido.
