@@ -1,4 +1,4 @@
-"""Stage 2 (owner: B). Fill audio_path and duration_s for every scene.
+"""Stage 2 (owner: B, David / daviid-sc). Fill audio_path and duration_s for every scene.
 
 MOCK: no audio, duration estimated at ~15 characters per second. Replace the body
 with real TTS (and avatar, if any); keep the signature.
