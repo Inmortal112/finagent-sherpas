@@ -1,5 +1,15 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-12 23:17 — docs/ideas-s4-only — Claude Code
+- **Hecho:** `ideas.md`: mi sección queda con una sola idea, **S4 · The Family Tree**, que ahora empieza con la
+  configuración por persona (formato, nivel de detalle, qué le preocupa). Borradas S1, S2 y S3; quedan en una lista
+  corta de descartadas con su porqué, para la nota del viernes.
+- **Estado:** `./check.sh` pasa (4 tests). Solo documentación.
+- **Bloqueos:** ninguno.
+- **Para David y Raúl:** siguen en pie las preguntas de la entrada anterior (¿fusionar casa y árbol?, ¿qué es
+  factible en SVG?).
+- **Siguiente:** votar entre los tres y redactar la nota de `/idea` (vie 13 nov, 22:00).
+
 ## 2026-11-12 23:13 — docs/ideas-family-tree — Claude Code
 - **Hecho:** `ideas.md`: nueva idea **S4 · The Family Tree** (el plan como árbol vivo; una rama por persona; cada
   paso del plan es un cuidado), ahora mi idea principal. S1 pasó a ser «Your Plan, Your Way» (agente configurable
