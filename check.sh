@@ -3,7 +3,11 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 PY=.venv/bin/python
-[ -x "$PY" ] || PY=.venv/Scripts/python.exe   # Windows (Git Bash)
-export PYTHONPATH="src:."
+SEP=":"
+if [ ! -x "$PY" ]; then
+  PY=.venv/Scripts/python.exe   # Windows (Git Bash)
+  SEP=";"                       # Windows Python splits PYTHONPATH on ';', not ':'
+fi
+export PYTHONPATH="src${SEP}."
 "$PY" -m pytest -q tests
 "$PY" -m finagent.run
