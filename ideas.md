@@ -4,7 +4,8 @@ Tres ideas por persona. Entre las nueve elegimos una y la enviamos con `/idea` a
 (10 puntos; hay que decir qué construimos y por qué, y qué descartamos y por qué: las ocho que no elijamos sirven
 para esa segunda parte).
 
-**Cómo añadir las tuyas:** escribe solo dentro de tu sección (abajo), con la misma plantilla. No edites las de otro;
+**Cómo añadir las tuyas:** escribe solo dentro de tu sección (abajo), con la misma plantilla. La idea de David está en
+`idea-david.md` («Your Financial Home»). No edites las de otro;
 si quieres opinar sobre una idea ajena, hazlo en la tabla de votos del final, en tu columna.
 
 Criterios del jurado: Engancha 20 · Se entiende 20 · Mueve a actuar 20 · Personal 15 · Creatividad 15 · Nota de idea 10.
@@ -116,23 +117,74 @@ Comprobado en `cases/` el 12 nov:
   El primer impacto es flojo: en dos minutos de pitch cuesta enseñar algo que pasa en siete días.
 - **Coste:** bajo.
 
-### Comparación de las tres (estimación de Samuel, no medida)
+### S4 · The Family Tree (idea principal de Samuel desde el 12 nov por la noche)
 
-| Criterio (puntos) | S1 Your Plan, Your Way | S2 Message from 2047 | S3 Sixty Seconds |
-|---|---|---|---|
-| Engancha (20) | Medio-alto | Muy alto | Medio |
-| Se entiende (20) | Muy alto | Medio | Alto |
-| Mueve a actuar (20) | Alto | Bajo | Alto |
-| Personal (15) | Muy alto | Alto | Medio |
-| Creatividad (15) | Medio | Alto | Bajo |
-| Dificultad en 6 días | Media-alta | Media | Baja |
+- **Qué es:** el plan de la familia se ve como un árbol vivo. Cada parte del árbol es un pilar de la nota, cada
+  miembro tiene su rama y cada paso del plan es un cuidado que lo hace reverdecer. Como está vivo, hay que volver.
+- **La metáfora (con datos de `score.pillars`):**
 
-**Preferencia de Samuel:** S1. Sus dos puntos débiles son «Engancha» y «Creatividad»; se refuerzan abriendo con la
-elección sobre una cifra propia (no con un formulario) y enseñando en la demo a Timothy y Melanie viendo el mismo
-plan de dos maneras. De S2 se puede tomar la voz y de S3 los mensajes de los días 3 y 30.
+  | Parte del árbol | Qué representa | Ejemplo real |
+  |---|---|---|
+  | Raíces | Liquidez y fondo de emergencia | Weah 15/15: raíces profundas. Michael 4/20: raíces cortas |
+  | Tronco | Ahorro y flujo de caja | Michael 0/25: tronco fino |
+  | Copa | Inversiones | Weah 8/15 |
+  | Hiedra que lo ahoga | Deuda cara | La tarjeta al 18 % de los Weah |
+  | Tutor y valla | Seguros y protección | Johnson 0/20: sin protección ante una tormenta |
+  | Frutos | Objetivos con fecha | Casa en 2027, universidad de Liam en 2038, jubilación |
 
-Versión anterior de S1 («First Move», 12 nov): cada miembro de la pareja ordenaba los pasos por separado y la app
-proponía un primer paso común. Queda como posible ampliación del paso 4.
+- **Para quién:** familias con o sin asesor. Demo: los Weah (pareja, una rama por persona) y Samantha Lewis (nota 82
+  y ahorros que se agotan a los 73).
+- **Cómo lo vive la familia:**
+  1. Primer vistazo: su árbol con los nombres de la familia en las ramas. En tres segundos ven qué está verde y qué
+     se seca.
+  2. Estaciones: un deslizador recorre los años del plan (`projections.yearly`). Al árbol de Samantha, que parece
+     perfecto, se le caen las hojas a los 73.
+  3. Cuidar: cada paso del plan es un cuidado («podar la hiedra» = pagar $6.800 de la tarjeta; «poner la valla» =
+     ampliar el seguro de vida). Al comprometerse con una fecha, el árbol reverdece y se ve la nota antes y después
+     (Weah: 60 → 73 con los dos pasos, `combined_moves`).
+  4. En pareja: cada uno cuida su rama y el tronco es común; los pasos que afectan a los dos necesitan que ambos
+     los confirmen.
+  5. Volver: cada día se despliega una hoja nueva (una parte del plan explicada en un minuto); los frutos maduran
+     cuando se acerca su fecha (la matrícula de agosto de Samantha); el día 3 la hiedra sigue ahí si no se ha hecho
+     el paso, y el día 30 un paso cumplido deja un anillo nuevo en el tronco, que queda como historial.
+- **Por qué puntúa:** un árbol sano o marchito se entiende sin saber de finanzas, y tocar cualquier parte abre las
+  cifras para el experto. Engancha porque es su familia, con sus nombres. Es la idea con más motivo para volver:
+  la casa se repara y ya está; el árbol sigue vivo. Ataca los atascos 2 (cifras que no dicen si algo va bien),
+  3 (la nota buena que esconde un problema), 5 (leer a ratos), 8 (pareja), 9 y 10 (seguimiento y fechas) y 11
+  (primer paso).
+- **Encaja con S1:** la configuración por persona (voz, gráfico o resumen; nivel de detalle) decide cómo se le
+  cuenta a cada uno la hoja del día. Y las respuestas rellenan el «Subjective concerns» para el asesor.
+- **Reparto:** Samuel: de los JSON al estado de cada parte, las hojas diarias por nivel de detalle, los cuidados
+  (`top_moves` / `combined_moves`) y las fechas, todo por `guard`. Raúl: el árbol en SVG generado por código (ramas
+  y hojas según los datos), estaciones, animación de reverdecer. David: la voz de la hoja del día y los avisos de
+  los días 3 y 30.
+- **Riesgos:**
+  - **Se parece en tipo a «Your Financial Home» de David** (`idea-david.md`): las dos son un objeto cuyas partes son
+    los pilares. La diferencia es que el árbol está vivo y da motivo para volver. Puede competir o fusionarse.
+  - **Solo cambia con cosas reales** (compromisos, pasos hechos, fechas que se acercan, contenido nuevo). Nada de
+    cambios inventados para simular vida: las bases prohíben inventar cifras, y solo hay proyección del plan actual.
+  - **Lo visual:** tiene que parecer una lámina botánica, no un dibujo animado.
+  - «Tutor y valla» para la protección es la parte menos intuitiva de la metáfora; hay que probarla con alguien.
+- **Coste:** bajo. Textos pregenerados; voz con `edge-tts` en desarrollo.
+
+### Comparación (estimación de Samuel, no medida)
+
+| Criterio (puntos) | S1 Your Plan, Your Way | S2 Message from 2047 | S3 Sixty Seconds | S4 The Family Tree |
+|---|---|---|---|---|
+| Engancha (20) | Medio-alto | Muy alto | Medio | Muy alto |
+| Se entiende (20) | Muy alto | Medio | Alto | Muy alto |
+| Mueve a actuar (20) | Alto | Bajo | Alto | Alto |
+| Personal (15) | Muy alto | Alto | Medio | Muy alto |
+| Creatividad (15) | Medio | Alto | Bajo | Alto |
+| Motivo para volver (extra) | Medio | Bajo | Alto | Muy alto |
+| Dificultad en 6 días | Media-alta | Media | Baja | Media-alta |
+
+**Preferencia de Samuel:** S4, con la configuración de S1 encima. S1 sola se parece demasiado a un chat sobre el
+plan; el árbol le da la parte visual y el motivo para volver.
+
+Otras metáforas valoradas el 12 nov y no desarrolladas: el plan como parte meteorológico («Money Weather»), como
+revisión médica («The Check-up») y como vuelo con dos copilotos («Co-Pilots»). Versión anterior de S1
+(«First Move»): la pareja ordenaba los pasos por separado y la app proponía un primer paso común.
 
 ---
 

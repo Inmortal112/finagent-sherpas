@@ -1,5 +1,17 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-12 23:13 — docs/ideas-family-tree — Claude Code
+- **Hecho:** `ideas.md`: nueva idea **S4 · The Family Tree** (el plan como árbol vivo; una rama por persona; cada
+  paso del plan es un cuidado), ahora mi idea principal. S1 pasó a ser «Your Plan, Your Way» (agente configurable
+  por persona) en el PR #7 y queda como capa encima de S4.
+- **Estado:** `./check.sh` pasa (4 tests). Solo documentación.
+- **Decisiones:** ninguna de equipo todavía; falta votar.
+- **Bloqueos:** ninguno.
+- **Para David:** S4 es del mismo tipo que tu casa (un objeto cuyas partes son los pilares). La diferencia es que el
+  árbol está vivo y da motivo para volver. ¿Competimos o las fusionamos?
+- **Para Raúl:** faltan tus ideas y tu opinión sobre qué es factible dibujar en SVG en seis días (casa o árbol).
+- **Siguiente:** votar entre los tres y redactar la nota de `/idea` (vie 13 nov, 22:00).
+
 ## 2026-11-12 14:50 — main — Claude Code
 - **Hecho:** el repo parte ahora del repo de partida de Sherpas (remoto `upstream`): entran `cases/` (las cuatro
   familias), `examples/voice/`, `BRIEF.md`. `AGENTS.md` y `02-DOCS/reto.md` actualizados con las bases reales.
