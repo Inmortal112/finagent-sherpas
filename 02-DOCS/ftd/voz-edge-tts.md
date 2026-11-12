@@ -17,7 +17,7 @@ Sustituir el mock de `voice.synthesize` por audio real: un MP3 por escena y su d
 - `duration_s` se calcula a partir del tamaño del archivo: edge-tts devuelve MP3 de 48 kbit/s constantes. No hace falta ninguna dependencia extra.
 - Si el motor falla, aparece un aviso y se usan duraciones estimadas con `audio_path = None`: `main` sigue funcionando sin internet.
 - `narration` no se modifica nunca (`test_voice_does_not_change_what_is_said`).
-- Cambio en un archivo compartido: `requirements.txt` (+ `edge-tts`, `python-dotenv`). Necesita el visto bueno de Samuel.
+- Cambio en un archivo compartido: `requirements.txt` (+ `edge-tts`, `python-dotenv`). Avisado en el PR #1 y en `comunicacion.md` (fusionado el 12 nov).
 
 ## Checklist
 
@@ -33,4 +33,4 @@ Sustituir el mock de `voice.synthesize` por audio real: un MP3 por escena y su d
 - `pytest -q tests` (con `PYTHONPATH=src;.` y `PYTHONUTF8=1`): 4 passed en 2,98 s.
 - Duraciones (tamaño / fin del habla): intro 6,1/6,01 · savings_rate 3,7/3,73 · emergency_fund_months 3,9/3,94 · debt_to_income 4,3/4,26.
 - Prueba sin red (proxy roto): `ConnectionTimeoutError` → respaldo correcto.
-- No verificado: `./check.sh` en Linux o Mac. En Windows falla por motivos previos a esta rama (separador de `PYTHONPATH` y lectura sin UTF-8 en los tests), ya avisado a Samuel.
+- No verificado: `./check.sh` en Linux o Mac. En Windows fallaba por motivos previos a esta rama (separador de `PYTHONPATH` y lectura sin UTF-8 en los tests); arreglado en el PR #3: `bash check.sh` pasa en Windows sin trucos.
