@@ -1,2 +1,4 @@
 pydantic>=2.14
 pytest>=8
+edge-tts>=7.3
+python-dotenv>=1.2
