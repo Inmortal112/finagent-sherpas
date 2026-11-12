@@ -16,6 +16,21 @@ sepan qué ha cambiado cada uno y lo tengan en cuenta antes de trabajar.
 
 ---
 
+## 2026-11-12 (tarde) · David (`daviid-sc`) · Arreglo de `check.sh` en Windows
+
+- **PR #1 (voz) y PR #2 (este archivo) ya están fusionados en `main`.** Tras `git pull`:
+  `pip install -r requirements.txt` (añade `edge-tts` y `python-dotenv`).
+- Rama `fix/windows-check` (PR #3). Toca dos archivos compartidos (no son de voz), con el OK de
+  David; **en Linux/macOS no cambia nada**:
+  - `check.sh`: en Windows (Git Bash) usa `;` como separador de `PYTHONPATH`, porque el Python
+    de Windows no entiende `:`. Antes fallaba con `No module named 'finagent'`.
+  - `tests/test_pipeline.py`: las 4 lecturas con `read_text()` ahora llevan `encoding="utf-8"`.
+    En Windows la codificación por defecto es cp1252 y rompía textos con tildes ("Pérez").
+- Resultado: **`./check.sh` funciona tal cual en Windows** (Git Bash), sin `PYTHONUTF8=1`.
+  Comprobado: 4 tests pasan y `OK -> out/index.html`.
+- Consejo para todos: al leer o escribir archivos de texto en Python, poner siempre
+  `encoding="utf-8"`; si no, funciona en Linux y falla en Windows (Raúl y David).
+
 ## 2026-11-12 · David (`daviid-sc`) · Voz
 
 ### PR #1 — `feat/voice-edge-tts`: voz real con edge-tts
@@ -49,9 +64,7 @@ https://github.com/Inmortal112/finagent-sherpas/pull/1
   jurado puedan abrirlo. Hay que decidirlo los tres antes de la entrega (18/11, 23:59).
   Los casos ya son públicos en el repo de Sherpas, así que no hay datos secretos en `cases/`.
 - `fixtures/diagnostic_sample.json` sigue siendo el inventado; ya están los casos reales en `cases/`.
-- `check.sh` no funciona en Windows (separador `:` en `PYTHONPATH` y lectura sin UTF-8 en los
-  tests). Mientras tanto, en Windows (PowerShell):
-  `$env:PYTHONPATH="src;."; $env:PYTHONUTF8="1"; .venv\Scripts\python -m pytest -q tests; .venv\Scripts\python -m finagent.run`
+- ~~`check.sh` no funciona en Windows~~ → arreglado en PR #3 (ver entrada de arriba).
 - `CLAUDE.md` del repo dice "No hacer push sin permiso de Samuel"; acordamos trabajar de igual a
   igual. Si estáis de acuerdo, se puede quitar esa línea (no la he tocado: es compartida).
 - Propuesta: añadir a `AGENTS.md` una línea tipo "Leer `comunicacion.md` al empezar" para que
