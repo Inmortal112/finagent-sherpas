@@ -2,6 +2,17 @@
 
 Agente que presenta y narra diagnósticos financieros de Sherpas Wealth. Estado: esqueleto con mocks.
 
+## Qué viene del repo de partida de Sherpas
+
+Este repo parte de [`SherpasEngineering/hackathon-upv-2026`](https://github.com/SherpasEngineering/hackathon-upv-2026) (remoto `upstream`).
+
+- [`BRIEF.md`](BRIEF.md): el brief oficial (reto, casos, criterios, acceso al MCP y al proxy, precios).
+- [`cases/`](cases/): las cuatro familias (`financial-health.json`, `investment-analysis.json`, `persona.md`, PDF).
+- [`examples/voice/`](examples/voice/): ejemplo de voz en tiempo real (Node 22).
+
+Para traer cambios de Sherpas: `git remote add upstream git@github.com:SherpasEngineering/hackathon-upv-2026.git`
+(una vez) y `git pull upstream main`. Si cambian su `README.md`, el cambio va a `BRIEF.md`; nuestro `README.md` se conserva.
+
 ## Instalación
 
 Linux/macOS:
