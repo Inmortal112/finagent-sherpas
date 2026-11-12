@@ -29,31 +29,50 @@ Comprobado en `cases/` el 12 nov:
 
 ## Ideas de Samuel
 
-### S1 · First Move
+### S1 · Your Plan, Your Way (idea principal de Samuel)
 
-- **Qué es:** una experiencia de dos minutos en el móvil, una por cada persona de la familia, que acaba en un único
-  primer paso acordado, con cómo hacerlo y una fecha. Vuelve los días 3 y 30.
-- **Para quién:** familias con o sin asesor. Caso principal de la demo: los Weah (pareja). Segundo: Michael Carter
-  (una persona sola, nota 26).
+- **Qué es:** un agente que se incrusta en la página del plan de Sherpas. Antes de explicar nada, cada persona lo
+  configura en medio minuto (cómo quiere que se lo expliquen y con cuánto detalle). Después reorganiza el plan de
+  esa familia en ese formato y en el orden que más le conviene, y termina en un primer paso.
+- **Para quién:** familias con o sin asesor. Caso principal de la demo: los Weah, con dos configuraciones distintas
+  sobre el mismo plan (Timothy: gráficos y todo el detalle; Melanie: voz, resumen y «dime qué hacer»).
+  Segundo: Michael Carter (nota 26).
 - **Cómo lo vive la familia:**
-  1. Empieza con una pregunta, no con la nota: «Timothy, what worries you most?» y cuatro tarjetas sacadas de su plan.
-  2. La app responde a esa preocupación con dos o tres cifras del plan hechas tangibles.
-  3. Cada miembro de la pareja ordena los pasos del plan en su móvil, por separado.
-  4. La app enseña dónde coinciden y dónde no, y propone un primer paso común con la nota antes y después
-     (`combined_moves`).
-  5. Compromiso: un paso, instrucciones concretas y una fecha. Día 3 y día 30: «¿lo hiciste?», la duda típica de ese
-     momento y el siguiente paso.
-- **Por qué puntúa:** la familia hace cosas (elige, ordena, se compromete) en vez de escuchar. Ataca cuatro de los
-  atascos del brief: la pareja que no actúa hasta ponerse de acuerdo (8), demasiadas opciones sin primer paso (11),
-  la preocupación que nadie ha preguntado (4) y leer a ratos en el móvil (5). Cubre el extra de los días después.
-- **Argumento para el pitch:** las respuestas rellenan el «Subjective concerns» que hoy está vacío. El asesor llega
-  a la reunión sabiendo qué le importa a cada uno y en qué discrepan, y el cliente de Sherpas es el asesor.
-- **Reparto:** Samuel genera el recorrido por persona desde `cases/` (tarjetas, cifras, pasos, paso común) con
-  `gpt-5-mini` y `guard`. Raúl hace la web móvil (tarjetas, ordenar, pantalla de coincidencias, botón «día 3 / día 30»
-  para la demo). David hace los mensajes de seguimiento y la voz opcional pregenerada.
-- **Riesgos:** sincronizar dos móviles en directo puede fallar en la demo (plan B: dos pestañas en una pantalla).
-  El contrato `Presentation` actual no encaja y hay que cambiarlo entre los tres.
-- **Coste:** bajo. Solo texto, generado una vez por familia y guardado.
+  1. **Configuración (30 s, por persona).** No es un formulario de ajustes: la app enseña una cifra real de su plan
+     de varias maneras y la persona elige la que mejor entiende.
+     - Formato (uno o varios): datos concretos en el tiempo, gráfico interactivo, voz, resumen escrito.
+     - Nivel de detalle: «Just tell me what to do» / «Show me why» / «Give me everything».
+     - Qué le preocupa más (cuatro tarjetas sacadas de su plan): decide por dónde se empieza.
+  2. **Plan reorganizado.** El agente ordena los temas según los datos de la familia (primero lo que más frena su
+     nota y lo que ha dicho que le preocupa) y presenta cada tema en el formato y nivel elegidos.
+  3. **Preguntas.** Puede preguntar al agente, que responde en su formato (un gráfico o una frase de voz, no solo
+     texto) y con cifras del plan.
+  4. **Primer paso.** Acaba con la acción que más le conviene, con la nota antes y después (`top_moves`,
+     `combined_moves`), cómo hacerla y una fecha.
+  5. La configuración se guarda y se puede cambiar. Los días 3 y 30 vuelve en el mismo formato.
+- **Por qué puntúa:** responde de frente a «Se entiende» (funciona para quien no sabe y para un experto: son los
+  niveles de detalle) y a «Personal» (para esta familia y para cada persona de ella: dos configuraciones, un plan).
+  Ataca los atascos de las cifras grandes que no dicen si algo va bien o mal (2), la pareja con necesidades
+  distintas (8) y demasiadas opciones sin primer paso (11).
+- **Argumento para el pitch:** lo que cada persona elige y dice que le preocupa rellena el «Subjective concerns»
+  que hoy está vacío en las cuatro familias; el asesor llega a la reunión sabiendo cómo hablarle a cada uno.
+- **Integración en Sherpas:** un widget (una etiqueta `<script>` o un `iframe`) sobre un backend propio que lee el
+  mismo JSON que Sherpas ya produce (`financial-health.json`, `investment-analysis.json`, `persona.md`). En la
+  demo se enseña incrustado en una página de plan de ejemplo. No conocemos su stack: «fácil de integrar» es una
+  afirmación de diseño, no algo que podamos probar contra su web.
+- **Reparto:** encaja con las tres etapas que ya tenemos. Samuel (cerebro): perfil de preferencias → selección,
+  orden y redacción de los bloques por nivel de detalle, con `guard`. Raúl (escena): pantalla de configuración y un
+  componente por formato (línea de tiempo, gráfico interactivo, resumen). David (voz): audio de cada bloque
+  (`edge-tts` en desarrollo, ElevenLabs solo para la demo) y preguntas por voz si da tiempo.
+  El contrato `Presentation` casi sirve: una escena pasa a ser un bloque; falta añadir el perfil de preferencias.
+- **Riesgos:**
+  - **Creatividad:** Sherpas ya tiene un chat sobre el plan y avisa de que una idea que sea solo eso puntúa bajo.
+    Hay que presentarlo como un plan que se reorganiza para cada persona, no como un chatbot; el chat es una pieza.
+  - **Engancha:** empezar por una configuración es fricción. Por eso son tres elecciones con vista previa sobre
+    sus propios datos, no un formulario.
+  - **Alcance:** 4 formatos × 3 niveles son 12 combinaciones por tema. Para el MVP: dos familias, tres o cuatro
+    temas, textos pregenerados y guardados.
+- **Coste:** bajo en texto. La voz, pregenerada.
 
 ### S2 · A Message from 2047
 
@@ -99,17 +118,21 @@ Comprobado en `cases/` el 12 nov:
 
 ### Comparación de las tres (estimación de Samuel, no medida)
 
-| Criterio (puntos) | S1 First Move | S2 Message from 2047 | S3 Sixty Seconds |
+| Criterio (puntos) | S1 Your Plan, Your Way | S2 Message from 2047 | S3 Sixty Seconds |
 |---|---|---|---|
-| Engancha (20) | Alto | Muy alto | Medio |
-| Se entiende (20) | Alto | Medio | Alto |
-| Mueve a actuar (20) | Muy alto | Bajo | Alto |
+| Engancha (20) | Medio-alto | Muy alto | Medio |
+| Se entiende (20) | Muy alto | Medio | Alto |
+| Mueve a actuar (20) | Alto | Bajo | Alto |
 | Personal (15) | Muy alto | Alto | Medio |
-| Creatividad (15) | Alto | Alto | Bajo |
-| Dificultad en 6 días | Media | Media | Baja |
+| Creatividad (15) | Medio | Alto | Bajo |
+| Dificultad en 6 días | Media-alta | Media | Baja |
 
-**Preferencia de Samuel:** S1. Se le puede añadir lo mejor de S2 (una frase de voz al comprometerse) y de S3 (los
-mensajes de los días 3 y 30) sin cambiar de idea.
+**Preferencia de Samuel:** S1. Sus dos puntos débiles son «Engancha» y «Creatividad»; se refuerzan abriendo con la
+elección sobre una cifra propia (no con un formulario) y enseñando en la demo a Timothy y Melanie viendo el mismo
+plan de dos maneras. De S2 se puede tomar la voz y de S3 los mensajes de los días 3 y 30.
+
+Versión anterior de S1 («First Move», 12 nov): cada miembro de la pareja ordenaba los pasos por separado y la app
+proponía un primer paso común. Queda como posible ampliación del paso 4.
 
 ---
 
