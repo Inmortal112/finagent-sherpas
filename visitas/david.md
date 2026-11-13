@@ -3,6 +3,16 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-13 — docs/idea-note — Claude Code
+- **Hecho:** `nota-idea.md`, borrador en inglés de la nota de `/idea` con la fusión «The House That Listens»
+  (qué construimos, por qué según la rúbrica, 7 ideas descartadas con su motivo, riesgos).
+- **Estado:** `./check.sh` pasa. Solo documentación.
+- **Decisiones:** ninguna de equipo todavía; es un borrador para editar entre los tres.
+- **Bloqueos:** falta vuestro voto en `ideas.md` antes de enviar la nota (hoy, 22:00).
+- **Para Samuel y Raúl:** editad `nota-idea.md` directamente si queréis cambiar algo; quien la envíe pega el texto
+  de debajo de la línea en Discord con `/idea`.
+- **Siguiente:** acordar el texto y enviarlo.
+
 ## 2026-11-13 — docs/david-fusion-vote — Claude Code
 - **Hecho:** `idea-david.md` (sección «Actualización 13 nov») e `ideas.md` (sección D1 y mi columna de votos):
   propongo fusionar S1 + R1 como «the house that listens».
