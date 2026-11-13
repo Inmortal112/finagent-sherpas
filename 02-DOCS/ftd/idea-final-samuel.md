@@ -3,7 +3,7 @@ created: 2026-11-13
 status: done
 branch: docs/idea-final-samuel
 ---
-# Idea final de Samuel: S5 · Home Story
+# Idea final de Samuel: S1 · Casa interactiva en el tiempo
 
 ## Intención
 Dejar en `ideas.md` la idea final de Samuel para el voto: la casa de David en una web interactiva que la familia
@@ -11,7 +11,7 @@ recorre deslizando, viendo el plan en cada momento. Llega como enlace del asesor
 casa si siguen el plan, y tiene botones de resumen escrito y de audio con idioma y acento.
 
 ## Alcance
-- Entra: sección de Samuel en `ideas.md` (S5 sustituye a S4, que pasa a descartadas) y entrada en `visitas/samuel.md`.
+- Entra: sección de Samuel en `ideas.md` (queda una sola idea, S1; se quitan todas las anteriores, incluida la lista de descartadas) y entrada en `visitas/samuel.md`.
 - NO entra: `idea-david.md`, `idea-raul.md`, la tabla de votos, la nota de `/idea`, código o contrato.
 
 ## Checklist

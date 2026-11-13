@@ -30,7 +30,7 @@ Comprobado en `cases/` el 12 nov:
 
 ## Idea de Samuel
 
-### S5 · Home Story — scroll through your plan (idea final de Samuel; nombre provisional)
+### S1 · Casa interactiva en el tiempo
 
 - **Qué es:** una web interactiva en **3D** en la que la familia ve su plan como **su casa** y lo recorre con el
   dedo, **hacia delante y hacia atrás a su ritmo**. La casa empieza más o menos dañada según su nota de Sherpas; al
@@ -63,9 +63,9 @@ Comprobado en `cases/` el 12 nov:
   | Pieza | Viene de | Qué se conserva |
   |---|---|---|
   | La casa y sus cinco partes | David, `idea-david.md` | Cimientos = liquidez, tejado = protección, estructura = deuda, instalaciones = ahorro, jardín = inversiones. Reparar una parte = un paso del plan. Estilo de plano arquitectónico. |
-  | Deslizar por el tiempo | Las «estaciones» de S4 y la línea del tiempo de David | Deja de ser un deslizador debajo del dibujo: el propio scroll de la página es la línea del tiempo. |
-  | Una vista por persona | S4 | En pareja, cada uno abre la misma casa con su nombre y elige por dónde empieza. Sin pantalla de configuración previa. |
-  | Elegir el formato | «Your Plan, Your Way» y S4 | Deslizar, leer o escuchar; sin configuración previa, son dos botones siempre visibles. |
+  | Recorrer el tiempo | La línea del tiempo de David | Deja de ser un deslizador debajo del dibujo: el propio gesto de avanzar es la línea del tiempo. |
+  | Una vista por persona | Samuel | En pareja, cada uno abre la misma casa con su nombre y elige por dónde empieza. Sin pantalla de configuración previa. |
+  | Elegir el formato | Samuel | Deslizar, leer o escuchar; sin configuración previa, son dos botones siempre visibles. |
   | Parar y preguntar | Raúl, `idea-raul.md` | En cualquier momento del recorrido, «Wait…» detiene el scroll y la casa enfoca la parte por la que se pregunta. |
 
 - **Referencia de estilo:** [El cens del tallat](https://www.cens-del-tallat.domesticstreamers.com/) (Domestic
@@ -145,18 +145,6 @@ Comprobado en `cases/` el 12 nov:
 - **Coste:** bajo. Textos y voz pregenerados por familia (`edge-tts` en desarrollo); llamadas al modelo solo para
   las preguntas libres.
 
-### Descartadas por Samuel (para la nota del viernes, que pide decir qué se descartó y por qué)
-
-- **S4 · The Family Tree** (el plan como árbol vivo, una rama por persona): mismo tipo de idea que la casa, con
-  partes menos intuitivas («tutor y valla» para los seguros) y una configuración inicial de doce combinaciones.
-  De ella quedan en S5 el recorrido por los años y la vista por persona. Texto completo en el historial de git.
-- **Your Plan, Your Way** (agente configurable sin metáfora visual): sola se parece demasiado a un chat sobre el
-  plan.
-- **A Message from 2047** (mensaje de voz del yo futuro): de un solo uso y mueve poco a actuar.
-- **Sixty Seconds a Day** (el plan por mensajes diarios): la más parecida a un chat.
-- **Money Weather**, **The Check-up**, **Co-Pilots** (parte meteorológico, revisión médica, vuelo): menos motivo
-  para volver o tono menos serio.
-
 ---
 
 ## Ideas de David
@@ -185,7 +173,7 @@ Comprobado en `cases/` el 12 nov:
 
 ## Votos
 
-Cada uno rellena solo su columna con sus tres favoritas en orden (por ejemplo `S4, D1, R1`) y una línea de porqué.
+Cada uno rellena solo su columna con sus tres favoritas en orden (por ejemplo `S1, D1, R1`) y una línea de porqué.
 
 | | Samuel | David | Raúl |
 |---|---|---|---|
