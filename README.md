@@ -35,4 +35,4 @@ Abre `out/index.html`.
 
 ## Cómo trabajamos
 
-Lee `AGENTS.md` (y dáselo a tu IA) antes de tocar nada: quién es dueño de qué, el contrato y cómo se fusiona.
+Lee `AGENTS.md` (y dáselo a tu IA) antes de tocar nada: quién es responsable de cada etapa (todos pueden editar todo), el contrato y cómo se fusiona.
