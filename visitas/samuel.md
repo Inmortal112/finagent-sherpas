@@ -1,5 +1,20 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-13 — docs/idea-final-samuel — Claude Code
+- **Hecho:** `ideas.md`: mi idea final es **S1 · Casa interactiva en el tiempo**: la casa de David vista en
+  una web que se recorre deslizando; el scroll es la línea del tiempo del plan. Es un enlace que el asesor da a la
+  familia, con casa de hoy / casa si siguen el plan y dos botones: resumen escrito y audio con idioma y acento.
+  Es mi única idea: he quitado de `ideas.md` todas las anteriores (árbol incluido); siguen en el historial de git.
+- **Estado:** `./check.sh` pasa (4 tests). Solo documentación.
+- **Decisiones:** ninguna de equipo; es mi propuesta para el voto. Límite comprobado en `cases/`: los pilares son de
+  hoy; año a año solo hay patrimonio, deuda y activos invertibles, así que tejado y cimientos no cambian a futuro.
+- **Para David:** mi idea usa tu casa tal cual (partes, reparar, estilo de plano); solo cambia cómo se recorre. El
+  selector de idioma y acento caería en la voz: ¿qué voces de `edge-tts` ves viables? (la demo va en inglés).
+- **Para Raúl:** tu «Wait…» está dentro de mi idea. Cambio grande para ti: Samuel quiere la casa en **3D** (`three.js`,
+  hecha de cajas, escenas que avanzan y retroceden con el dedo, como la referencia enlazada en `ideas.md`) y una vista del
+  asesor que cambia la casa. ¿Lo ves factible en cinco días, o partimos del SVG?
+- **Siguiente:** votar y redactar la nota de `/idea` (hoy, 22:00).
+
 ## 2026-11-13 — docs/shared-ownership — Claude Code
 - **Hecho:** `AGENTS.md`, regla 1: de «un dueño por archivo» a **«todos pueden modificar todo»**. La columna
   «Dueño» de la tabla pasa a «Responsable» (referente de la etapa, no candado). Explícito para las IA: si ves algo incorrecto en cualquier archivo, lo arreglas tú. `CLAUDE.md` y `README.md` alineados.
