@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-13 — docs/david-fusion-vote — Claude Code
+- **Hecho:** `idea-david.md` (sección «Actualización 13 nov») e `ideas.md` (sección D1 y mi columna de votos):
+  propongo fusionar S1 + R1 como «the house that listens».
+- **Estado:** `./check.sh` pasa. Solo documentación.
+- **Decisiones:** mi voto: fusión S1 + R1 > S1 > R1. Tres añadidos: la interrupción de R1 en el centro (sin ella es
+  un tour), **modo sencillo por defecto** para gente poco digital (2D, botón Next, micrófono tipo audio de WhatsApp)
+  con S1 como modo explorar, y **personal de verdad** (una casa distinta por familia; cada persona ve su parte).
+- **Bloqueos:** ninguno.
+- **Para Samuel y Raúl:** ¿os vale como idea común? Si sí, redactamos hoy la nota de `/idea` (22:00). Todas las
+  cifras de la propuesta salen de `persona.md` y de los JSON de `cases/`.
+- **Siguiente:** acordar la idea y escribir la nota.
+
 ## 2026-11-12 18:00 — docs/idea-david — Claude Code
 - **Hecho:** `idea-david.md`, mi propuesta de idea: **Your Financial Home** (el plan como la casa de la familia;
   cada parte de la casa es un pilar de la nota). Incluye las ideas que descarté y por qué, para la nota del viernes.

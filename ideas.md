@@ -149,7 +149,21 @@ Comprobado en `cases/` el 12 nov:
 
 ## Ideas de David
 
-<!-- David: escribe aquí tus tres ideas (D1, D2, D3) con la plantilla del final. -->
+### D1 · Your Financial Home → propuesta de fusión "the house that listens"
+
+- **Idea original:** [idea-david.md](idea-david.md) (la casa: cada parte es un pilar de la nota).
+- **Propuesta del 13 nov (detalle en `idea-david.md`, sección «Actualización 13 nov»):** fusionar S1 y R1.
+  1. **Base:** la casa en el tiempo de S1.
+  2. **Centro:** la interrupción de R1. La casa escucha: se pregunta hablando o tocando, la voz se detiene y la casa
+     enfoca lo preguntado. Sin esto, recorrer paradas es un tour, y Sherpas ya tiene tours.
+  3. **Modo sencillo por defecto** (para alguien poco digital o mayor): una cosa por pantalla, la voz lo hace todo,
+     casa quieta en 2D, un botón **Next**, micrófono que se mantiene pulsado como un audio de WhatsApp, preguntas en
+     botones y *"Explain it more simply"*. **Modo explorar** para quien quiera más: todo S1 (3D, deslizar, dos finales).
+  4. **Personal de verdad:** cada familia tiene una casa distinta (Michael en un piso de alquiler con la casa de 2027
+     en obras; Samantha sin hipoteca; Johnson sin tejado), cada persona ve su parte (seguro de Timothy y de Melanie),
+     motivación y estilo de decisión de `persona.md` solo como punto de partida, sus propias palabras vuelven los
+     días 3 y 30, y avisos ligados a sus fechas (agosto de Samantha, enero de 2027 de Michael).
+  5. **Probar el modo sencillo** con 3–5 personas ajenas al equipo, incluida una persona mayor poco digital.
 
 ---
 
@@ -177,8 +191,8 @@ Cada uno rellena solo su columna con sus tres favoritas en orden (por ejemplo `S
 
 | | Samuel | David | Raúl |
 |---|---|---|---|
-| Favoritas | | | |
-| Por qué | | | |
+| Favoritas | | Fusión S1 + R1 (D1 «the house that listens»), luego S1, luego R1 | |
+| Por qué | | S1 da la base y R1 lo que la distingue de un tour; con modo sencillo por defecto sirve a cualquiera, y la casa distinta por familia hace «Personal» de verdad | |
 
 ## Plantilla
 
