@@ -3,6 +3,100 @@
 > Propuesta de David Sancho (`daviid-sc`) para elegir entre las ideas de los tres.
 > 12 nov 2026. Nombre del producto en inglés (el producto va en inglés); el documento, en español.
 
+## Actualización 13 nov · Propuesta de fusión de David: "the house that listens"
+
+Tras leer S1 (Samuel) y R1 (Raúl), apoyo **fusionar las tres**: la casa en el tiempo de S1 como base, pero con
+**la interrupción de Raúl en el centro**, un **modo sencillo por defecto** y una personalización que cambie la
+experiencia de verdad, no solo el nombre. Frase de pitch: *"Your plan, as your home. Walk through the years — and
+stop it anytime to ask."*
+
+### 1. La interrupción, en el centro (de R1)
+
+Recorrer una historia con paradas, por sí solo, es un tour bonito, y Sherpas ya tiene tours. Lo que nos distingue es
+que **la casa escucha**: en cualquier momento la familia pregunta (hablando o tocando), la voz se detiene, la casa
+enfoca la parte por la que se pregunta y responde con los datos del plan. Eso es lo que hay que enseñar en el pitch.
+
+### 2. Dos modos: sencillo por defecto, explorar para quien quiera más
+
+Tiene que poder usarlo alguien poco digital (una persona mayor, alguien que nunca ha leído un plan). "Funciona para
+quien no sabe nada" es la mitad de "Se entiende" (20 puntos).
+
+- **Modo sencillo (por defecto):** una cosa por pantalla y la voz lo hace todo.
+  - Se abre y empieza a hablar sola, con voz tranquila.
+  - La casa es una imagen quieta (sin 3D ni giros); se ilumina la parte de la que se habla.
+  - Un único botón grande **Next**; sin deslizar ni gestos. Si no se toca nada, espera.
+  - Para preguntar: un botón grande de micrófono que se **mantiene pulsado para hablar, como un audio de
+    WhatsApp**. Si no quiere hablar, dos o tres preguntas escritas en botones grandes (*"What does this mean?"*,
+    *"Is this bad?"*, *"What should I do?"*).
+  - **"Explain it more simply"** siempre a mano. Letra grande, mucho contraste, subtítulos, nada de jerga sin explicar.
+  - Acaba en **una sola cosa que hacer**, en una frase, con un botón **Remind me**.
+- **Modo explorar:** todo lo de S1 (deslizar por los años, casa en 3D, dos finales, todos los datos). Para el
+  experto o quien disfrute explorando. Así cubrimos a la vez al novato y al experto.
+- **Prueba con usuarios reales** (como propone Raúl): probar el modo sencillo con 3–5 personas ajenas al equipo,
+  incluida al menos una persona mayor poco digital. Si de verdad funciona, es una frase de pitch honesta y potente.
+- **Riesgo técnico menor:** el modo sencillo se puede hacer en 2D (SVG); el 3D solo para el modo explorar, y solo si
+  el primer prototipo funciona en el móvil.
+
+### 3. Personal de verdad: para cada familia y para cada persona
+
+Todo sale de los casos (`persona.md` y los JSON), sin inventar nada.
+
+**a) Cada familia tiene una casa distinta, porque su vida es distinta:**
+
+| Familia | Su "casa" | Detalles reales del caso |
+|---|---|---|
+| Michael | **Un piso de alquiler** ($2,800 al mes) y al lado **un solar con la casa de 2027 en obras** | Su BMW, Austin de fondo |
+| Samantha | Casa en propiedad **sin hipoteca** ($900,000) | Su Porsche Cayenne; habitaciones de Ethan (18) y Ava (16) |
+| Johnson | Casa con **hipoteca grande** ($560,000) y **sin tejado** (protección 0/20) | Habitaciones de Oliver (11) y Sophia (9); Denver |
+| Weah | Casa con hipoteca pequeña ($50,000) | Habitaciones de Liam (6) y Josh (3); San Francisco |
+
+En la línea del tiempo, la habitación de Ethan se queda vacía en agosto de 2026 (empieza la universidad) y la de Ava
+en 2028. En el pitch, enseñar dos familias seguidas para que se vea que no es la misma plantilla con otro nombre.
+
+**b) Cada persona ve su parte:**
+- Weah: a Timothy le faltan $610,000 de seguro de vida y a Melanie $490,000; cada uno ve **su** hueco.
+- Johnson: según el plan, Emily lleva las cuentas de ahorro, el 529 y la de inversión, y Daniel tiene a su nombre la
+  tarjeta y el préstamo de estudios; cada uno empieza por lo que gestiona.
+- Timothy es "Growth" y Melanie "Moderate": la misma cartera se explica desde el punto de vista de cada uno.
+
+**c) Hablarles de lo que les mueve, sin suponerlo:** `persona.md` trae una motivación (D6) y un estilo de decisión
+(D5), marcados como de baja confianza. Se usan solo como **punto de partida**, y lo que diga la persona manda.
+- Motivación, para el "para qué": Protección (Weah, Johnson: sus hijos), Libertad (Michael: jubilarse a los 58),
+  Deber (Samantha: Ethan y Ava). El seguro de vida no es "una póliza": es proteger a sus hijos.
+- Estilo de decisión, para el "cómo": Validator (Samantha) → botón *"How was this calculated?"* con la fuente de cada
+  cifra; Collaborator (Weah, Michael) → explicar el razonamiento; Dual (Johnson) → cada uno su parte y luego juntos.
+- La pregunta inicial (*"What worries you most?"*) puede corregir todo esto.
+
+**d) Sus propias palabras vuelven a ellos:** lo que preguntó se le recuerda después con sus palabras (*"On Monday you
+asked whether you could still buy the house in 2027…"*). Los días 3 y 30 retoman **su** duda. El informe al asesor
+separa lo que dijo la familia de lo que dedujo el sistema.
+
+**e) Cifras traducidas con sus propios números:** Weah, la tarjeta cuesta unos $3,240 al año y el efectivo parado da
+unos $150; Michael, la hipoteca serían $3,015 al mes frente a $2,800 de alquiler; Samantha, el próximo pago de
+Ethan, $12,500, llega en agosto de 2027.
+
+**f) Los avisos llegan cuando su vida lo pide:** Samantha antes de cada agosto (universidad); Michael antes de enero
+de 2027 (entrada de la casa y vacaciones de $3,500).
+
+**g) La voz, personal:** dice sus nombres y los de sus hijos bien pronunciados; cada persona elige ritmo y modo
+(sencillo o explorar), y el idioma y acento de S1.
+
+Frase de pitch para "Personal": *"Not one template with a different name. Michael lives in a rented apartment with a
+dream house under construction. Samantha's house is paid off — but Ethan's room just went quiet."*
+
+### 4. Reparto con esta fusión
+
+- **Samuel:** paradas, hechos y condiciones por familia y por persona (incluidos los datos de 3a–3f), con `guard`;
+  interpretar la pregunta y elegir la escena.
+- **Raúl:** la casa de cada familia (2D en modo sencillo, 3D en explorar), las escenas que cambian al preguntar, los
+  dos modos y la vista de pareja.
+- **David:** la voz que hace que la casa **escuche y hable**: narración, pausa y reanudación al interrumpir, preguntas
+  habladas (voz a texto, `scribe-v2`) y respuesta hablada; nombres bien pronunciados y ritmo por persona.
+
+---
+
+# Idea original (12 nov)
+
 ## En una frase
 
 El plan de la familia se convierte en **su casa**: cada parte de la casa es un pilar de su nota de Sherpas,
