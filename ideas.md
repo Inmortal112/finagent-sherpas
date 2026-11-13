@@ -125,6 +125,18 @@ Comprobado en `cases/` el 12 nov:
 
 ## Ideas de Raúl
 
+### R1 · Common Ground — A plan you can interrupt
+
+- **Qué es:** una explicación visual y hablada del plan que puedes interrumpir. Una duda cambia la escena para mostrar lo que necesitas comprender; termina en un primer paso concreto, individual o compartido.
+- **Para quién:** familias con o sin asesor. Caso principal: Timothy y Melanie Weah; Samantha como ampliación individual.
+- **Cómo lo vive la familia:** dilema propio → explicación → pregunta que transforma la escena → explorar un paso ya calculado → elegir o dejar una duda → ayuda al volver según el obstáculo.
+- **Por qué puntúa:** personalización por preguntas expresadas, comprensión visual, participación y seguimiento útil. La adaptación debe ser observable para distinguirse de un tour o chat.
+- **Reparto:** Samuel, hechos y lógica de explicación; David, voz e interrupciones; Raúl, experiencia móvil y escenas. Persistencia y contrato adicional pendientes de acuerdo.
+- **Riesgos:** parecer un formulario o chat con gráficos; latencia; confundir compromiso con mejora financiera. El MVP prioriza una historia completa y no recalcula futuros ausentes.
+- **Coste:** voz base con edge-tts, contenido pregenerado y llamadas acotadas por el proxy.
+- **Propuesta completa:** [idea-raul.md](idea-raul.md), con storyboard, demo de dos minutos, alcance, condiciones de los escenarios y comparación con las ideas del equipo.
+- **Estado:** propuesta para discutir; no elegida ni implementación iniciada. No se registran votos.
+
 <!-- Raúl: escribe aquí tus tres ideas (R1, R2, R3) con la plantilla del final. -->
 
 ---
