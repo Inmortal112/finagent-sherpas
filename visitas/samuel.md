@@ -1,5 +1,19 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-13 — docs/idea-final-samuel — Claude Code
+- **Hecho:** `ideas.md`: mi idea final es **S5 · Home Story — scroll through your plan**: la casa de David vista en
+  una web que se recorre deslizando; el scroll es la línea del tiempo del plan. Es un enlace que el asesor da a la
+  familia, con casa de hoy / casa si siguen el plan y dos botones: resumen escrito y audio con idioma y acento.
+  S4 (árbol) pasa a descartadas.
+- **Estado:** `./check.sh` pasa (4 tests). Solo documentación.
+- **Decisiones:** ninguna de equipo; es mi propuesta para el voto. Límite comprobado en `cases/`: los pilares son de
+  hoy; año a año solo hay patrimonio, deuda y activos invertibles, así que tejado y cimientos no cambian a futuro.
+- **Para David:** S5 usa tu casa tal cual (partes, reparar, estilo de plano); solo cambia cómo se recorre. El
+  selector de idioma y acento caería en la voz: ¿qué voces de `edge-tts` ves viables? (la demo va en inglés).
+- **Para Raúl:** tu «Wait…» está dentro de S5. Lo más delicado es animar la casa con el scroll en el móvil: ¿lo ves
+  factible?
+- **Siguiente:** votar y redactar la nota de `/idea` (hoy, 22:00).
+
 ## 2026-11-12 23:17 — docs/ideas-s4-only — Claude Code
 - **Hecho:** `ideas.md`: mi sección queda con una sola idea, **S4 · The Family Tree**, que ahora empieza con la
   configuración por persona (formato, nivel de detalle, qué le preocupa). Borradas S1, S2 y S3; quedan en una lista
