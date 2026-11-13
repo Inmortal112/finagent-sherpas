@@ -10,8 +10,9 @@
   hoy; año a año solo hay patrimonio, deuda y activos invertibles, así que tejado y cimientos no cambian a futuro.
 - **Para David:** S5 usa tu casa tal cual (partes, reparar, estilo de plano); solo cambia cómo se recorre. El
   selector de idioma y acento caería en la voz: ¿qué voces de `edge-tts` ves viables? (la demo va en inglés).
-- **Para Raúl:** tu «Wait…» está dentro de S5. Lo más delicado es animar la casa con el scroll en el móvil: ¿lo ves
-  factible?
+- **Para Raúl:** tu «Wait…» está dentro de S5. Cambio grande para ti: Samuel quiere la casa en **3D** (`three.js`,
+  hecha de cajas, escenas que avanzan y retroceden con el dedo, como la referencia enlazada en S5) y una vista del
+  asesor que cambia la casa. ¿Lo ves factible en cinco días, o partimos del SVG?
 - **Siguiente:** votar y redactar la nota de `/idea` (hoy, 22:00).
 
 ## 2026-11-12 23:17 — docs/ideas-s4-only — Claude Code

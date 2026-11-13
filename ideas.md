@@ -32,9 +32,24 @@ Comprobado en `cases/` el 12 nov:
 
 ### S5 · Home Story — scroll through your plan (idea final de Samuel; nombre provisional)
 
-- **Qué es:** una web interactiva en la que la familia ve su plan como **su casa** y lo recorre **deslizando**.
-  Deslizar es avanzar en el tiempo: la casa se queda fija en pantalla y cambia con cada año del plan, de hoy a la
-  jubilación. En cada momento se ve cómo está la casa, qué pasa ese año y qué paso toca.
+- **Qué es:** una web interactiva en **3D** en la que la familia ve su plan como **su casa** y lo recorre con el
+  dedo, **hacia delante y hacia atrás a su ritmo**. La casa empieza más o menos dañada según su nota de Sherpas; al
+  avanzar por el plan se ve cómo se arregla cada parte, y el recorrido acaba en dos finales: la casa si siguen el
+  plan y la casa si no lo siguen.
+- **Cómo se mueve:** la página no se desplaza; el gesto (dedo o rueda) hace avanzar la escena actual y, al acabar,
+  pasa a la siguiente. Al retroceder se entra por el final de la escena anterior. Nada avanza solo.
+- **La casa de partida sale de la nota:** la nota global (`score.published_score` y su banda) fija el estado
+  general y cada pilar (`score.pillars`) el de su parte. Michael (26, *critical*): casa muy dañada. Johnson (52,
+  *vulnerable*): en pie y sin tejado. Weah (60, *stable*): estructura agrietada por la tarjeta. Samantha (82,
+  *strong*): casi impecable.
+- **Dos finales:**
+  - **If you follow the plan:** todas las partes reparadas y la nota de llegada (Weah: 78).
+  - **If you don't:** la casa tal como la deja el plan actual (`projections.yearly`). Puede seguir en pie y tener
+    el jardín seco: es el caso de Samantha, con buena casa y activos líquidos agotados en 2053.
+- **El asesor anota y la casa cambia:** en una vista aparte, el asesor apunta las dudas que van saliendo y marca
+  qué pasos da por hechos y cuáles no. La casa de la familia se actualiza con esa combinación y enseña su
+  consecuencia (Weah: sin el seguro de vida, la nota se queda en 62 en vez de 73). Las notas rellenan el
+  «Subjective concerns» vacío. El asesor elige entre escenarios que el plan ya trae calculados; no cambia cifras.
 - **Cómo llega:** es **un enlace que el asesor entrega a la familia**. Sin instalar nada ni crear cuenta: lo abren
   en el móvil y ahí está su plan completo, con su casa de hoy, su línea del tiempo y la casa como quedaría si hacen
   los pasos del plan.
@@ -62,8 +77,8 @@ Comprobado en `cases/` el 12 nov:
 - **Para quién:** familias con o sin asesor, en el móvil (un solo gesto: deslizar con el pulgar). Demo: Samantha
   Lewis (el giro) y los Weah (la pareja y el paso).
 - **Cómo lo vive la familia (cada punto es una parada del scroll):**
-  1. **Today.** Su casa entera, con sus nombres y su nota. En tres segundos se ve qué está sólido y qué agrietado
-     (`score.pillars`). Johnson: casa en pie y sin tejado (protección 0/20) con dos hijos dentro.
+  1. **Today.** Su casa entera en 3D, con sus nombres y su nota; se puede girar con el dedo. En tres segundos se
+     ve qué está sólido y qué agrietado (`score.pillars`). Johnson: casa en pie y sin tejado (protección 0/20) con dos hijos dentro.
   2. **What worries you most?** Una pregunta con cuatro tarjetas sacadas de su plan. La respuesta decide qué parte
      se enfoca primero y rellena el «Subjective concerns» que hoy está vacío en las cuatro familias.
   3. **Room by room.** Al deslizar, la cámara pasa por cada parte con una frase y su cifra. «Show me why» abre el
@@ -78,7 +93,8 @@ Comprobado en `cases/` el 12 nov:
      en 2048. La deuda baja en la estructura hasta desaparecer (Weah: 2059).
   6. **The moment the plan breaks, if it does.** Samantha: nota 82 y casa impecable hasta que el scroll llega a
      2053 y el jardín se seca (`BANKRUPTCY_ZEROCASH`, a los 73). Michael: 2075. Es lo que la nota no enseña.
-  7. **Your next step.** La página acaba en una tarjeta: el paso elegido, la fecha y lo que falta comprobar. Día 3
+  7. **Two endings.** Las dos casas, una junto a otra: siguiendo el plan y sin seguirlo.
+  8. **Your next step.** La página acaba en una tarjeta: el paso elegido, la fecha y lo que falta comprobar. Día 3
      y día 30: al volver, el scroll se abre en esa reparación, hecha o pendiente.
 - **Por qué puntúa:**
   - **Engancha (20):** deslizar es el gesto que ya hace todo el mundo en el móvil; no hay que aprender nada.
@@ -94,8 +110,8 @@ Comprobado en `cases/` el 12 nov:
 - **Integración en Sherpas:** una página web que lee el mismo JSON que Sherpas ya produce; el asesor comparte su
   enlace (una URL por familia) o se incrusta (`iframe`) en la página del plan. No conocemos su stack: es una decisión de diseño, no algo probado.
 - **Reparto:** Samuel (cerebro): de los JSON a la lista de paradas de cada familia (estado de cada parte, año,
-  cifra, texto y paso), todo por `guard`. Raúl (escena): la casa en SVG (5 partes × 3 estados), el scroll que la
-  mueve, la reparación, el «Wait…» y los botones «Read it» / «Listen». David (voz): la narración de cada parada,
+  cifra, texto y paso), todo por `guard`. Raúl (escena): la casa en 3D con `three.js`, hecha de cajas (5 partes × 3 estados), las
+  escenas y el gesto que las mueve, la vista del asesor, la reparación, el «Wait…» y los botones «Read it» / «Listen». David (voz): la narración de cada parada,
   la pausa al interrumpir y el selector de idioma y acento (voces de `edge-tts`).
   El contrato `Presentation` casi sirve: una escena pasa a ser una parada; faltan el año y la parte de la casa
   (campos opcionales, regla 2).
@@ -113,8 +129,17 @@ Comprobado en `cases/` el 12 nov:
   - **Tres formatos son tres cosas que mantener:** el resumen escrito y el audio salen del mismo texto de las
     paradas, no se escriben aparte.
   - **50 años de scroll cansan:** se salta de parada en parada (unas 8 por familia), no año a año.
-  - **Animar con el scroll en el móvil** es lo más delicado de construir; hay que probarlo el primer día y tener
-    botones «Next» como alternativa.
+  - **El 3D con escenas encadenadas es lo más caro de construir** y cae casi entero en Raúl, que contaba con un
+    SVG en 2D. Hay que probar una parte de la casa en el móvil el primer día; plan B: la misma casa en SVG con
+    botones «Next» / «Back».
+  - **El final bueno no siempre arregla el jardín.** Los pasos de Samantha suben la nota de 82 a 84 (seguro de
+    hogar), pero el plan no trae calculado un escenario en el que sus activos dejen de agotarse. Su final «si
+    sigues el plan» no puede enseñar un jardín sano sin inventarlo: hay que decirlo tal cual o elegir a los Weah
+    para ese final.
+  - **La vista del asesor añade una segunda pantalla y estado compartido** (lo que marca el asesor tiene que
+    llegar a la casa de la familia). Para el MVP: los dos en el mismo dispositivo o un parámetro en el enlace.
+  - **El asesor solo puede variar entre escenarios ya calculados** (`top_moves`, `combined_moves`); Samantha y
+    Michael solo tienen pasos sueltos.
   - **Que parezca una infografía pasiva:** por eso la pregunta inicial, la reparación y el «Wait…» cambian lo que
     se ve.
 - **Coste:** bajo. Textos y voz pregenerados por familia (`edge-tts` en desarrollo); llamadas al modelo solo para
