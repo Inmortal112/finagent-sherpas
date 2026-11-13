@@ -53,6 +53,12 @@ Comprobado en `cases/` el 12 nov:
   | Elegir el formato | «Your Plan, Your Way» y S4 | Deslizar, leer o escuchar; sin configuración previa, son dos botones siempre visibles. |
   | Parar y preguntar | Raúl, `idea-raul.md` | En cualquier momento del recorrido, «Wait…» detiene el scroll y la casa enfoca la parte por la que se pregunta. |
 
+- **Referencia de estilo:** [El cens del tallat](https://www.cens-del-tallat.domesticstreamers.com/) (Domestic
+  Data Streamers), pero con la casa. Cómo está hecha (mirado el 13 nov): un solo HTML con `three.js`, una escena 3D
+  a pantalla completa construida con cajas y cámara ortográfica (aspecto de maqueta), y **escenas encadenadas**: la
+  página no se desplaza de verdad, la rueda o el dedo hacen avanzar la escena actual y, al acabar, pasa a la
+  siguiente. Empieza con «entrar con sonido / sin sonido» y un selector de idioma. Se toma la técnica y el tono, no
+  su código ni su diseño.
 - **Para quién:** familias con o sin asesor, en el móvil (un solo gesto: deslizar con el pulgar). Demo: Samantha
   Lewis (el giro) y los Weah (la pareja y el paso).
 - **Cómo lo vive la familia (cada punto es una parada del scroll):**
