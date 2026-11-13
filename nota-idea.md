@@ -1,7 +1,7 @@
 # /idea — The House That Listens
 
-> DRAFT for the team (David, 13 Nov). Due Fri 13 Nov, 22:00, via `/idea`. One page max.
-> Edit freely; once Samuel and Raúl agree, paste the text below the line into Discord.
+> Our idea, agreed by the three of us on 13 Nov. Due Fri 13 Nov, 22:00, via `/idea`. One page max.
+> To send it: paste the text below the line into Discord.
 
 ---
 

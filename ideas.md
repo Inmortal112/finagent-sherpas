@@ -1,12 +1,15 @@
 # Ideas candidatas
 
+> **Idea elegida (13 nov, de acuerdo los tres): «The House That Listens»**, la fusión de S1 + R1 con modo sencillo
+> por defecto (detalle en la sección D1 y en `idea-david.md`). Nota de `/idea` en [nota-idea.md](nota-idea.md).
+> El resto del archivo queda como registro de las propuestas.
+
 Las ideas de cada uno. Entre todas elegimos una y la enviamos con `/idea` antes del **vie 13 nov a las 22:00**
 (10 puntos; hay que decir qué construimos y por qué, y qué descartamos y por qué: las que no elijamos sirven
 para esa segunda parte).
 
 **Cómo añadir las tuyas:** escribe solo dentro de tu sección (abajo), con la misma plantilla. La idea de David está en
-`idea-david.md` («Your Financial Home»). No edites las de otro;
-si quieres opinar sobre una idea ajena, hazlo en la tabla de votos del final, en tu columna.
+`idea-david.md` («Your Financial Home»).
 
 Criterios del jurado: Engancha 20 · Se entiende 20 · Mueve a actuar 20 · Personal 15 · Creatividad 15 · Nota de idea 10.
 Aviso de las bases: Sherpas ya tiene tours guiados y un chat sobre el plan; una idea que sea solo eso puntúa bajo.
@@ -185,14 +188,11 @@ Comprobado en `cases/` el 12 nov:
 
 ---
 
-## Votos
+## Idea elegida
 
-Cada uno rellena solo su columna con sus tres favoritas en orden (por ejemplo `S1, D1, R1`) y una línea de porqué.
-
-| | Samuel | David | Raúl |
-|---|---|---|---|
-| Favoritas | | Fusión S1 + R1 (D1 «the house that listens»), luego S1, luego R1 | |
-| Por qué | | S1 da la base y R1 lo que la distingue de un tour; con modo sencillo por defecto sirve a cualquiera, y la casa distinta por familia hace «Personal» de verdad | |
+**The House That Listens**, acordada por los tres el 13 nov, sin votación: la casa en el tiempo de S1 como base, la
+interrupción de R1 en el centro, modo sencillo por defecto y modo explorar, y personalización por familia y por
+persona (detalle en D1 y en `idea-david.md`). Nota de `/idea`: [nota-idea.md](nota-idea.md).
 
 ## Plantilla
 
