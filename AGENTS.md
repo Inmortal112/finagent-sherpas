@@ -16,7 +16,7 @@ diagnóstico (MCP) ─▶ brain ─▶ guard ─▶ voice ─▶ stage ─▶ lo
                        └────── Presentation (contracts/schemas.py) ──────┘
 ```
 
-| Etapa | Carpeta/archivo | Dueño (GitHub) | Su IA | Entra → sale |
+| Etapa | Carpeta/archivo | Responsable (GitHub) | Su IA | Entra → sale |
 |---|---|---|---|---|
 | Cerebro | `src/finagent/brain.py`, `guard.py` | A: Samuel (`Inmortal112`) | Claude Code | diagnóstico → `Presentation` con hechos y narración |
 | Voz | `src/finagent/voice.py` | B: David (`daviid-sc`) | Claude Code (plan Pro) | `Presentation` → la misma con `audio_path` y `duration_s` |
@@ -27,8 +27,12 @@ función por la versión real **sin cambiar su firma**.
 
 ## Reglas
 
-1. **Un dueño por archivo.** Edita solo lo tuyo. Si necesitas un cambio en lo de otro, pídeselo
-   (issue o mensaje); no lo edites tú ni tu IA.
+1. **Todos pueden modificar todo.** Cualquiera de los tres (y su IA) puede editar cualquier archivo
+   del repo, sin pedir permiso. El responsable de la tabla es el referente de su etapa (quien mejor
+   la conoce), no un candado. **Si ves algo incorrecto en cualquier archivo, arréglalo tú mismo: no
+   esperes a su responsable ni lo dejes solo anotado.** Si tocas una etapa que no es la tuya: `git pull --rebase origin main`
+   antes de empezar, cambio pequeño en su propio PR y una línea «Para …» en tu entrada de `visitas/`
+   para que su responsable se entere. Excepciones: el contrato (regla 2) y `visitas/` (un archivo por persona).
 2. **El contrato es `contracts/schemas.py`.** Es lo único compartido. Se cambia en un PR aparte,
    pequeño, con el visto bueno de los tres, y regenerando el esquema (`python -m contracts.schemas`).
    Añadir un campo opcional es barato; renombrar o quitar, no.
@@ -56,7 +60,8 @@ función por la versión real **sin cambiar su firma**.
 
 Los tres (Samuel, David y Raúl) trabajan de igual a igual (acordado el 12 nov): cada uno sube sus ramas y
 fusiona sus PRs **sin pedir permiso a nadie**, siempre que `./check.sh` pase. Nada de push directo ni
-force-push a `main`. Cambios en archivos de otro o en el contrato: avisar antes (reglas 1 y 2).
+force-push a `main`. Todos pueden editar cualquier archivo (regla 1); los cambios en el contrato se
+avisan antes (regla 2).
 
 ## Libro de visitas (`visitas/`): memoria compartida entre las tres IA
 

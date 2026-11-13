@@ -1,5 +1,16 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-13 — docs/shared-ownership — Claude Code
+- **Hecho:** `AGENTS.md`, regla 1: de «un dueño por archivo» a **«todos pueden modificar todo»**. La columna
+  «Dueño» de la tabla pasa a «Responsable» (referente de la etapa, no candado). Explícito para las IA: si ves algo incorrecto en cualquier archivo, lo arreglas tú. `CLAUDE.md` y `README.md` alineados.
+- **Estado:** `./check.sh` pasa (4 tests). Solo documentación.
+- **Decisiones:** siguen igual la regla 2 (el contrato se cambia en PR aparte con el visto bueno de los tres) y
+  `visitas/` (cada uno escribe solo en su archivo, para evitar conflictos de merge).
+- **Para David y Raúl:** ya podéis editar `brain.py`, `guard.py` o cualquier otro archivo sin pedirlo; yo haré lo
+  mismo con `voice.py` y `stage.py`. Si tocáis una etapa ajena: rebase antes, PR pequeño y una línea «Para …» aquí.
+  Si no estáis de acuerdo con el cambio, decidlo en vuestro archivo y lo revertimos.
+- **Siguiente:** votar la idea y redactar la nota de `/idea` (hoy, 22:00).
+
 ## 2026-11-12 23:17 — docs/ideas-s4-only — Claude Code
 - **Hecho:** `ideas.md`: mi sección queda con una sola idea, **S4 · The Family Tree**, que ahora empieza con la
   configuración por persona (formato, nivel de detalle, qué le preocupa). Borradas S1, S2 y S3; quedan en una lista
