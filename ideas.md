@@ -1,6 +1,6 @@
 # Ideas candidatas
 
-> **Idea elegida (13 nov, de acuerdo los tres): «The House That Listens»**, la fusión de S1 + R1 con modo sencillo
+> **Idea elegida (13 nov, de acuerdo los tres): «Under One Roof»** (antes «The House That Listens»), la fusión de S1 + R1 con modo sencillo
 > por defecto (detalle en la sección D1 y en `idea-david.md`). Nota de `/idea` en [nota-idea.md](nota-idea.md).
 > El resto del archivo queda como registro de las propuestas.
 
@@ -190,7 +190,8 @@ Comprobado en `cases/` el 12 nov:
 
 ## Idea elegida
 
-**The House That Listens**, acordada por los tres el 13 nov, sin votación: la casa en el tiempo de S1 como base, la
+**Under One Roof** (*One plan. One home. Everyone in it.*; antes «The House That Listens»), acordada por los tres
+el 13 nov, sin votación: la casa en el tiempo de S1 como base, la
 interrupción de R1 en el centro, modo sencillo por defecto y modo explorar, y personalización por familia y por
 persona (detalle en D1 y en `idea-david.md`). Nota de `/idea`: [nota-idea.md](nota-idea.md).
 

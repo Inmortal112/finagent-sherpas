@@ -3,6 +3,17 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-13 — docs/under-one-roof — Claude Code
+- **Hecho:** `nota-idea.md` con la versión final de la nota (más humana, descartadas resumidas, apartado nuevo
+  «Why a phone, and what else we said no to»). `ideas.md`: nombre nuevo de la idea.
+- **Estado:** `./check.sh` pasa. Solo documentación.
+- **Decisiones:** la idea se llama **Under One Roof** (*One plan. One home. Everyone in it.*), antes «The House That
+  Listens». Al empezar, cada persona elige su modo: sencillo (botones grandes, voz guía, mantener pulsado para
+  hablar) o completo (explorar todas las cifras).
+- **Bloqueos:** ninguno.
+- **Para Samuel y Raúl:** la nota se envía hoy antes de las 22:00 pegando el texto de debajo de la línea con `/idea`.
+- **Siguiente:** enviar la nota y repartir el MVP.
+
 ## 2026-11-13 — docs/idea-note — Claude Code
 - **Hecho:** `nota-idea.md`, la nota de `/idea` en inglés con la idea elegida, «The House That Listens»
   (qué construimos, por qué según la rúbrica, 7 ideas descartadas con su motivo, riesgos). En `ideas.md`,
