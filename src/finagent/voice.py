@@ -29,6 +29,14 @@ DEFAULT_VOICES = {"es": "es-ES-ElviraNeural", "en": "en-US-EmmaMultilingualNeura
 # edge-tts always returns 24 kHz mono MP3 at a constant 48 kbit/s, so the file size gives the duration.
 EDGE_MP3_BYTES_PER_SECOND = 48_000 / 8
 MAX_PARALLEL_REQUESTS = 4
+# A touch slower than the voice's natural pace: calmer, easier to follow for a family hearing it first.
+DEFAULT_RATE = "-5%"
+
+
+def speaking_rate() -> str:
+    """edge-tts rate, e.g. "-5%" (slower) or "+10%" (faster). Override with VOICE_RATE in .env."""
+    rate = (os.getenv("VOICE_RATE") or DEFAULT_RATE).strip()
+    return rate if rate[:1] in "+-" else f"+{rate}"
 
 
 def synthesize(presentation: Presentation, out_dir: Path) -> Presentation:
@@ -75,7 +83,7 @@ async def _edge_all(scenes: list[Scene], out_dir: Path, voice: str, language: st
         async with limit:
             audio = bytearray()
             spoken = to_speech(scene.narration, language)
-            async for chunk in edge_tts.Communicate(spoken, voice).stream():
+            async for chunk in edge_tts.Communicate(spoken, voice, rate=speaking_rate()).stream():
                 if chunk["type"] == "audio":
                     audio.extend(chunk["data"])
         if not audio:

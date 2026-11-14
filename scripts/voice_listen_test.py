@@ -20,7 +20,7 @@ from pathlib import Path
 import edge_tts
 
 from finagent.speech_text import SPOKEN_TERMS, to_speech
-from finagent.voice import DEFAULT_VOICES
+from finagent.voice import DEFAULT_VOICES, speaking_rate
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "out" / "listen"
@@ -76,7 +76,7 @@ def _samples() -> list[tuple[str, str]]:
 
 async def _speak(lines: list[str], path: Path, voice: str) -> None:
     audio = bytearray()
-    async for chunk in edge_tts.Communicate(" ".join(lines), voice).stream():
+    async for chunk in edge_tts.Communicate(" ".join(lines), voice, rate=speaking_rate()).stream():
         if chunk["type"] == "audio":
             audio.extend(chunk["data"])
     path.write_bytes(audio)
