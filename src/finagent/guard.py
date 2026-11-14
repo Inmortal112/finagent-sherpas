@@ -6,11 +6,13 @@ import re
 
 from contracts.schemas import Presentation
 
-NUMBER = re.compile(r"\d+(?:[.,]\d+)?")
+# English number format (the product is in English): the point is the decimal separator and
+# commas only group thousands, so "6,800" is 6800 and "2.5" is two and a half.
+NUMBER = re.compile(r"\d+(?:,\d{3})*(?:\.\d+)?")
 
 
 def _normalise(text: str) -> float:
-    return float(text.replace(",", "."))
+    return float(text.replace(",", ""))
 
 
 def unsupported_numbers(presentation: Presentation) -> list[tuple[str, str]]:

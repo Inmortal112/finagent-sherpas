@@ -1,6 +1,6 @@
 """End-to-end pipeline: diagnostic -> brain -> guard -> voice -> stage.
 
-    python -m finagent.run [diagnostic.json]
+    python -m finagent.run [cases/<family>/financial-health.json]
 
 This must work on `main` at all times, with mocks or with real stages.
 """
@@ -11,6 +11,7 @@ from pathlib import Path
 from finagent import brain, guard, stage, voice
 
 ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_CASE = ROOT / "cases" / "samantha-lewis" / "financial-health.json"
 
 
 def main(diagnostic_path: Path, out_dir: Path) -> Path:
@@ -25,7 +26,7 @@ def main(diagnostic_path: Path, out_dir: Path) -> Path:
 
 
 if __name__ == "__main__":
-    source = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "fixtures" / "diagnostic_sample.json"
+    source = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_CASE
     target = ROOT / "out"
     target.mkdir(exist_ok=True)
     print(f"OK -> {main(source, target)}")
