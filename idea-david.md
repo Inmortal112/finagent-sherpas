@@ -6,7 +6,7 @@
 ## Actualización 13 nov · Propuesta de fusión de David: "the house that listens"
 
 Tras leer S1 (Samuel) y R1 (Raúl), apoyo **fusionar las tres**: la casa en el tiempo de S1 como base, pero con
-**la interrupción de Raúl en el centro**, un **modo sencillo por defecto** y una personalización que cambie la
+**la interrupción de Raúl en el centro**, **dos modos que cada persona elige al abrir** y una personalización que cambie la
 experiencia de verdad, no solo el nombre. Frase de pitch: *"Your plan, as your home. Walk through the years — and
 stop it anytime to ask."*
 
@@ -16,13 +16,16 @@ Recorrer una historia con paradas, por sí solo, es un tour bonito, y Sherpas ya
 que **la casa escucha**: en cualquier momento la familia pregunta (hablando o tocando), la voz se detiene, la casa
 enfoca la parte por la que se pregunta y responde con los datos del plan. Eso es lo que hay que enseñar en el pitch.
 
-### 2. Dos modos: sencillo por defecto, explorar para quien quiera más
+### 2. Dos modos: cada persona elige el suyo al abrir
 
 Tiene que poder usarlo alguien poco digital (una persona mayor, alguien que nunca ha leído un plan). "Funciona para
 quien no sabe nada" es la mitad de "Se entiende" (20 puntos).
 
-- **Modo sencillo (por defecto):** una cosa por pantalla y la voz lo hace todo.
-  - Se abre y empieza a hablar sola, con voz tranquila.
+Al abrir su plan, lo primero que ve cada persona es una pantalla con dos botones grandes, uno por modo. Nada
+empieza hasta que elige, y puede cambiar de modo después.
+
+- **Modo sencillo:** una cosa por pantalla y la voz lo hace todo.
+  - Al elegirlo, empieza a hablar sola, con voz tranquila.
   - La casa es una imagen quieta (sin 3D ni giros); se ilumina la parte de la que se habla.
   - Un único botón grande **Next**; sin deslizar ni gestos. Si no se toca nada, espera.
   - Para preguntar: un botón grande de micrófono que se **mantiene pulsado para hablar, como un audio de
@@ -161,7 +164,7 @@ Cada parte tiene tres estados (sólido / con grietas / roto) según los puntos d
 
 ## Para todos los públicos (también gente mayor)
 
-- **Guiado por defecto, explorar si quieres.** No hay que moverse por ningún mundo: la casa se recorre sola.
+- **Guiado o explorar: cada persona elige al abrir.** En el guiado no hay que moverse por ningún mundo: la casa se recorre sola.
 - **Un solo gesto: tocar.** Sin arrastrar, sin pellizcar, sin menús escondidos.
 - **Texto grande, buen contraste y voz siempre**, para quien ve mal o no quiere leer.
 - **Modo experto**: cualquier parte se puede tocar para abrir todos los datos del plan. Sirve al novato y al experto.
