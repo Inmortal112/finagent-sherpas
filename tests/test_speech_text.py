@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
     ("stocks & bonds vs. cash", "stocks and bonds versus cash"),
     ("Save first — then invest", "Save first, then invest"),
     ("- **Rebuild a cushion** — Your $30,000 covers it", "Rebuild a cushion. Your $30,000 covers it."),
-    ("the two 401(k)s and an IRA", "the two four-oh-one-Ks and an I-R-A"),
+    ("the two 401(k)s and an IRA", "the two four-oh-one-K plans and an I-R-A"),
     ("the 529 college plan", "the five-twenty-nine college plan"),
     ("Sell VTI and SCHD ETFs", "Sell V-T-I and S-C-H-D E-T-Fs"),
     ("State Street® SPDR® Portfolio", "State Street Spider Portfolio"),

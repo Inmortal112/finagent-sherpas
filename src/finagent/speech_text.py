@@ -8,7 +8,8 @@ changed (it is what `guard` checks and what the stage shows as subtitles); only 
 Rules are plain regular expressions, applied in order, with no LLM: free, deterministic, and they
 can only change how a number is *said*, never its value (no rounding). Every rule targets a format
 found in the Sherpas case texts (`cases/*/*.json`). Acronyms and tickers live in `SPOKEN_TERMS`, an
-editable table: decide the doubtful ones by ear with `python scripts/voice_listen_test.py`.
+editable table, checked by transcribing the audio back with Whisper (2026-11-14); to re-check after
+a change, run `python scripts/voice_listen_test.py` and listen to out/listen/after.mp3.
 
 Only English has rules (the product is in English); other languages only lose the markdown.
 """
@@ -23,7 +24,7 @@ MAGNITUDES = {"K": "thousand", "M": "million", "B": "billion"}
 # How each acronym or ticker is said. Letters joined by hyphens are spelled out one by one.
 # Unknown all-caps words are left to the voice. Doubtful entries are marked "check by ear".
 SPOKEN_TERMS = {
-    "401(k)s": "four-oh-one-Ks",
+    "401(k)s": "four-oh-one-K plans",  # "four-oh-one-Ks" is heard as "four-one cast"
     "401(k)": "four-oh-one-K",
     "403(b)": "four-oh-three-B",
     "IRAs": "I-R-As",
@@ -34,25 +35,25 @@ SPOKEN_TERMS = {
     "DTI": "D-T-I",
     "APR": "A-P-R",
     "ESPP": "E-S-P-P",
-    "NAV": "N-A-V",
+    "NAV": "net asset value",  # "N-A-V" is heard as "and A-V"
     "LTCG": "long-term capital gains",
     "NIIT": "net investment income tax",
     "MAGI": "modified adjusted gross income",
     "TTM": "trailing twelve months",
     "USD": "US dollars",
-    "REIT": "reet",          # check by ear
-    "SPDR": "Spider",        # how the fund family says it; check by ear
-    "FTSE": "Footsie",       # check by ear
+    "REIT": "reet",
+    "SPDR": "Spider",        # how the fund family says it
+    "FTSE": "Footsie",
     # Tickers: spelled letter by letter, as advisors usually say them.
     "VTI": "V-T-I",
-    "VOO": "V-O-O",
+    "VOO": "V-double-O",     # "V-O-O" is heard as "Vio"
     "VWO": "V-W-O",
     "SCHD": "S-C-H-D",
     "SCHP": "S-C-H-P",
-    "TBIL": "T-bill",        # check by ear
-    "JNK": "J-N-K",
+    "TBIL": "T-bill",
+    "JNK": "J-N-K",          # still heard as "J and K" in every spelling tried
     "LQD": "L-Q-D",
-    "UPRO": "U-PRO",         # check by ear
+    "UPRO": "U-P-R-O",       # "U-PRO" is heard as "you pro"
 }
 
 _TERMS = re.compile(

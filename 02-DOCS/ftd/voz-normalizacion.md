@@ -31,11 +31,19 @@ Los textos `narrative` de los casos (los que usarán la narración con LLM y las
 - [x] En los 312 textos de los cuatro casos: ninguna cifra cambia y no queda markdown.
 - [x] `bash check.sh` pasa.
 - [x] `voice_listen_test.py` genera `out/listen/before.mp3`, `after.mp3` y `samples.txt` (11 muestras).
-- [ ] Escuchado por David: confirmar las siglas «check by ear».
+- [x] Comprobado transcribiendo el audio con Whisper (`small.en`, local): ver Evidencia.
+- [ ] `JNK` se sigue entendiendo «J and K» con todas las formas probadas (solo aparece 5 veces).
 
 ## Evidencia (2026-11-14, Windows 11)
 - `pytest -q tests/test_speech_text.py` → 27 passed.
 - 155 de 312 textos de los casos cambian al normalizar; revisados a ojo 14 al azar más las 11 muestras.
 
+- Whisper sobre `before.mp3` / `after.mp3`: antes, la lista de siglas salía como basura («Stigest jedna», «SBDR»,
+  «NAF») y `~3%` perdía el «about»; después se entiende casi todo. Probadas por separado en una frase:
+  `four-oh-one-Ks` → «4-1 cast» (cambiado a «four-oh-one-K plans» → «401k plans»), `N-A-V` → «and AV» (→ «net asset
+  value»), `U-PRO` → «you pro» (→ `U-P-R-O`), `V-O-O` → «Vio» (→ «V-double-O»). `IRAs`, `HSA`, `ETF`, `529`, `VTI`,
+  `SCHD`, `LQD`, `TBIL`, `SPDR`, `REIT`, `FTSE` se entienden bien.
+- edge-tts ya leía bien `/year`, `-$8,336` y `$1M`: esas reglas sobran con edge, pero se quedan por ElevenLabs.
+
 ## Siguiente
-Escuchar `before.mp3` / `after.mp3` y ajustar `SPOKEN_TERMS`. Después: motor ElevenLabs para la demo (fase 3).
+Motor ElevenLabs para la demo (fase 3), reutilizando `to_speech`.

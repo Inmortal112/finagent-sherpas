@@ -12,7 +12,7 @@
 - **Bloqueos:** ninguno.
 - **Para Samuel:** la narración puede traer markdown y formatos de `narrative` tal cual: la voz los adapta. Confirmo
   que `openai` no está en `requirements.txt` (nunca lo estuvo); habrá que añadirlo con el primer LLM.
-- **Siguiente:** escuchar `before.mp3`/`after.mp3`, ajustar `SPOKEN_TERMS`; luego motor ElevenLabs (fase 3).
+- **Siguiente:** motor ElevenLabs (fase 3). Siglas comprobadas transcribiendo el audio con Whisper (ver ficha).
 
 ## 2026-11-13 — docs/under-one-roof — Claude Code
 - **Hecho:** `nota-idea.md` con la versión final de la nota (más humana, descartadas resumidas, apartado nuevo
