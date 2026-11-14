@@ -3,6 +3,17 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-14 — feat/voice-normalization — Claude Code
+- **Hecho:** `speech_text.py` (`to_speech`): reescribe el texto como se dice en voz alta (markdown fuera, `/yr` → «a
+  year», `-$8,336` → «minus», `$1M`, rangos, `22/30`, fechas ISO, `401(k)`, `529`, siglas y tickers). `voice.py` lo
+  aplica antes del TTS. Tests y `scripts/voice_listen_test.py` (antes/después en `out/listen/`). Ficha `voz-normalizacion.md`.
+- **Estado:** `bash check.sh` pasa (37 tests). Ninguna cifra cambia en los 312 textos de los cuatro casos.
+- **Decisiones:** `narration` no se toca (`guard` y subtítulos usan el original); sin LLM; nunca se redondea.
+- **Bloqueos:** ninguno.
+- **Para Samuel:** la narración puede traer markdown y formatos de `narrative` tal cual: la voz los adapta. Confirmo
+  que `openai` no está en `requirements.txt` (nunca lo estuvo); habrá que añadirlo con el primer LLM.
+- **Siguiente:** motor ElevenLabs (fase 3). Siglas comprobadas transcribiendo el audio con Whisper (ver ficha).
+
 ## 2026-11-13 — docs/under-one-roof — Claude Code
 - **Hecho:** `nota-idea.md` con la versión final de la nota (más humana, descartadas resumidas, apartado nuevo
   «Why a phone, and what else we said no to»). `ideas.md`: nombre nuevo de la idea.
