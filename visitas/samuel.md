@@ -1,5 +1,19 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/brain-house-facts — Claude Code
+- **Hecho:** `house.py` (nuevo) y `brain.py`: cada pilar es una parte de la casa (`foundations`, `roof`, `walls`,
+  `plumbing`, `garden`) con estado `solid` / `cracked` / `broken`; cada paso dice qué parte repara; escenas nuevas
+  `all_moves` (casa reparada, solo Weah y Johnson) y `timeline` (el plan año a año). Ficha `brain-hechos-casa.md`.
+- **Estado:** `./check.sh` pasa (67 tests). Sin LLM todavía: frases de plantilla. El contrato no cambia.
+- **Decisiones:** umbrales nuestros sobre la nota 0-100 del pilar (≥ 70 sólido, ≥ 40 con grietas), en `house.py`.
+  Los activos invertibles nunca salen negativos (lo prohíbe el caso): se cortan en 0 y se dice la edad.
+- **Bloqueos:** sigo sin `.env` (`TEAM_KEY`); sin respuesta a la pregunta del backend `/ask` (FastAPI o Node).
+- **Para Raúl:** todo va en `visual.data`: `intro` trae `house` (parte → estado) y `people`; `pillar_*` trae
+  `house_part` y `state`; `move_*` trae `house_part`, `action`, `effort` y nota antes/después; `timeline` trae
+  `points` (un punto por año) y `events` (`retirement`, `debt_free`, `savings_run_out` o `savings_last`).
+- **Para David:** dos mp3 nuevos (`all_moves`, `timeline`) y las frases de pilar y de paso son más largas.
+- **Siguiente:** narración con LLM por el proxy, pasada por `guard`.
+
 ## 2026-11-14 — feat/brain-real-cases — Claude Code — resumen del día y propuesta de arquitectura
 - **Hecho:** tres cosas, detalladas en las dos entradas de abajo y en `02-DOCS/ftd/`: (1) documentos de idea
   unificados en «cada persona elige su modo al abrir»; (2) `brain` lee los cuatro casos reales; (3) `guard` usa
