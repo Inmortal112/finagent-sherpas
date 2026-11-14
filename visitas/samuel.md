@@ -1,5 +1,41 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-14 — feat/brain-real-cases — Claude Code — resumen del día y propuesta de arquitectura
+- **Hecho:** tres cosas, detalladas en las dos entradas de abajo y en `02-DOCS/ftd/`: (1) documentos de idea
+  unificados en «cada persona elige su modo al abrir»; (2) `brain` lee los cuatro casos reales; (3) `guard` usa
+  formato inglés (punto decimal, coma de millares).
+- **Estado:** `./check.sh` pasa (10 tests). Dos PR abiertos: documentos del modo y `brain` + `guard`.
+- **Decisiones (propuesta mía, a confirmar entre los tres):** workflow, no agente. La narración se genera una vez
+  por familia (LLM de texto por el proxy → `guard` → voz). En las preguntas en vivo el LLM elige la parte de la casa
+  de una lista cerrada y responde solo con los hechos de esa parte; `guard` revisa antes de hablar.
+- **Bloqueos:** no hay `.env` con `TEAM_KEY` en mi máquina ni `openai` en `requirements.txt`; hoy no hay ningún LLM.
+- **Para David y Raúl:** las preguntas en vivo necesitan un **backend** (hoy solo generamos un HTML fijo). Propongo
+  un FastAPI pequeño con una ruta `/ask`; la clave se queda ahí. ¿Os encaja, o partimos del Node de `examples/voice/`?
+- **Siguiente:** subir esto en dos PR y seguir con los hechos por familia y por persona (paso 2).
+
+## 2026-11-14 — feat/brain-real-cases — Claude Code — `brain` con casos reales
+- **Hecho:** `brain.py` lee `cases/<familia>/financial-health.json`: nota, banda, los cinco pilares (puntos como en
+  la app, p. ej. 22/30) y los `top_moves` con nota antes y después. `run.py` usa a Samantha por defecto. Borrado
+  `fixtures/` (el diagnóstico inventado). Tests: los cuatro casos.
+- **Estado:** `./check.sh` pasa (10 tests). Sin LLM todavía: frases de plantilla en inglés.
+- **Decisiones:** `brain.build` devuelve `language="en"` por defecto (regla 9). El contrato no cambia.
+- **Bloqueos:** ninguno. `guard` usa ya formato inglés: punto decimal, coma de millares («6,800» = 6800).
+- **Para David:** la narración sale ya en inglés, así que `voice` usa `en-US-EmmaMultilingualNeural`. Ids de
+  escena nuevos (`intro`, `pillar_debt`, `move_1`…): son los nombres de tus mp3.
+- **Para Raúl:** `presentation.json` trae 9 escenas reales por familia; `visual.data.fact_id` sigue igual.
+- **Siguiente:** hechos por familia y por persona (paso 2).
+
+## 2026-11-14 — docs/mode-choice-on-open — Claude Code
+- **Hecho:** `ideas.md` e `idea-david.md`: se quita «modo sencillo por defecto». Queda una sola versión, la de
+  `nota-idea.md`: **cada persona elige su modo al abrir** (pantalla inicial con dos botones, sencillo o completo).
+- **Estado:** `./check.sh` pasa (4 tests). Solo documentación.
+- **Decisiones:** no hay modo por defecto; nada empieza hasta elegir, y se puede cambiar de modo después.
+- **Bloqueos:** ninguno.
+- **Para David:** he editado `idea-david.md` (sección 2 y «Para todos los públicos») para que coincida con la nota.
+  Tus entradas del 13 nov en `visitas/david.md` siguen diciendo «por defecto»; no las toco, son registro.
+- **Para Raúl:** la primera pantalla de `stage` es el selector de modo, no la casa.
+- **Siguiente:** repartir el MVP y abrir las issues.
+
 ## 2026-11-13 — docs/idea-final-samuel — Claude Code
 - **Hecho:** `ideas.md`: mi idea final es **S1 · Casa interactiva en el tiempo**: la casa de David vista en
   una web que se recorre deslizando; el scroll es la línea del tiempo del plan. Es un enlace que el asesor da a la

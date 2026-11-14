@@ -9,4 +9,4 @@
   si tocas una etapa que no es la tuya, anótalo en tu archivo de `visitas/`. Cambios en el contrato:
   avisar antes (regla 2).
 - Remoto por SSH (`git@github.com:`).
-- `fixtures/diagnostic_sample.json` es inventado: sustituirlo por un diagnóstico real del MCP tras el kick-off.
+- `brain` lee los casos reales de `cases/<familia>/financial-health.json` (el fixture inventado ya no existe).
