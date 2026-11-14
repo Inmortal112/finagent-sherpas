@@ -5,7 +5,9 @@ Engines, chosen with VOICE_ENGINE in .env:
 - "mock": no audio, duration estimated from the text length.
 
 If the real engine fails (no internet, service down), the stage falls back to "mock"
-so the pipeline never breaks. `narration` is never modified.
+so the pipeline never breaks. `narration` is never modified: the engine receives
+`speech_text.to_speech(narration)`, a copy rewritten the way a person says it ("$15,032/yr" ->
+"$15,032 a year").
 
 audio_path is relative to out_dir (e.g. "audio/intro.mp3"), so the stage page can
 load it from next to index.html.
@@ -18,6 +20,7 @@ import os
 from pathlib import Path
 
 from contracts.schemas import Presentation, Scene
+from finagent.speech_text import to_speech
 
 log = logging.getLogger(__name__)
 
@@ -36,7 +39,7 @@ def synthesize(presentation: Presentation, out_dir: Path) -> Presentation:
     if engine == "edge":
         voice = os.getenv("VOICE_NAME") or DEFAULT_VOICES[result.language]
         try:
-            asyncio.run(_edge_all(result.scenes, Path(out_dir), voice))
+            asyncio.run(_edge_all(result.scenes, Path(out_dir), voice, result.language))
             return result
         except Exception as exc:  # any failure must not break the pipeline
             log.warning("edge-tts failed (%s: %s); using estimated durations", type(exc).__name__, exc)
@@ -61,7 +64,7 @@ def _mock_all(scenes: list[Scene]) -> None:
         scene.duration_s = round(max(2.0, len(scene.narration) / 15), 1)
 
 
-async def _edge_all(scenes: list[Scene], out_dir: Path, voice: str) -> None:
+async def _edge_all(scenes: list[Scene], out_dir: Path, voice: str, language: str) -> None:
     import edge_tts  # imported here so a missing package falls back to mock
 
     audio_dir = out_dir / AUDIO_DIR
@@ -71,7 +74,8 @@ async def _edge_all(scenes: list[Scene], out_dir: Path, voice: str) -> None:
     async def one(scene: Scene) -> None:
         async with limit:
             audio = bytearray()
-            async for chunk in edge_tts.Communicate(scene.narration, voice).stream():
+            spoken = to_speech(scene.narration, language)
+            async for chunk in edge_tts.Communicate(spoken, voice).stream():
                 if chunk["type"] == "audio":
                     audio.extend(chunk["data"])
         if not audio:
