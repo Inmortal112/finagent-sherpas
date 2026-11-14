@@ -29,8 +29,8 @@ DEFAULT_VOICES = {"es": "es-ES-ElviraNeural", "en": "en-US-EmmaMultilingualNeura
 # edge-tts always returns 24 kHz mono MP3 at a constant 48 kbit/s, so the file size gives the duration.
 EDGE_MP3_BYTES_PER_SECOND = 48_000 / 8
 MAX_PARALLEL_REQUESTS = 4
-# A touch slower than the voice's natural pace: calmer, easier to follow for a family hearing it first.
-DEFAULT_RATE = "-5%"
+# The voice's natural pace. -5% was tried (2026-11-14) and David preferred the natural one.
+DEFAULT_RATE = "+0%"
 
 
 def speaking_rate() -> str:
