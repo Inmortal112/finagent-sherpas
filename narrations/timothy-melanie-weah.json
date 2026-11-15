@@ -1,21 +1,21 @@
 {
-  "model": "gpt-5-mini",
+  "model": "deepseek-flash",
   "scenes": {
-    "intro": "Hello Timothy and Melanie, we're going to look at your financial house and what each part looks like. Your financial health score is 60 out of 100, called stable, and you have $150,000 sitting in cash while some protection gaps remain. This view shows where your spare cash and your cover meet in real life.",
-    "pillar_savings_and_cash_flow": "Timothy and Melanie, this shows your plumbing, savings and monthly cash flow, scoring 26 out of 30 and solid. You hold $150,800 in cash, so emergencies and near-term plans are covered, but the spare surplus is low confidence and college saving is unfunded; bills and a short shock would be handled today, while education will need funding later.",
-    "pillar_debt": "Your walls, debt, are cracked. You score 12 out of 20 and carry an $18,000 credit card balance at 18%, the costliest piece of $93,000 total debt. Practically, that high-rate balance is the part of your bills most likely to eat into your monthly spare cash.",
-    "pillar_investments": "Your garden, investments, is cracked. You score 8 out of 15 and have $210,000 in invested savings while much cash sits outside growth. That means much of your liquid wealth isn't set up to grow, and a large share sits in the house rather than in accounts that compound for college or retirement.",
-    "pillar_liquidity_and_emergency_fund": "Your foundations, liquidity and emergency fund, are solid. You score 15 out of 15 and hold $150,801 in accessible cash, covering about 16 months of essentials. In practice this means you can cover layoffs, sudden medical bills, or major home repairs without selling investments.",
-    "pillar_insurance_and_protection": "Your roof, insurance and protection, is broken. You score 7 out of 20 and have no umbrella policy, leaving $1,000,000 of liability exposure uncovered. Concretely, that gap means a large liability claim could force you to use savings you were building for Liam and Josh.",
-    "move_1": "This step uses $6,800 of cash to pay down the high-rate card, repairing your walls. It raises your score from 60 out of 100 to 62 out of 100. That change reduces the interest drain on your monthly payments and cuts how long you carry the expensive balance.",
-    "move_2": "This step adds $235,000 of life cover to strengthen your roof. The overall score stays at 60 out of 100. In daily terms it increases what would be available to your family if one of you died, rather than leaving that gap to your cash or investments.",
-    "move_3": "This step adds $1M of umbrella cover to shore up your roof, and the score remains 60 out of 100. That means a large liability claim would be far less likely to tap into the savings you hold for Liam and Josh.",
-    "all_moves": "Doing all three moves together, using cash to pay down the high-rate card, adding life insurance, and buying umbrella liability cover, takes your score from 60 out of 100 to 78 out of 100. Together they move the main weaknesses in your roof and walls so large bills are much less likely to eat your savings.",
-    "timeline": "Timothy plans to retire at 62 and Melanie at 60. Your debts are projected paid off by 2059 and, on the current plan, your savings and investments are projected to remain at $2,371,901 at the end of the plan. That means you expect to stop working at those ages and still have a sizeable nest egg to draw on in retirement."
+    "intro": "Hello Timothy and Melanie. Your financial health score is 60 out of 100, which Sherpas calls stable. You are about to see your plan drawn as your own home, with each part showing what is solid and what needs work.",
+    "pillar_savings_and_cash_flow": "Your plumbing is solid, at 26 out of 30 points. You hold $150,800 in cash, well above the reserve that covers emergencies. Education is the main open goal, and meeting it would take more saving each year.",
+    "pillar_debt": "Your walls are cracked, at 12 out of 20 points. Most debt is manageable, but the $18,000 card at 18% is the costly part. At $300 a month, it is projected to be paid off in September 2039, so it can sit with you for years.",
+    "pillar_investments": "Your garden is cracked, at 8 out of 15 points. You hold $150,000 in cash against $210,000 in invested savings, so a lot of your money is not set up to grow. Your mix is 81.2% stocks against a 98.0% target, which can mean slower growth for retirement.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations are solid, at 15 out of 15 points. You hold $150,801 in accessible cash, about 16 months of essentials, well above the 8 to 9 months recommended. Even after a $6,000 vacation, your cushion still stands.",
+    "pillar_insurance_and_protection": "Your roof is broken, at 7 out of 20 points. Timothy has $140,000 of life cover against a recommended $750,000, a $610,000 gap, and Melanie is $490,000 short. You have no umbrella cover, the extra protection behind home and car insurance, so a $1,000,000 liability claim is uncovered. That leaves your children and savings open to real harm.",
+    "move_1": "Your plan already includes paying $6,800 on the 18% card from cash. It repairs the walls by clearing the costly card balance, and lifts your score from 60 out of 100 to 62 out of 100.",
+    "move_2": "Your plan already includes adding $235,000 of life cover. It repairs the roof by closing part of the gap, though on its own your score stays at 60 out of 100.",
+    "move_3": "Your plan already includes adding $1M of umbrella cover, the extra protection behind your home and car insurance. It repairs the roof, and on its own your score stays at 60 out of 100.",
+    "all_moves": "Together, the plan's steps pay down the high interest card, add life cover and add umbrella cover. As a group, they lift your score from 60 out of 100 to 78 out of 100.",
+    "timeline": "Looking ahead, Timothy plans to retire at 62 and Melanie at 60. The plan has your debts paid off by 2059, and your savings and investments last all the way through. You are projected to still have $2,371,901 in today's dollars, a cushion if later years cost more than expected."
   },
   "template_kept": [],
   "usage": {
-    "prompt_tokens": 5679,
-    "completion_tokens": 7890
+    "prompt_tokens": 4476,
+    "completion_tokens": 9820
   }
 }

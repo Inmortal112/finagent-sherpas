@@ -1,5 +1,17 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/brain-narration-fast-model — Claude Code
+- **Hecho:** la narración pasa de `gpt-5-mini` a `deepseek-flash` (`narrator.py`, `.env.example`) y las cuatro
+  `narrations/<familia>.json` están **regeneradas** con él. Ficha `brain-narracion-modelo-rapido.md`.
+- **Estado:** `./check.sh` pasa (110 tests). Las 42 escenas aceptadas por `guard`, ninguna en plantilla.
+- **Decisiones:** un solo modelo de texto en todo el producto (el mismo que `/ask`). Generar no fue más rápido
+  (8 min 27 s las cuatro) y costó $0,108; gasto total del equipo: $0,31 de $50.
+- **Bloqueos:** ninguno. Nadie ha leído ni escuchado aún los textos nuevos.
+- **Para David:** los textos de las cuatro familias han cambiado: los mp3 guardados en caché ya no valen y
+  ElevenLabs volverá a cobrar esos caracteres. Espera a que Samuel dé el visto bueno a los textos antes de generar.
+- **Para Raúl:** los ids de escena no cambian; solo el texto de `narration`.
+- **Siguiente:** Samuel revisa los textos de Samantha y Michael.
+
 ## 2026-11-15 — feat/brain-ask — Claude Code
 - **Hecho:** backend FastAPI (`server.py`): `/ask`, `/history`, `/decision`, `/advisor-note`, `/families`,
   `/presentation/{family}`. `ask.py` (pregunta → escena + respuesta, con `guard`) y `sessions.py` (historial en

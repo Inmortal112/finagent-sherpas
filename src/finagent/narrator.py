@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[2]
 NARRATIONS_DIR = ROOT / "narrations"
-DEFAULT_MODEL = "gpt-5-mini"
+DEFAULT_MODEL = "deepseek-flash"
 
 SYSTEM_PROMPT = """\
 You write what a calm, warm voice says while a family looks at their financial plan drawn as their own home.

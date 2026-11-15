@@ -1,20 +1,20 @@
 {
-  "model": "gpt-5-mini",
+  "model": "deepseek-flash",
   "scenes": {
-    "intro": "Hello Michael. You're about to see your financial health as Sherpas mapped it to your home. Your financial health score is 26 out of 100 and Sherpas call that critical. You hold $30,000 of cash, so near-term needs like the planned home purchase could leave you short.",
-    "pillar_savings_and_cash_flow": "Your plumbing is broken. Savings and cash flow score is 0 out of 25. You have $30,000 in cash, so the January 2027 home purchase would leave you with no cushion for bills.",
-    "pillar_debt": "Your walls are solid. Debt score is 8 out of 10. The $3,500 credit card at 20% is the most expensive piece, but overall your debts are manageable and monthly payments are not the main strain on your budget.",
-    "pillar_investments": "Your garden is cracked. Investments score is 11 out of 25. You have $145,000 in invested savings, so how that money is placed toward growth will affect your ability to reach retirement targets.",
-    "pillar_liquidity_and_emergency_fund": "Your foundations are broken. Liquidity and emergency fund score is 4 out of 20. You have $30,000 of cash, so a loss of income or the January 2027 home purchase could leave you unable to cover monthly bills.",
-    "pillar_insurance_and_protection": "Your roof is broken. Insurance and protection score is 4 out of 20. You have $180,000 of life insurance, well below recommended levels, and with no umbrella policy a large liability could force you to use your savings to cover debts.",
-    "move_1": "This step strengthens your roof and raises your score from 26 out of 100 to 31 out of 100. It means buying $1M of umbrella protection so a big liability would not sweep away your savings.",
-    "move_2": "This step repairs your plumbing and raises your score from 26 out of 100 to 62 out of 100. It cuts withdrawals to $10,300 a year, which slows how fast savings are used and stretches your money in retirement.",
-    "move_3": "This step improves your garden and lifts your score from 26 out of 100 to 31 out of 100. It moves about $19,900 of your invested savings toward more stocks so that your invested pool can do more work for retirement.",
-    "timeline": "You plan to retire at 58. Debts are paid off by 2057 and savings and investments run out at 85, which means about $32,439 of planned spending would go unpaid by then."
+    "intro": "Hello Michael. What you're looking at is your financial plan drawn as your own home. Your financial health score is 26 out of 100, which is critical. Each room shows you where you stand today.",
+    "pillar_savings_and_cash_flow": "Your plumbing is savings and monthly cash flow. It is broken. It scores 0 out of 25. You save $43,000 a year, but your cash flow runs about $8,336 a year short because retirement, near-term goals and your cash cushion all draw on the same income. One surprise bill can put your home purchase or your retirement saving at risk.",
+    "pillar_debt": "The walls are your debt, and they are solid. They score 8 out of 10. Your $28,500 in debt is manageable, but the $3,500 credit card at 20% is your most expensive debt for its size. Paying it off faster would compete with your home purchase or retirement saving.",
+    "pillar_investments": "The garden is your investments, and it is cracked. It scores 11 out of 25. Your $145,000 is mostly in stocks, 73.5%, while the mix you chose aims for 98%. That gap means your money may grow more slowly than the plan expects, which matters for retiring at 58.",
+    "pillar_liquidity_and_emergency_fund": "The foundations are your emergency fund and cash, and they are broken. They score 4 out of 20. Your $30,000 covers 3.2 months of expenses, about $16,530 short of the low end of the 5 to 6 month reserve you need. That cushion is what stands between you and a surprise bill or a pause in your income.",
+    "pillar_insurance_and_protection": "The roof is your insurance and protection, and it is broken. It scores 4 out of 20. You have $180,000 of life insurance against a recommended $900,000 to $1,800,000, a $720,000 shortfall, and no umbrella policy, the extra cover for a big lawsuit. If your income stopped, the debts and plans you carry would be left without a backstop.",
+    "move_1": "This step adds $1M of umbrella cover, the extra protection if someone sues you. It repairs your roof. Your score moves from 26 out of 100 to 31 out of 100.",
+    "move_2": "This step means taking less out of your savings each year, $10,300 a year, which is 6.0%. It repairs your plumbing. Your score rises from 26 out of 100 to 62 out of 100.",
+    "move_3": "This step moves more of your invested mix into stocks, from 74% to 88%. It repairs your garden. Your score goes from 26 out of 100 to 31 out of 100.",
+    "timeline": "Looking ahead, you plan to retire at 58. The plan has your debts paid off by 2057, and your savings and investments run out at age 85. About $32,439 of planned spending would go unpaid by the end. That is the gap between the life you plan and what the current numbers support."
   },
   "template_kept": [],
   "usage": {
-    "prompt_tokens": 4158,
-    "completion_tokens": 7535
+    "prompt_tokens": 4284,
+    "completion_tokens": 11235
   }
 }
