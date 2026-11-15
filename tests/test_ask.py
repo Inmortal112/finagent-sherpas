@@ -76,6 +76,7 @@ def test_a_model_failure_never_raises():
 @pytest.fixture
 def client(tmp_path, monkeypatch):
     monkeypatch.setenv("SESSIONS_DIR", str(tmp_path))
+    server._recent_questions.clear()
     replies = iter([
         {"scene": "timeline", "answer": "Your savings run out at age 73."},
         {"scene": "off_plan", "answer": ""},

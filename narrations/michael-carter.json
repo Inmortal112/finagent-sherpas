@@ -12,9 +12,16 @@
     "move_3": "This step improves your garden and lifts your score from 26 out of 100 to 31 out of 100. It moves about $19,900 of your invested savings toward more stocks so that your invested pool can do more work for retirement.",
     "timeline": "You plan to retire at 58. Debts are paid off by 2057 and savings and investments run out at 85, which means about $32,439 of planned spending would go unpaid by then."
   },
-  "template_kept": [],
-  "usage": {
-    "prompt_tokens": 4158,
-    "completion_tokens": 7535
+  "simple": {
+    "intro": "Hello Michael, this shows your financial health as your home. Your score is 26 out of 100, which Sherpas calls critical.",
+    "pillar_savings_and_cash_flow": "Your plumbing is broken. Your score is 0 out of 25, so pay is stretched and cash won't cover the coming home and vacation.",
+    "pillar_debt": "Your walls are solid. Your debt score is 8 out of 10, so debts are manageable and the credit card is the costly piece.",
+    "pillar_investments": "Your garden is cracked. Your investments score is 11 out of 25, with most wealth invested but the stock mix short of your growth target.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations are broken. Your emergency fund score is 4 out of 20, so your cash cushion is lean and could not cover an income interruption.",
+    "pillar_insurance_and_protection": "Your roof is broken. Your protection score is 4 out of 20, so life cover and umbrella are far below what's needed and savings are exposed.",
+    "move_1": "This step adds broad liability cover to protect against big claims. It repairs the roof and raises your score to 31 out of 100.",
+    "move_2": "This step cuts what you withdraw from savings each year to ease cash flow pressure. It repairs the plumbing and raises your score to 62 out of 100.",
+    "move_3": "This step shifts more of your invested savings toward growth to match your plan. It repairs the garden and raises your score to 31 out of 100.",
+    "timeline": "You plan to retire as scheduled and reach debt freedom before your money runs out. Your savings and investments run out at age 85."
   }
 }

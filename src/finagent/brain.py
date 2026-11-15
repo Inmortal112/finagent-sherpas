@@ -10,6 +10,7 @@ What the stage needs to draw the house travels in `visual.data` (the contract do
 - pillar_*:  `house_part`, `state`, `state_fact_id`
 - move_*:    `house_part`, `action`, `effort`, `score_before`, `score_after`
 - all_moves: `moves`, `score_before`, `score_after` (only when the plan combines moves)
+- person_*:  one per adult when the plan belongs to a couple: `person`, `salary`, `accounts`, `debts`, life cover
 - timeline:  `points` (one per year) and `events` (retirement, debt_free, savings_run_out / savings_last)
 """
 import re
@@ -20,9 +21,18 @@ from finagent import house, narrator
 SOURCE = "financial-health.json"
 
 
-def build(diagnostic: dict, language: str = "en") -> Presentation:
-    """The family's presentation, with the saved narration of `narrations/` where `guard` accepts it."""
-    return narrator.apply_saved(build_template(diagnostic, language), diagnostic["case"]["slug"])
+MODES = ("complete", "simple")
+
+
+def build(diagnostic: dict, language: str = "en", mode: str = "complete") -> Presentation:
+    """The family's presentation, with the saved narration of `narrations/` where `guard` accepts it.
+
+    `mode` is the one each person picks on opening: "complete" (every figure) or "simple" (shorter
+    sentences, one figure at most). Facts and scenes are the same; only the narration changes.
+    """
+    if mode not in MODES:
+        raise ValueError(f"mode must be one of {MODES}, not {mode!r}")
+    return narrator.apply_saved(build_template(diagnostic, language), diagnostic["case"]["slug"], mode=mode)
 
 
 def build_template(diagnostic: dict, language: str = "en") -> Presentation:
@@ -81,6 +91,13 @@ def build_template(diagnostic: dict, language: str = "en") -> Presentation:
                 fact_ids=[fact_id, state_id] + [f.id for f in context],
             )
         )
+
+    people = house.adults(diagnostic)
+    if len(people) > 1:  # with one adult, their part is the whole home
+        for person in people:
+            person_facts, person_scene = _person(diagnostic, person["first_name"])
+            facts.extend(person_facts)
+            scenes.append(person_scene)
 
     for i, move in enumerate(score["top_moves"]):
         before_id, after_id = f"move_{i + 1}_score_before", f"move_{i + 1}_score_after"
@@ -183,6 +200,56 @@ def _timeline(diagnostic: dict) -> tuple[list[Fact], Scene]:
         title="Your house through the years",
         narration=" ".join(["Now look ahead."] + sentences),
         visual=Visual(kind="line", data={"fact_id": main_fact, "house_part": "garden", **data}),
+        fact_ids=[f.id for f in facts],
+    )
+    return facts, scene
+
+
+def _money(amount: float) -> str:
+    return f"${amount:,.2f}".removesuffix(".00")
+
+
+def _person(diagnostic: dict, first_name: str) -> tuple[list[Fact], Scene]:
+    """One adult's own part of the home: what is in their name. Used when the plan belongs to a couple."""
+    view = house.person_view(diagnostic, first_name)
+    slug = _slug(first_name)
+    facts, sentences = [], [f"{first_name}, this is your part of the home."]
+
+    def add(key: str, label: str, value, source: str, unit: str = "") -> str:
+        facts.append(Fact(id=f"person_{slug}_{key}", label=f"{first_name}: {label}", value=value, unit=unit,
+                          source=f"{SOURCE}:{source}"))
+        return facts[-1].id
+
+    if view["salary"]:
+        add("salary", "yearly salary", view["salary"], "profile.incomes[].yearly", "USD")
+        sentences.append(f"Your salary is {_money(view['salary'])} a year.")
+    if view["accounts"]:
+        listed = _join([f"{a['name']} ({_money(a['balance'])})" for a in view["accounts"]])
+        add("accounts", "accounts in their name", listed, "profile.accounts[]")
+    if view["debts"]:
+        listed = _join([f"{d['name']} ({_money(d['balance'])} at {d['rate_percent']:g}%)" for d in view["debts"]])
+        add("debts", "debts in their name", listed, "profile.liabilities[]")
+    if view["life_cover"] is not None:
+        add("life_cover", "life insurance", view["life_cover"],
+            "key_metrics.protection.lifeInsurance.lifeInsuranceCoverageBasics", "USD")
+        sentence = f"You hold {_money(view['life_cover'])} of life insurance"
+        if view["life_recommended_min"] is not None:
+            add("life_recommended_min", "recommended life insurance, minimum", view["life_recommended_min"],
+                "key_metrics.protection.lifeInsurance.lifeInsuranceCoverageRecommendations", "USD")
+            add("life_recommended_max", "recommended life insurance, maximum", view["life_recommended_max"],
+                "key_metrics.protection.lifeInsurance.lifeInsuranceCoverageRecommendations", "USD")
+        if view["life_shortfall"]:
+            add("life_shortfall", "life insurance shortfall", view["life_shortfall"],
+                "key_metrics.protection.lifeInsurance.lifeInsuranceCoverageGapsAndExcess", "USD")
+            sentence += f", {_money(view['life_shortfall'])} short of the recommended minimum"
+        sentences.append(sentence + ".")
+
+    scene = Scene(
+        id=f"person_{slug}",
+        title=f"{first_name}'s part of the home",
+        narration=" ".join(sentences),
+        visual=Visual(kind="text", data={"person": first_name, "house_part": "roof",
+                                         "fact_id": f"person_{slug}_life_cover", **view}),
         fact_ids=[f.id for f in facts],
     )
     return facts, scene

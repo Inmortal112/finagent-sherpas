@@ -7,15 +7,27 @@
     "pillar_investments": "This is the garden: cracked. Investments score is 8 out of 15. You hold $14,000 in cash and about $330,000 in invested savings while most of your wealth is in the home, so the cash cushion is thin relative to your invested base. In daily life the house is harder to use for emergencies or to fund retirement needs quickly.",
     "pillar_liquidity_and_emergency_fund": "These are the foundations: solid. Liquidity and emergency fund score is 13 out of 15. Your accessible cash is $19,000 and, once the $4,500 vacation payment is set aside, you are about $92,360 short of the minimum reserve. With two incomes at stake, that cushion is what you would lean on first if a paycheck were interrupted.",
     "pillar_insurance_and_protection": "This is the roof: broken. Insurance and protection score is 0 out of 20. Daniel has $250,000 of life insurance and Emily has $200,000, and you have no umbrella cover, leaving large protection gaps. That means a death or a big liability claim could put the mortgage, college costs and your savings at risk.",
+    "person_daniel": "Daniel, you'll see your part of the home and the roof that protects the family. Your salary is $160,000 a year. The roof is broken: life cover leaves a shortfall of $1,350,000, so Emily, Oliver and Sophia would need to replace your income and handle your debts.",
+    "person_emily": "Emily, you'll see your part of the home and the roof that protects the family. Your salary is $120,000 a year. The roof is broken: life cover leaves a shortfall of $1,000,000, so you, your accounts and the 529 would be counted on to keep Oliver and Sophia's bills and college savings going.",
     "move_1": "This repair fixes the roof. The plan adds $1,166,000 of life cover and raises your overall score from 52 out of 100 to 57 out of 100. In daily life that would better protect the mortgage and your children's costs if one income stopped.",
     "move_2": "This repair fixes the roof. The plan adds $1M of umbrella cover and raises your score from 52 out of 100 to 56 out of 100. That would shield your savings from a single large liability claim that could otherwise reach your assets.",
     "move_3": "This repair fixes the plumbing. The plan redirects $15,032 a year of free cash flow into savings and moves your score from 52 out of 100 to 55 out of 100. That means more goes into retirement savings instead of being free for other goals like extra cash or college.",
     "all_moves": "Done together these two steps raise your score from 52 out of 100 to 60 out of 100. They add meaningful life insurance and an umbrella policy, closing big protection gaps so a single loss is less likely to drain your savings.",
     "timeline": "Looking ahead, Daniel plans to retire at 62 and Emily at 60. Your debts are projected to be paid off by 2047, and under the current plan your savings and investments last to the end of the plan."
   },
-  "template_kept": [],
-  "usage": {
-    "prompt_tokens": 4600,
-    "completion_tokens": 7618
+  "simple": {
+    "intro": "Hello Daniel and Emily. You are about to see your financial health, 52 out of 100, called vulnerable.",
+    "pillar_savings_and_cash_flow": "Your plumbing is cracked and scores 16 out of 30. Your leftover cash is thin and must cover emergencies, college and retirement.",
+    "pillar_debt": "Your walls are solid and score 15 out of 20. Your debts are large but manageable, so payments stay current and housing holds.",
+    "pillar_investments": "Your garden is cracked and scores 8 out of 15. Much of your wealth is the house while invested savings are smaller and less ready for emergencies.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations are solid and score 13 out of 15. Still, your cash covers only a month or so, so a lost paycheck would hit you fast.",
+    "pillar_insurance_and_protection": "Your roof is broken and scores 0 out of 20. Life cover and umbrella are far short, so a large claim could threaten your home and income.",
+    "person_daniel": "Daniel, this is your part of the home; your salary is $160,000 a year and your life cover is far below recommended.",
+    "person_emily": "Emily, this is your part of the home; your salary is $120,000 a year and your life cover is far below recommended.",
+    "move_1": "This step adds life cover to repair your roof and raises your score to 57 out of 100.",
+    "move_2": "This step adds umbrella cover to mend your roof and raises your score to 56 out of 100.",
+    "move_3": "This step moves your free cash into savings to shore up the plumbing and raises your score to 55 out of 100.",
+    "all_moves": "Together, the life and umbrella moves lift your house score to 60 out of 100.",
+    "timeline": "Looking ahead, your plan projects savings lasting to the end with $260,272 left."
   }
 }
