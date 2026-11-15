@@ -7,6 +7,7 @@ text model wrote once per family (`narrations/`, see narrator.py), scene by scen
 
 What the stage needs to draw the house travels in `visual.data` (the contract does not change):
 - intro:     `house` {part: state}, `people`, `band`, `colour`, `home` (owned or rented, and the cars)
+             and `worries` (what to suggest under "What worries you most?", from the plan's concerns)
 - pillar_*:  `house_part`, `state`, `state_fact_id`
 - move_*:    `house_part`, `action`, `effort`, `score_before`, `score_after`, `pays_part_of_debt`
 - all_moves: `moves`, `score_before`, `score_after` (only when the plan combines moves)
@@ -63,6 +64,7 @@ def build_template(diagnostic: dict, language: str = "en") -> Presentation:
                 "people": [{"first_name": p["first_name"], "role": p["role"], "age": p["age"]}
                            for p in diagnostic["case"]["household"]],
                 "home": house.home(diagnostic),
+                "worries": house.worries(diagnostic),
             }),
             fact_ids=["score", "band"] + [f.id for f in facts if f.id == "context_summary"],
         )

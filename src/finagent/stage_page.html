@@ -581,7 +581,7 @@ function build() {
     <div class="worry" id="worryBox" hidden><div class="eyebrow mono">Before we walk through it</div>
       <b>What worries you most about money?</b>
       <form id="worryForm"><input id="worryText" placeholder="In your own words" maxlength="300" autocomplete="off"><button class="pill dark">Tell us</button></form>
-      <div class="chips" id="worryChips">${["Retiring with enough", "An emergency", "Our debts", "The children's future"].map((w) => `<button type="button" class="chip">${w}</button>`).join("")}</div>
+      <div class="chips" id="worryChips">${((data.worries || []).length ? data.worries : ["Retiring with enough", "An emergency", "Our debts", "The children's future"]).map((w) => `<button type="button" class="chip">${esc(w)}</button>`).join("")}</div>
       <p class="answer" id="worryAnswer" hidden></p></div>
     <p class="note">${weak.length ? "Keep scrolling: we walk through each part, then through the years, then through the repairs." : "Every part stands. Keep scrolling to see how it holds through the years."}</p>` });
 

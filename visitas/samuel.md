@@ -1,5 +1,17 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-16 01:40 — feat/stage-family-worries — Claude Code
+- **Hecho:** los botones bajo «What worries you most?» son ahora tres por familia, sacados de las «Objective
+  concerns» de su `persona.md` (`house.WORRIES` → `intro.visual.data.worries`). Ficha `stage-preocupaciones-familia.md`.
+- **Estado:** `./check.sh` pasa (167). Navegador y modelo real: las 12 frases llevan a su parte de la casa.
+- **Decisiones:** `persona.md` no recoge ninguna preocupación dicha por las familias, así que son sugerencias
+  del plan, no «lo que dijeron». Descartado por ahora el campo para que el asesor la escriba.
+- **Bloqueos:** ninguno.
+- **Para Raúl:** toqué una línea de `stage_page.html` (los botones de `worryChips` leen `data.worries`; sin ese
+  dato salen los cuatro de antes).
+- **Para David:** ningún texto narrado cambia. `out/` regenerado en mi máquina (8 páginas, 105 mp3).
+- **Siguiente:** Samuel monta Render el 16 (antes hay que cambiar el `Dockerfile` a `run --all` con voz).
+
 ## 2026-11-16 00:55 — fix/brain-ask-partial-paydown — Claude Code
 - **Hecho:** `/ask` ya no dice que pagar $6,800 «salda» la tarjeta de los Weah. El paso lleva un hecho nuevo (el
   saldo de hoy, $18,000) y `guard.claims_debt_cleared` rechaza «clears / pays off…» en ese paso. Ficha
