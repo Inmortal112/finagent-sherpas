@@ -1,27 +1,27 @@
 {
-  "model": "gpt-5-mini",
+  "model": "deepseek-flash",
   "scenes": {
-    "intro": "Hello Samantha. You're about to see your financial picture drawn as a home and your overall score. Your financial health score is 82 out of 100, which Sherpas calls strong. The plan shows your savings and investments run out at age 73 in the projection, so you have strength now but a later-life gap to note.",
-    "pillar_savings_and_cash_flow": "This is your plumbing, savings and cash flow, and its state is solid. Your score for this part is 22 out of 30 and the plan shows you run about $6,418 a year short. That means you can cover essentials today, but the shortfall draws on your cash reserve and leaves little slack for near-term college payments.",
-    "pillar_debt": "These are your walls, debt, and their state is solid. Your score here is 20 out of 20 and you have no debt: $0 outstanding. In daily life that means no monthly loan payments take your income, so the money you earn is available to fund college or retirement instead.",
-    "pillar_investments": "This is your garden, investments, and its state is cracked. Your garden scores 10 out of 15 and $900,000 of your assets is your home. That means a lot of your wealth is not easily spent, so there is less invested money available for near-term college and long-term retirement.",
-    "pillar_liquidity_and_emergency_fund": "These are your foundations, cash and emergency fund, and their state is solid. Foundations score 15 out of 15 and your $80,000 of cash covers 7.9 months of essential expenses. In daily life that means you can handle surprises now, though after near-term payments your cushion has little extra slack.",
-    "pillar_insurance_and_protection": "This is your roof, insurance and protection, and its state is solid. Your roof scores 14 out of 20 and you hold $2,000,000 of term life insurance. For you that cover sits where your household is most exposed and would help replace income for the children if your income stopped.",
-    "move_1": "This step closes a coverage gap for your roof; Sherpas already worked it out. It moves your overall score from 82 out of 100 to 84 out of 100 by adding homeowners insurance on your primary home so the coverage gap clears. That change would keep a property or liability claim from tapping your home's equity.",
-    "move_2": "This step repairs the garden by spreading out the money you hold in one single fund. The plan moves about $58,300 out of your VTI holding and raises your overall score to 83 out of 100. In daily life that spreads risk so a single fund is less likely to dominate your returns.",
-    "move_3": "This step repairs the garden by moving some invested money toward a bit less growth. The plan moves about $17,100 of your invested holdings into slightly less growth and lifts your overall score to 83 out of 100. Concretely, this nudges your portfolio mix so it is a little less dependent on high-growth swings.",
-    "timeline": "Look ahead: this timeline shows your house through the years and retirement at 65. On the current plan your savings and investments run out at age 73 in the projection. That means from retirement at 65 the projection shows savings exhausted at 73, so later years would need other income sources to cover planned spending."
+    "intro": "Hello, Samantha. Your financial health score is 82 out of 100, and Sherpas calls that strong. Over the next few minutes you'll see your plan drawn as your own home, from the foundations to the roof. We'll walk through each part and what it means for you, Ethan and Ava.",
+    "pillar_savings_and_cash_flow": "Your plumbing is solid. Savings and cash flow scores 22 out of 30 points. You save 24% of your income, a strong habit, but your outgoings run about $6,418 a year short, and none of that saving goes into retirement accounts yet. In practice, your everyday cash has to cover that gap each year.",
+    "pillar_debt": "Your walls are solid. Debt scores 20 out of 20 points. You carry no debt, and your home is owned outright with $900,000 of equity. No loan payments pull at your monthly cash. Even so, only $750 of your cash sits above both your reserve and your goals coming up soon, so there is little slack.",
+    "pillar_investments": "Your garden is cracked, and investments score 10 out of 15 points. Most of your wealth is your home, about 65% of it, and a home is not easy to spend. Your invested savings sit at 85.1% in stocks, a little above the 80.0% you aim for. College and retirement both have to come out of the same everyday cash.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations are solid, and your emergency fund scores 15 out of 15 points. Your cash covers 7.9 months of essential expenses, more than the 5 to 6 months suggested. Once you set aside the goals coming up soon, that cover falls to 6.1 months, so a surprise bill would eat into it faster than you might think.",
+    "pillar_insurance_and_protection": "Your roof is solid, and insurance and protection scores 14 out of 20 points. You hold $2,000,000 of term life cover, within the range recommended for your household, protecting Ethan and Ava if your income ever stopped. Underneath your umbrella, the cover behind your home and auto policies shows as unconfirmed, so a large claim could reach your own money.",
+    "move_1": "A step your plan already worked out: adding homeowners insurance on your main home, which closes a gap in your cover. It repairs your roof and lifts your score from 82 out of 100 to 84 out of 100.",
+    "move_2": "Another step in the plan: spreading out the money you hold in a single fund, trimming it from 39% to 25% of your investments. That repairs your garden and moves your score from 82 out of 100 to 83 out of 100.",
+    "move_3": "The plan also shifts your mix from 85% in stocks to 80%, moving about $17,100. That repairs your garden, lifting your score from 82 out of 100 to 83 out of 100.",
+    "timeline": "Now look ahead, Samantha. You plan to retire at 65, and on this plan your savings and investments run out at age 73, with $1,448,673 of planned spending unpaid by the end. The plan shows no debt from 2059. Those later years are where the pressure sits, since college for Ethan and Ava competes for the same dollars."
   },
   "simple": {
-    "intro": "Hello Samantha. You are about to see your financial health score: 82 out of 100.",
-    "pillar_savings_and_cash_flow": "Your plumbing is solid with a score of 22 out of 30. It covers near bills now, while college and retirement compete for the same cash.",
-    "pillar_debt": "Your walls are solid with a score of 20 out of 20; no loan payments, but the cash cushion is thin.",
-    "pillar_investments": "Your garden is cracked with a score of 10 out of 15. Most wealth sits in your home, so cash and investments must pay for college and retirement.",
-    "pillar_liquidity_and_emergency_fund": "Your foundations are solid with a score of 15 out of 15. It is easy to reach, but has little slack once near-term goals are set.",
-    "pillar_insurance_and_protection": "Your roof is solid with a score of 14 out of 20. Life insurance and umbrella stand ready, but check the underlying home and auto cover.",
-    "move_1": "This repair fixes the roof by adding homeowners insurance on your primary home and raises your score to 84 out of 100.",
-    "move_2": "This step spreads out the money held in a single fund, repairing the garden and lifting your score to 83 out of 100.",
-    "move_3": "This step slightly reduces how much of your invested mix aims for fast growth, calming the garden and lifting your score to 83 out of 100.",
-    "timeline": "Looking ahead, your savings and investments run out at age 73. When you retire, that means you'll need to plan how to cover spending after savings stop."
+    "intro": "Samantha, this is your money plan shown as your home. Your score is 82 out of 100, which is strong.",
+    "pillar_savings_and_cash_flow": "Your plumbing is savings and cash flow, solid at 22 out of 30 points. You save well, but college and retirement pull on the same cash.",
+    "pillar_debt": "Your walls are debt, and they are solid at 20 out of 20 points. With no debt, your income is free, but your cash cushion is thin.",
+    "pillar_investments": "Your garden is investments, cracked at 10 out of 15 points. Most of your money is in your home, so it cannot pay for college or later years.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations are your emergency cash, solid at 15 out of 15 points. You have cash to cover surprises, though your near goals make it tighter.",
+    "pillar_insurance_and_protection": "Your roof is insurance and protection, solid at 14 out of 20 points. Your life cover is in place, but your home cover still needs confirming.",
+    "move_1": "This step adds home insurance for your house and repairs your roof, lifting your score to 84 out of 100.",
+    "move_2": "This step spreads out the money you hold in a single fund and repairs your garden, lifting your score to 83 out of 100.",
+    "move_3": "This step moves your investments a little safer and repairs your garden, lifting your score to 83 out of 100.",
+    "timeline": "Looking ahead, on this plan your savings run out at age 73, after you stop working."
   }
 }

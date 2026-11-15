@@ -13,7 +13,7 @@ Samuel pide que la narración de las familias deje de usar `gpt-5-mini` y use un
 
 ## Alcance
 - Entra: `narrator.py` (`DEFAULT_MODEL`), `.env.example` (`BRAIN_MODEL`), `narrations/<familia>.json` (las cuatro,
-  **regeneradas** con el modelo nuevo), esta ficha y `visitas/samuel.md`.
+  **regeneradas** con el modelo nuevo, en modo completo y sencillo), esta ficha y `visitas/samuel.md`.
 - NO entra: `ask.py` (ya usa `deepseek-flash`), el contrato, `voice`, `stage`. `BRIEF.md` y `02-DOCS/reto.md`
   citan `gpt-5-mini` en ejemplos y en la tabla de precios de Sherpas: no son configuración nuestra y no se tocan.
   Las fichas y entradas antiguas que nombran `gpt-5-mini` son historia y se quedan como están.
@@ -45,7 +45,16 @@ Samuel pide que la narración de las familias deje de usar `gpt-5-mini` y use un
 - **verify (15 nov, sobre `c8581fa` + cambios sin commit):** `./check.sh` → `110 passed`, `OK -> out/index.html`
   (Samantha, con los textos nuevos y sus mp3 de edge-tts); `compileall src contracts tests` → sin errores.
   `ruff` y `mypy`: HERRAMIENTA-AUSENTE. Veredicto: PASA.
-- Sin comprobar: nadie ha leído con calma ni escuchado los 42 textos nuevos. Las versiones anteriores
+- **Segunda tanda (tras fusionar `main`, PR #33 y #35):** `main` había añadido el modo sencillo (`simple`) y las
+  escenas por persona, escritos con `gpt-5-mini`. Se tomaron las narraciones de `main` y se regeneraron los dos
+  modos: `--all` → 13, 10, 10 y 13 escenas; `--all --simple` → 13, 10, 10 y 13; `template kept for []` en las ocho
+  tandas. Mismos ids de escena que en `main`. Modo sencillo: 28 palabras como máximo. Tiempo: 7 min 6 s.
+  Gasto: de `0.307` a `0.411` → $0,104. Total de las dos tandas: **$0,21**; gasto del equipo: $0,41 de $50.
+- `narrator.py`: una regeneración completa apunta ahora el modelo que la escribió (antes `setdefault` conservaba
+  `gpt-5-mini`); con `--missing` se conserva el nombre anterior. Sin test propio: `main()` llama al modelo.
+- **verify (15 nov, sobre `c57b085` + cambios sin commit):** `./check.sh` → `132 passed`, `OK -> out/index.html`;
+  `compileall src contracts tests` → sin errores. `ruff` y `mypy`: HERRAMIENTA-AUSENTE. Veredicto: PASA.
+- Sin comprobar: nadie ha leído con calma ni escuchado los 92 textos nuevos (46 por modo). Las versiones anteriores
   (`gpt-5-mini`) están en el historial de git (`c8581fa`).
 
 ## Siguiente
