@@ -1,7 +1,8 @@
 # Escalabilidad: cómo dar más contexto al modelo
 
-> Propuesta de Samuel (15 nov). **No está construido**: describe cómo puede crecer el producto y qué forma
-> elegimos primero. Documento interno, en español; si entra en la entrega se traduce al inglés (regla 9).
+> Propuesta de Samuel (15 nov). Describe cómo puede crecer el producto y qué forma elegimos primero.
+> **Construido: el nivel A del resumen del historial** (ver «Estado» más abajo). El resto son ideas.
+> Documento interno, en español; si entra en la entrega se traduce al inglés (regla 9).
 
 ## La idea
 
@@ -17,11 +18,11 @@ y, con demasiado texto, el modelo atiende peor a lo importante.
 | Momento | Archivo | Qué se le envía | ¿Recuerda algo? |
 |---|---|---|---|
 | Narración (una vez por familia) | `narrator.py` | las escenas en orden, cada una con sus hechos | no hace falta |
-| Pregunta en vivo | `ask.py` | la pregunta y los hechos del plan de esa familia | **no**: cada pregunta es independiente |
+| Pregunta en vivo | `ask.py` | la pregunta, los hechos del plan y, desde la segunda pregunta, el resumen de la conversación | lo que le pasa el resumen |
 
-El historial sí se guarda (`sessions.py`, un JSON por sesión en `data/sessions/`), pero solo lo leen `/history`
-y `/advisor-note`. **Nunca vuelve al modelo.** Si Melanie pregunta «Can we buy the house in 2030?» y después
-«and how much would that cost?», el modelo no sabe qué es «that».
+Hasta el 15 nov el historial se guardaba (`sessions.py`, un JSON por sesión en `data/sessions/`) pero solo lo leían
+`/history` y `/advisor-note`: nunca volvía al modelo. Si la familia preguntaba «Why does my garden dry up?» y
+después «and what can I do about it?», el modelo no sabía qué era «it».
 
 ## Las formas de añadir contexto
 
@@ -48,25 +49,27 @@ y lo añade a cada pregunta. Tras cada respuesta, el resumen se actualiza.
 - **Ya tenemos casi todos los datos.** `sessions.advisor_note` calcula hoy las partes más preguntadas, lo que el
   plan no cubre y el paso elegido.
 
-**Cómo funcionaría** (propuesta, sobre el código que ya existe):
+**Cómo funciona** (nivel A, construido):
 
-1. `sessions.py` guarda un campo nuevo `summary` en el JSON de la sesión.
-2. `server.py` lee ese resumen y el último turno, y se los pasa a `ask.answer`.
-3. `ask.py` los añade al mensaje `user`, debajo de la pregunta:
+1. `sessions.context_for(session)` monta el resumen a partir del archivo de la sesión, en el momento de preguntar.
+   No se guarda aparte: así no puede quedarse viejo.
+2. `server.py` se lo pasa a `ask.answer` en `/ask`, `/ask/stream` y `/worry`.
+3. `ask.py` lo añade al mensaje del modelo en el campo `conversation`, y a las instrucciones una regla: es
+   contexto para entender la pregunta, nunca fuente de cifras, y una pregunta de seguimiento se queda en la misma
+   parte de la casa.
 
+```json
+"conversation": {
+  "worries": ["We owe an amount on a card, is that bad?"],
+  "asked_most_about": ["garden", "walls"],
+  "chosen_step": "Close a coverage gap",
+  "previous": {"question": "Why does my garden dry up?",
+               "answer": "Your savings and investments run out at age 73…",
+               "scene": "timeline", "house_part": "garden"}
+}
 ```
-Question: and how much would that cost?
 
-What this person has asked so far (no figures; background only):
-- Asked mostly about: garden, roof.
-- Worried about running out of savings after retiring.
-- Chose step: move_1 (add life cover).
-
-Previous question: Can we buy the house in 2030?
-Previous answer: (texto de la respuesta anterior)
-```
-
-4. Tras responder, el resumen se actualiza y se guarda.
+4. La primera pregunta de una sesión se envía exactamente igual que antes. `ASK_HISTORY=off` lo desactiva.
 
 **Quién escribe el resumen.** Dos niveles, en este orden:
 
@@ -76,6 +79,16 @@ Previous answer: (texto de la respuesta anterior)
 | B. Con el modelo | una llamada aparte, después de responder: «update this summary with the new turn, in 5 lines, no figures» | unos $0,0003 por pregunta con `deepseek-flash` | solo si el nivel A se queda corto |
 
 El nivel B se lanza **después** de devolver la respuesta, para no añadir espera (hoy `/ask` tarda 2,6-4,0 s).
+
+## Estado (15 nov)
+
+- **Nivel A construido y probado** con el servidor real y tres familias. Ejemplo (Samantha): «Why does my garden
+  dry up?» → `timeline`, jardín; «and what can I do about it?» → `move_3`, jardín («shift your invested mix from 85%
+  in stocks to 80%…»); «how much does that raise my score?» → `move_3` («from 82 out of 100 to 83 out of 100»).
+  Sin historial, la segunda pregunta acababa en `move_1` (seguro de hogar), que no tiene que ver con el jardín.
+- **Respuestas en 1,0-6,2 s**, las diez aceptadas por `guard`. Es una muestra pequeña (10 preguntas): falta probarlo
+  con personas.
+- **Nivel B sin construir:** no ha hecho falta todavía.
 
 ## Reglas para no romper `guard`
 
@@ -98,14 +111,16 @@ El nivel B se lanza **después** de devolver la respuesta, para no añadir esper
 - **No está medido.** No sabemos todavía si mejora las respuestas de seguimiento ni cuánto cambia el tiempo de
   respuesta.
 
-## Cómo se comprobaría
+## Cómo se comprueba
 
-1. Test: dos preguntas en la misma sesión; la segunda llamada al modelo contiene el resumen y el turno anterior.
-2. Test: un resumen con una cifra se rechaza antes de guardarse.
-3. Test: sin sesión previa, el mensaje es el de hoy (nada cambia para la primera pregunta).
-4. Prueba real en `/try`: «Can we buy the house in 2030?» y después «and how much would that cost?»; la segunda
-   respuesta habla de la casa.
-5. `./check.sh` sigue pasando sin llamar al modelo.
+`tests/test_ask_context.py` (9 tests, sin llamar al modelo):
+
+1. Dos preguntas en la misma sesión: la segunda llamada al modelo lleva el resumen y el turno anterior.
+2. El resumen no lleva cifras: los números que escribió la familia pasan a «an amount».
+3. Sin historia, el mensaje y las instrucciones son los de antes.
+4. El resumen no crece con la sesión (30 turnos pesan lo mismo que 1).
+5. Una cifra del turno anterior usada en otra escena se sigue rechazando.
+6. `ASK_HISTORY=off` lo desactiva.
 
 ## Después (sin orden decidido)
 

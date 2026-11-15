@@ -18,6 +18,9 @@ ROOT = Path(__file__).resolve().parents[2]
 SESSION_ID = re.compile(r"^[A-Za-z0-9_-]{8,64}$")  # also keeps a session id from being a path
 MONTHS = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
           "November", "December")
+FIGURE = re.compile(r"[$€£]?\s?\d[\d,.]*\s?%?")  # any number someone typed, with its currency sign or percent
+CONTEXT_ITEMS = 3     # worries and parts of the home kept in the summary: its size never grows with the session
+CONTEXT_CHARS = 300   # longest text kept from one question, answer or worry
 CHECK_IN_AFTER_DAYS = 3     # the idea note: "checks in with them on day 3"
 PLAN_DATE_WINDOW_DAYS = 90  # a plan date is announced this long before it arrives
 
@@ -167,6 +170,48 @@ def advisor_note(session: dict) -> dict:
         "decision": session["decision"],
         "follow_up": session.get("follow_up"),
     }
+
+
+def context_for(session: dict) -> dict | None:
+    """What the model should know about this conversation before the next question, or None at the start.
+
+    A summary made by code, the same size however long the session is (see escalabilidad.md): what worries
+    them, the parts of the home they asked about most and the step they chose, all without figures, plus
+    the last question and its answer word for word so that "that" or "it" can be understood.
+    Set ASK_HISTORY=off to answer every question on its own, as before.
+    """
+    if (os.getenv("ASK_HISTORY") or "on").lower() in ("off", "0", "false", "no"):
+        return None
+    turns = session.get("turns") or []
+    if not turns:
+        return None
+    note = advisor_note(session)
+    context: dict = {}
+    if note["worries"]:
+        context["worries"] = [_no_figures(text) for text in note["worries"][-CONTEXT_ITEMS:]]
+    if note["asked_most_about"]:
+        context["asked_most_about"] = note["asked_most_about"][:CONTEXT_ITEMS]
+    if note["decision"]:
+        context["chosen_step"] = _no_figures(note["decision"]["title"])
+    last = turns[-1]
+    previous = {"question": _short(last.get("question") or "")}
+    if last.get("source") in ("model", "approved_narration"):
+        previous["answer"] = _short(last.get("text") or "")
+        previous["scene"] = last.get("scene_id")
+        if last.get("house_part"):
+            previous["house_part"] = last["house_part"]
+    context["previous"] = previous
+    return context
+
+
+def _short(text: str) -> str:
+    text = " ".join(text.split())
+    return text if len(text) <= CONTEXT_CHARS else text[:CONTEXT_CHARS].rsplit(" ", 1)[0] + "…"
+
+
+def _no_figures(text: str) -> str:
+    """The same sentence without its numbers: a summary must not carry a figure into a scene that lacks it."""
+    return _short(FIGURE.sub(" an amount ", text))
 
 
 def _now() -> str:

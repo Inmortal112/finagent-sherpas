@@ -79,13 +79,25 @@ rule above: 1 or 2 short sentences, 28 words at most, with one figure at most. E
 """
 
 
+CONVERSATION = """
+The model has no memory, so "conversation" tells you what was said before: what worries this person, the
+parts of the home they asked about most, the step they chose, and the previous question with its answer.
+Use it only to understand the new question (what "that", "it" or "the first one" refers to) and to stay
+kind about what worries them. When the new question follows on from the previous one, stay with the same
+part of the home: for "what can I do about it", choose the step ("move_...") that repairs that part if the
+plan has one. It is background, never a source: every figure in your answer must come from the chosen
+scene's own facts, even if the previous answer quoted another one.
+"""
+
+
 def answer(presentation: Presentation, diagnostic: dict, question: str,
            complete: Callable[[str, str], str] | None = None, mode: str = "complete",
-           person: str | None = None) -> Answer:
+           person: str | None = None, context: dict | None = None) -> Answer:
     """Answer one question about `presentation`. `complete(system, user) -> str` is the model call.
 
     `mode` is "complete" or "simple" (shorter, one figure at most). `person` is the adult who is asking,
     when the plan belongs to a couple: the answer speaks to them and can use their own part of the home.
+    `context` is the conversation so far (`sessions.context_for`); None answers the question on its own.
     """
     question = " ".join(question.split())
     if not question:
@@ -96,6 +108,9 @@ def answer(presentation: Presentation, diagnostic: dict, question: str,
     if person:
         brief["asked_by"] = person
     system = SYSTEM_PROMPT + (SIMPLE_MODE if mode == "simple" else "")
+    if context:
+        brief["conversation"] = context
+        system += CONVERSATION
 
     scene_id, rejected_because = None, None
     for _ in range(2):
