@@ -217,6 +217,12 @@ details.action[open] summary { margin-bottom: .4rem; }
 .due { margin-top: .7rem; font-size: .95rem; color: var(--ink-2); }
 .due .row { display: flex; gap: .5rem; margin-top: .7rem; flex-wrap: wrap; }
 .due .pill { padding: .5rem 1.1rem; font-size: .88rem; margin: 0; }
+.first-move { margin-top: .9rem; padding: 1rem 1.1rem; border-radius: 16px; background: var(--mist); border: 1px solid #e3ecff; }
+.first-move ol, .due ol { margin: .5rem 0 0 1.1rem; padding: 0; color: var(--ink); }
+.first-move li, .due li { margin: .35rem 0; line-height: 1.45; }
+.first-move .small, .due .small { margin-top: .6rem; font-size: .85rem; color: var(--ink-2); }
+.due form { display: flex; gap: .5rem; margin-top: .6rem; }
+.due input { flex: 1; min-width: 0; padding: .5rem .8rem; border-radius: 999px; border: 1px solid #d6e2ff; font: inherit; font-size: .9rem; }
 .modal { position: fixed; inset: 0; z-index: 60; background: rgba(10,12,20,.55); backdrop-filter: blur(6px); display: none; place-items: center; padding: 1rem; }
 .modal.open { display: grid; }
 .sheet { position: relative; background: #fff; border-radius: 22px; max-width: 34rem; width: 100%; max-height: 86vh; overflow: auto; padding: 1.7rem; }
@@ -632,6 +638,7 @@ function build() {
     <div class="eyebrow mono" style="margin-top:1.4rem">Which one do you start with?</div>
     <div class="steps">${moves.map((s) => `<button data-step="${esc(s.id)}"><span><b>${esc(stepName(s))}</b><small>${esc(effortWords(s.visual.data.effort))} · ${esc(s.visual.data.score_before)} → ${esc(s.visual.data.score_after)}</small></span><span aria-hidden="true">→</span></button>`).join("")}</div>
     <div class="chosen-note" id="chosenNote" aria-live="polite"></div>
+    <div class="first-move" id="firstMove" hidden></div>
     <div class="back" id="backBox" hidden>
       <div class="eyebrow mono">A few days later · try it now</div>
       <button class="pill ghost" id="comeBack">Come back three days from now</button>
@@ -946,7 +953,7 @@ async function comeBack() {
         const row = el("div", "row");
         [["Yes, I started", true, "pill dark"], ["Not yet", false, "pill ghost"]].forEach(([label, done, cls]) => {
           const b = el("button", cls); b.textContent = label;
-          b.addEventListener("click", () => followUp(done, box));
+          b.addEventListener("click", () => (done ? followUp(true, box) : askWhatGotInTheWay(box)));
           row.append(b);
         });
         box.append(row);
@@ -956,16 +963,19 @@ async function comeBack() {
   } catch (e) { list.innerHTML = '<div class="due">The server did not answer. Please try again.</div>'; }
 }
 
-async function followUp(done, box) {
+async function followUp(done, box, note = null, reply = "") {
   try {
     const response = await fetch(api.base + "/follow-up", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: api.session, done }) });
+      body: JSON.stringify({ session_id: api.session, done, note }) });
     const data = await response.json();
     if (!response.ok) throw new Error();
     const part = data.repaired_house_part;
     if (part) { doneParts.add(part); turnHome(part); }
-    box.textContent = done ? `Well done. ${part ? `Your ${part} ${part.endsWith("s") ? "are" : "is"} repaired, and your` : "Your"} advisor will see it.`
-                           : "No rush. Your advisor will see that this step needs a hand.";
+    if (done) {
+      box.textContent = `Well done. ${part ? `Your ${part} ${part.endsWith("s") ? "are" : "is"} repaired, and your` : "Your"} advisor will see it.`;
+    } else {
+      box.innerHTML = `<div>${reply}</div><div class="small">Your advisor will see what got in the way, so the next talk starts there.</div>`;
+    }
   } catch (e) { box.append(el("div", "", "That did not go through. Please try again.")); }
 }
 
@@ -981,22 +991,68 @@ async function showNote() {
     if (!response.ok) throw new Error();
     const note = await response.json();
     const list = (items) => (items && items.length ? `<ul>${items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>` : "<p>Nothing yet.</p>");
-    const follow = note.follow_up ? (note.follow_up.done ? "They said they started it." : "They said: not yet.") : "Not asked yet.";
+    const follow = note.follow_up
+      ? (note.follow_up.done ? "They said they started it."
+         : `They said: not yet.${note.follow_up.note ? ` What got in the way: “${esc(note.follow_up.note)}”` : ""}`)
+      : "Not asked yet.";
+    const chosen = note.decision
+      ? esc(note.decision.plain_title || note.decision.title)
+        + (note.decision.plain_title && note.decision.plain_title !== note.decision.title ? ` <span class="small">(Sherpas: ${esc(note.decision.title)})</span>` : "")
+      : "None yet.";
     show(head + `<p>${note.person ? esc(note.person) + " · " : ""}${esc(note.mode || MODE)} mode</p>
       <h4>What worries them</h4>${list(note.worries)}
       <h4>What they asked</h4>${list(note.questions)}
       <h4>Asked most about</h4><p>${note.asked_most_about.length ? esc(note.asked_most_about.map((p) => "the " + p).join(", ")) : "Nothing yet."}</p>
       <h4>The plan did not cover</h4>${list(note.not_covered_by_the_plan)}
-      <h4>First step chosen</h4><p>${note.decision ? esc(note.decision.title) : "None yet."}</p>
+      <h4>First step chosen</h4><p>${chosen}</p>
       <h4>Three days later</h4><p>${follow}</p>`);
   } catch (e) { show(head + "<p>The server did not answer. Please try again.</p>"); }
 }
 $("modal").addEventListener("click", (e) => { if (e.target === $("modal")) $("modal").classList.remove("open"); });
 
+const firstMovesHtml = (step) =>
+  `<ol>${(step.visual.data.first_moves || []).map((m) => `<li>${esc(m)}</li>`).join("")}</ol>`;
+const isCouple = () => P.scenes.some((s) => s.id.startsWith("person_"));
+
+// "Not yet" at the day-3 check-in: ask what got in the way, answer that obstacle, and tell the advisor.
+const obstacles = () => [
+  ["I don't know where to start", () => chosenStep
+      ? `Here is the first move again.${firstMovesHtml(chosenStep)}` : "Open the step again above and start with its first move."],
+  ["It costs more than I expected", () =>
+      "That is a fair worry, and the cost is not in your plan. Your advisor can help you compare before you decide."],
+  ...(isCouple()
+    ? [["We haven't agreed yet", () =>
+        "That is normal. Open the “?” together and ask your questions in your own words: the home answers both of you."]]
+    : [["I haven't had the time", () => "That is fine. The first move takes a few minutes, whenever you are ready."]]),
+];
+
+function askWhatGotInTheWay(box) {
+  box.innerHTML = `<div>No rush. What got in the way?</div>`;
+  const row = el("div", "row");
+  obstacles().forEach(([label, reply]) => {
+    const b = el("button", "pill ghost"); b.textContent = label;
+    b.addEventListener("click", () => followUp(false, box, label, reply()));
+    row.append(b);
+  });
+  const form = el("form");
+  form.innerHTML = '<input aria-label="Or tell us in your own words" placeholder="Or tell us in your own words"><button class="pill dark">Send</button>';
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = form.querySelector("input").value.trim();
+    if (text) followUp(false, box, text, "Thank you for telling us.");
+  });
+  box.append(row, form);
+}
+
 async function chooseStep(button) {
   document.querySelectorAll("[data-step]").forEach((b) => b.classList.toggle("chosen", b === button));
   const step = scene(button.dataset.step);
+  chosenStep = step;
   $("chosenNote").textContent = `Chosen: ${stepName(step)}. Tell your advisor this is where you start.`;
+  const box = $("firstMove");
+  box.innerHTML = `<div class="eyebrow mono">Your first move, tomorrow</div>${firstMovesHtml(step)}
+    <div class="small">A few minutes is enough. You do not have to finish it in one go.</div>`;
+  box.hidden = false;
   if (!(await api.ready) || !api.family) return;
   try {
     const response = await fetch(api.base + "/decision", { method: "POST", headers: { "Content-Type": "application/json" },

@@ -98,7 +98,7 @@ def reminders(session: dict, diagnostic: dict, today: date) -> dict:
     decision, answered = session.get("decision"), session.get("follow_up")
     if decision and not answered and today >= _day(decision["decided_at"]) + timedelta(days=CHECK_IN_AFTER_DAYS):
         due.append({"kind": "check_in", "scene_id": decision["scene_id"],
-                    "text": f"A few days ago you chose a first step: {decision['title']}. "
+                    "text": f"A few days ago you chose a first step: {decision.get('plain_title') or decision['title']}. "
                             "Have you been able to start it?"})
     elif not decision and today >= _day(session["started"]) + timedelta(days=CHECK_IN_AFTER_DAYS):
         due.append({"kind": "no_step_yet", "scene_id": None,
@@ -131,9 +131,10 @@ def add_turn(session: dict, turn: dict) -> dict:
     return stored
 
 
-def decide(session: dict, scene_id: str, title: str) -> dict:
-    """Record the step the family chose to take."""
-    session["decision"] = {"scene_id": scene_id, "title": title, "decided_at": _now()}
+def decide(session: dict, scene_id: str, title: str, plain_title: str | None = None) -> dict:
+    """Record the step the family chose to take. `title` is Sherpas' (for the advisor), `plain_title` the family's."""
+    session["decision"] = {"scene_id": scene_id, "title": title, "plain_title": plain_title or title,
+                           "decided_at": _now()}
     save(session)
     return session["decision"]
 

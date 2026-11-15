@@ -66,6 +66,15 @@ def test_every_move_has_a_plain_title_without_figures(path):
         assert not any(ch.isdigit() for ch in plain), plain
 
 
+@pytest.mark.parametrize("path", CASES, ids=lambda p: p.parent.name)
+def test_every_step_has_a_first_move_without_figures(path):
+    plan = brain.build(json.loads(path.read_text(encoding="utf-8")))
+    for scene in (s for s in plan.scenes if s.id.startswith("move_")):
+        moves = scene.visual.data["first_moves"]
+        assert moves and moves != list(house.FIRST_MOVE_FALLBACK), scene.title
+        assert not any(ch.isdigit() for move in moves for ch in move), moves
+
+
 def test_timeline_knows_the_family_goals_so_ask_can_quote_them():
     from finagent import narrator
     plan = brain.build(_load("samantha-lewis"))

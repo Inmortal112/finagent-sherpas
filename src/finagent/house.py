@@ -43,6 +43,52 @@ PLAIN_MOVE_TITLES = {
     "reduce single-name concentration": "Spread out money held in one investment",
 }
 
+# Sherpas' step title (lower case) -> how to get started tomorrow, in plain words. Practical actions only:
+# no figures, no product or company names, nothing the family must decide alone. Always ends with the advisor.
+FIRST_MOVES = {
+    "raise mortality coverage": (
+        "Find the life insurance papers you already have, from work or your own.",
+        "Ask your insurer or your advisor for a quote for more cover.",
+    ),
+    "add life cover": (
+        "Find the life insurance papers you already have, from work or your own.",
+        "Ask your insurer or your advisor for a quote for more cover.",
+    ),
+    "add umbrella cover": (
+        "Call the company that insures your home or your car and ask about umbrella cover.",
+        "Have your current policies at hand when you call.",
+    ),
+    "close a coverage gap": (
+        "Find the insurance papers for your home and check what they cover.",
+        "Call your insurer, or your advisor, and ask what is missing.",
+    ),
+    "pay down revolving card": (
+        "Log in to your card account and look at the balance.",
+        "Choose the day this week you will make the payment from the cash you already hold.",
+    ),
+    "raise annual savings": (
+        "Look at where your money goes in a normal month.",
+        "Ask your advisor which account the money left over each year should go to.",
+    ),
+    "lower the withdrawal rate": (
+        "This one is about later, so there is nothing to pay or sign tomorrow.",
+        "Write down what you hope to spend each year once you retire.",
+    ),
+    "raise growth allocation toward glide": (
+        "Log in to your retirement and investment accounts and look at how they are invested.",
+        "Ask your advisor how to move toward the mix your plan suggests.",
+    ),
+    "reduce growth allocation toward glide": (
+        "Log in to your investment accounts and look at how they are invested.",
+        "Ask your advisor how to move toward the mix your plan suggests.",
+    ),
+    "reduce single-name concentration": (
+        "Log in to your investment accounts and find the fund that holds the largest share.",
+        "Ask your advisor how to spread it out without a surprise tax bill.",
+    ),
+}
+FIRST_MOVE_FALLBACK = ("Send this step to your advisor and ask what the first move is.",)
+
 # Word in a move's title -> house part it repairs. First match wins, so the order matters.
 MOVE_PARTS = (
     (("cover", "insurance", "umbrella"), "roof"),
@@ -76,6 +122,11 @@ def plain_title(title: str) -> str:
     Words only, never a figure. A title not in the table is shown as Sherpas wrote it.
     """
     return PLAIN_MOVE_TITLES.get(title.strip().lower(), title)
+
+
+def first_moves(title: str) -> list[str]:
+    """How to start a step tomorrow: one or two practical actions, never a figure."""
+    return list(FIRST_MOVES.get(title.strip().lower(), FIRST_MOVE_FALLBACK))
 
 
 def part_for_move(title: str) -> str | None:

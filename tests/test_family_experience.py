@@ -161,7 +161,7 @@ def test_reminders_check_in_on_day_3_and_announce_the_plan_dates(client):
     assert [d["kind"] for d in due(today + timedelta(days=2))["due"]] == []
     check_in = due(today + timedelta(days=3))["due"]
     assert [d["kind"] for d in check_in] == ["check_in"]
-    assert "Pay down revolving card" in check_in[0]["text"] and check_in[0]["scene_id"] == "move_1"
+    assert "Pay down the credit card" in check_in[0]["text"] and check_in[0]["scene_id"] == "move_1"
 
     done = client.post("/follow-up", json={"session_id": session_id, "done": True}).json()
     assert done["repaired_house_part"] == "walls"
@@ -174,6 +174,17 @@ def test_reminders_check_in_on_day_3_and_announce_the_plan_dates(client):
     assert near["upcoming"][0]["label"] == "January 2030"
     assert all(u["date"] >= "2029-11-15" for u in near["upcoming"])
     assert client.get("/reminders", params={"session_id": session_id, "today": "soon"}).status_code == 422
+
+
+def test_not_yet_with_what_got_in_the_way_reaches_the_advisor(client):
+    session_id = client.post("/decision", json={"family": WEAH, "scene_id": "move_3"}).json()["session_id"]
+    reply = client.post("/follow-up", json={"session_id": session_id, "done": False,
+                                            "note": "We haven't agreed yet"}).json()
+    assert reply["repaired_house_part"] is None
+    note = client.get("/advisor-note", params={"session_id": session_id}).json()
+    assert note["follow_up"] == {**note["follow_up"], "done": False, "note": "We haven't agreed yet"}
+    assert note["decision"]["title"] == "Add umbrella cover"            # Sherpas' words for the advisor
+    assert note["decision"]["plain_title"] == "Add umbrella insurance"  # the family's words
 
 
 def test_a_visit_without_a_step_gets_a_nudge_and_no_follow_up(client):

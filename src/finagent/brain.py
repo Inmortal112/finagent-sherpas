@@ -124,6 +124,7 @@ def build_template(diagnostic: dict, language: str = "en") -> Presentation:
                 visual=Visual(kind="kpi", data={
                     "fact_id": after_id, "house_part": part, "action": move["action"], "effort": move["effort"],
                     "plain_title": house.plain_title(move["title"]),
+                    "first_moves": house.first_moves(move["title"]),
                     "score_before": move["score_before"], "score_after": move["score_after"],
                 }),
                 fact_ids=[before_id, after_id, action_id],
