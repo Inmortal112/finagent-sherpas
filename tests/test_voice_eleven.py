@@ -24,7 +24,7 @@ def eleven(monkeypatch, tmp_path):
     """VOICE_ENGINE=eleven with a fake key, a temporary cache and a recorded, fake HTTP call."""
     for name, value in {"VOICE_ENGINE": "eleven", "ELEVENLABS_API_KEY": "test-key", "TEAM_KEY": "",
                         "LLM_PROXY_URL": "", "ELEVEN_VOICE_ID": "", "ELEVEN_MODEL": "",
-                        "ELEVEN_MAX_CHARS": "", "VOICE_CACHE_DIR": str(tmp_path / "cache")}.items():
+                        "ELEVEN_MAX_CHARS": "", "ELEVEN_MAX_CHARS_PER_DAY": "", "VOICE_CACHE_DIR": str(tmp_path / "cache")}.items():
         monkeypatch.setenv(name, value)  # set even when empty, so the real .env cannot fill them in
     calls = []
 
@@ -76,6 +76,34 @@ def test_over_budget_sends_nothing_and_uses_edge(eleven, tmp_path, monkeypatch):
     after = voice.synthesize(_presentation(), tmp_path)
     assert not calls and edge_runs == [2]
     assert all(scene.duration_s == 9.9 for scene in after.scenes)
+
+
+def test_daily_cap_adds_up_across_runs(eleven, monkeypatch):
+    calls, _ = eleven
+    monkeypatch.setenv("ELEVEN_MAX_CHARS_PER_DAY", "60")
+    first = voice.speak("[FICTIONAL EXAMPLE] Open an IRA this year.")
+    assert first.engine == "eleven" and len(calls) == 1
+    assert voice_eleven.chars_sent_today() == len(json.loads(calls[0].data)["text"])
+
+    monkeypatch.setattr(voice, "_edge_bytes", _no_edge_audio)
+    second = voice.speak("[FICTIONAL EXAMPLE] Then look at your savings account.")
+    assert second.engine != "eleven" and len(calls) == 1  # over today's cap: nothing more is sent
+
+    again = voice.speak("[FICTIONAL EXAMPLE] Open an IRA this year.")
+    assert again.engine == "eleven" and len(calls) == 1   # cached audio is free, so it still plays
+
+
+def test_daily_count_starts_again_the_next_day(eleven, tmp_path):
+    usage = tmp_path / "cache" / "usage.json"
+    usage.parent.mkdir(parents=True)
+    usage.write_text(json.dumps({"date": "2026-01-01", "chars": 999_999}), encoding="utf-8")
+    assert voice_eleven.chars_sent_today() == 0
+    usage.write_text("not json", encoding="utf-8")
+    assert voice_eleven.chars_sent_today() == 0
+
+
+async def _no_edge_audio(text, voice_name):
+    return b""
 
 
 def test_no_key_uses_edge(eleven, tmp_path, monkeypatch):

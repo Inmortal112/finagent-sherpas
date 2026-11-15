@@ -3,6 +3,17 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 15:50 — feat/voice-daily-cap — Claude Code
+- **Hecho:** tope diario de caracteres enviados a ElevenLabs: `ELEVEN_MAX_CHARS_PER_DAY` (por defecto 20000) en
+  `voice_eleven.py`. Suma pipeline y respuestas en directo; la cuenta va en `out/voice_cache/usage.json` y empieza de
+  cero cada día. Dos tests nuevos, `VOICE.md` y `.env.example` al día.
+- **Estado:** `bash check.sh` pasa (150 tests). Real: una respuesta por el enlace público sumó 237 caracteres; con el
+  tope a 1, la siguiente salió por edge-tts sin enviar nada.
+- **Decisiones:** por encima del tope la voz cae a edge-tts (lo ya en caché sigue sonando con ElevenLabs).
+- **Bloqueos:** micrófono real sin probar.
+- **Para Samuel:** regenerar las cuatro familias en los dos modos puede pasar de 20000: súbelo en `.env` ese día.
+- **Siguiente:** probar el micrófono por el enlace; regenerar el audio cuando los textos tengan el visto bueno.
+
 ## 2026-11-15 15:27 — fix/serve-share-windows — Claude Code
 - **Hecho:** `scripts/serve.sh` arranca en Windows (`PYTHONPATH` con `;`, igual que `check.sh`). `scripts/share.sh` usa
   `cloudflared` si está instalado y, si no, `localhost.run` (ahora contra `127.0.0.1`). `BACKEND.md`: una línea.

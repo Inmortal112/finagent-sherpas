@@ -14,7 +14,7 @@ ANSWER = "[FICTIONAL EXAMPLE] Your **roof** needs $1,200/yr."
 def engines(monkeypatch, tmp_path):
     for name, value in {"VOICE_ENGINE": "eleven", "ELEVENLABS_API_KEY": "test-key", "TEAM_KEY": "",
                         "LLM_PROXY_URL": "", "ELEVEN_VOICE_ID": "", "ELEVEN_MODEL": "",
-                        "ELEVEN_MAX_CHARS": "", "VOICE_CACHE_DIR": str(tmp_path / "cache"),
+                        "ELEVEN_MAX_CHARS": "", "ELEVEN_MAX_CHARS_PER_DAY": "", "VOICE_CACHE_DIR": str(tmp_path / "cache"),
                         "VOICE_NAME": ""}.items():
         monkeypatch.setenv(name, value)  # set even when empty, so the real .env cannot fill them in
     sent = {"eleven": [], "edge": []}

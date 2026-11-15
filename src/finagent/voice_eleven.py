@@ -11,6 +11,9 @@ Spending guards (ElevenLabs bills per character):
   voice is never paid for twice. Folder: VOICE_CACHE_DIR, default out/voice_cache (git-ignored).
 - Budget: ELEVEN_MAX_CHARS (default 6000) caps the characters sent in one run, counting only the
   scenes not already cached. Over the cap, nothing is sent and `voice` falls back to edge-tts.
+- Daily budget: ELEVEN_MAX_CHARS_PER_DAY (default 20000) caps the characters sent in one day, adding up
+  every run and every live answer. It is what protects the account while a public link is open. The count
+  is kept in <cache folder>/usage.json and starts again each day; over the cap, `voice` falls back to edge-tts.
 """
 from __future__ import annotations
 
@@ -19,8 +22,10 @@ import hashlib
 import json
 import logging
 import os
+import threading
 import urllib.request
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 
 log = logging.getLogger(__name__)
@@ -30,6 +35,7 @@ DIRECT_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}?output_form
 DEFAULT_VOICE_ID = "XrExE9yKIg1WjnnlVkGX"  # Matilda: American, "knowledgeable, professional" (premade)
 DEFAULT_MODEL = "eleven_flash_v2_5"         # cheapest and fastest
 DEFAULT_MAX_CHARS = 6000                    # one family is about 1,000 characters
+DEFAULT_MAX_CHARS_PER_DAY = 20000           # about 80 live answers; the student plan gives ~130,000 a month
 TIMEOUT_S = 60
 # The same three models have different names on each route.
 PROXY_MODEL_NAMES = {
@@ -96,6 +102,33 @@ def max_chars() -> int:
     return int(os.getenv("ELEVEN_MAX_CHARS") or DEFAULT_MAX_CHARS)
 
 
+def max_chars_per_day() -> int:
+    return int(os.getenv("ELEVEN_MAX_CHARS_PER_DAY") or DEFAULT_MAX_CHARS_PER_DAY)
+
+
+_usage_lock = threading.Lock()
+
+
+def _usage_path() -> Path:
+    return cache_dir() / "usage.json"
+
+
+def chars_sent_today() -> int:
+    """Characters sent to ElevenLabs today (cached audio is not counted: it was not sent)."""
+    try:
+        usage = json.loads(_usage_path().read_text(encoding="utf-8"))
+        return int(usage["chars"]) if usage.get("date") == date.today().isoformat() else 0
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):  # no file yet, or a damaged one
+        return 0
+
+
+def _count_sent(chars: int) -> None:
+    with _usage_lock:
+        total = chars_sent_today() + chars
+        _usage_path().parent.mkdir(parents=True, exist_ok=True)
+        _usage_path().write_text(json.dumps({"date": date.today().isoformat(), "chars": total}), encoding="utf-8")
+
+
 async def synthesize_all(texts: dict[str, str], parallel: int) -> dict[str, bytes]:
     """Audio for every {scene_id: spoken text}, from the cache or from ElevenLabs."""
     route = route_from_env()
@@ -104,6 +137,9 @@ async def synthesize_all(texts: dict[str, str], parallel: int) -> dict[str, byte
     to_pay = sum(len(text) for text in missing.values())
     if to_pay > max_chars():
         raise BudgetExceeded(f"{to_pay} characters to send, ELEVEN_MAX_CHARS is {max_chars()}")
+    if missing and chars_sent_today() + to_pay > max_chars_per_day():
+        raise BudgetExceeded(f"{to_pay} characters to send and {chars_sent_today()} already sent today, "
+                             f"ELEVEN_MAX_CHARS_PER_DAY is {max_chars_per_day()}")
     if missing:
         log.info("ElevenLabs (%s, %s): sending %d characters, %d scenes cached",
                  route.name, route.model, to_pay, len(texts) - len(missing))
@@ -117,6 +153,7 @@ async def synthesize_all(texts: dict[str, str], parallel: int) -> dict[str, byte
             raise RuntimeError(f"ElevenLabs returned no audio for scene {scene_id!r}")
         paths[scene_id].parent.mkdir(parents=True, exist_ok=True)
         paths[scene_id].write_bytes(audio)
+        _count_sent(len(text))
 
     await asyncio.gather(*(fetch(scene_id, text) for scene_id, text in missing.items()))
     return {scene_id: path.read_bytes() for scene_id, path in paths.items()}
