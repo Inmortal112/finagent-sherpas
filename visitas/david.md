@@ -3,6 +3,17 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 — feat/voice-speak — Claude Code
+- **Hecho:** `voice.speak_async(text)` / `voice.speak(text)` → `SpokenAudio(audio, duration_s, engine)`: un texto a MP3
+  para las respuestas de `/ask`. Mismos motores, respaldos, `to_speech` y caché. Tests y ficha `voz-respuestas.md`.
+- **Estado:** `bash check.sh` pasa. Real: 196 caracteres con ElevenLabs en 0,78 s; repetida, 0,005 s (caché).
+- **Decisiones:** nunca lanza error: sin motor, `audio=None` y se muestra el texto.
+- **Bloqueos:** ninguno.
+- **Para Samuel:** en tu ruta `/ask`: `spoken = await voice.speak_async(answer)` y devuelve
+  `Response(spoken.audio, media_type="audio/mpeg")` (si `spoken.audio` es `None`, solo texto). No uses `voice.speak` ahí.
+- **Para Raúl:** el audio de la respuesta llega como MP3 en la respuesta de `/ask`; hablemos de cómo grabas el micrófono.
+- **Siguiente:** STT (voz de la familia → texto) cuando sepamos cómo graba Raúl.
+
 ## 2026-11-15 — feat/voice-elevenlabs — Claude Code
 - **Hecho:** `voice_eleven.py` + `VOICE_ENGINE=eleven` en `voice.py` (respaldo eleven → edge → mock). Caché en
   `out/voice_cache/` (mismo texto y voz = no se paga dos veces) y tope `ELEVEN_MAX_CHARS`. Voz: **Matilda**. Ficha `voz-elevenlabs.md`.

@@ -10,6 +10,9 @@ so the pipeline never breaks. `narration` is never modified: the engine receives
 `speech_text.to_speech(narration)`, a copy rewritten the way a person says it ("$15,032/yr" ->
 "$15,032 a year").
 
+For live answers (the /ask route of the backend) use `speak_async(text)` / `speak(text)`: one text in,
+MP3 bytes out, with the same engines and fallbacks.
+
 audio_path is relative to out_dir (e.g. "audio/intro.mp3"), so the stage page can
 load it from next to index.html.
 """
@@ -18,6 +21,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+from dataclasses import dataclass
 from pathlib import Path
 
 from contracts.schemas import Presentation, Scene
@@ -67,6 +71,52 @@ def synthesize(presentation: Presentation, out_dir: Path) -> Presentation:
     return result
 
 
+@dataclass(frozen=True)
+class SpokenAudio:
+    """One spoken answer. `audio` is MP3 bytes, or None when no engine could speak (show the text)."""
+    audio: bytes | None
+    duration_s: float
+    engine: str  # "eleven", "edge" or "mock"
+
+
+async def speak_async(text: str, language: str = "en") -> SpokenAudio:
+    """Speak one short text, e.g. a live answer from /ask. Never raises: the answer is shown anyway.
+
+    Same engines and fallbacks as `synthesize` (eleven -> edge -> mock), same spoken rewrite
+    (`to_speech`), and with ElevenLabs the same cache and character cap. Inside FastAPI:
+        spoken = await voice.speak_async(answer_text)
+        return Response(spoken.audio, media_type="audio/mpeg")
+    """
+    _load_env()
+    spoken = to_speech(text, language)
+    engine = os.getenv("VOICE_ENGINE", "edge").strip().lower()
+
+    if engine == "eleven":
+        from finagent import voice_eleven
+        try:
+            audio = (await voice_eleven.synthesize_all({"answer": spoken}, 1))["answer"]
+            return SpokenAudio(audio, round(voice_eleven.mp3_duration_s(audio), 1), "eleven")
+        except Exception as exc:
+            log.warning("ElevenLabs failed (%s: %s); falling back to edge-tts", type(exc).__name__, exc)
+            engine = "edge"
+
+    if engine == "edge":
+        try:
+            audio = await _edge_bytes(spoken, os.getenv("VOICE_NAME") or DEFAULT_VOICES[language])
+            if audio:
+                return SpokenAudio(audio, round(len(audio) / EDGE_MP3_BYTES_PER_SECOND, 1), "edge")
+            log.warning("edge-tts returned no audio; answer will be text only")
+        except Exception as exc:
+            log.warning("edge-tts failed (%s: %s); answer will be text only", type(exc).__name__, exc)
+
+    return SpokenAudio(None, round(max(2.0, len(text) / 15), 1), "mock")
+
+
+def speak(text: str, language: str = "en") -> SpokenAudio:
+    """`speak_async` for code that is not async (scripts, tests). Inside FastAPI use `speak_async`."""
+    return asyncio.run(speak_async(text, language))
+
+
 def _load_env() -> None:
     try:
         from dotenv import load_dotenv
@@ -94,20 +144,24 @@ async def _eleven_all(scenes: list[Scene], out_dir: Path, language: str) -> None
         scene.duration_s = round(voice_eleven.mp3_duration_s(audios[scene.id]), 1)
 
 
-async def _edge_all(scenes: list[Scene], out_dir: Path, voice: str, language: str) -> None:
+async def _edge_bytes(text: str, voice: str) -> bytes:
     import edge_tts  # imported here so a missing package falls back to mock
 
+    audio = bytearray()
+    async for chunk in edge_tts.Communicate(text, voice, rate=speaking_rate()).stream():
+        if chunk["type"] == "audio":
+            audio.extend(chunk["data"])
+    return bytes(audio)
+
+
+async def _edge_all(scenes: list[Scene], out_dir: Path, voice: str, language: str) -> None:
     audio_dir = out_dir / AUDIO_DIR
     audio_dir.mkdir(parents=True, exist_ok=True)
     limit = asyncio.Semaphore(MAX_PARALLEL_REQUESTS)
 
     async def one(scene: Scene) -> None:
         async with limit:
-            audio = bytearray()
-            spoken = to_speech(scene.narration, language)
-            async for chunk in edge_tts.Communicate(spoken, voice, rate=speaking_rate()).stream():
-                if chunk["type"] == "audio":
-                    audio.extend(chunk["data"])
+            audio = await _edge_bytes(to_speech(scene.narration, language), voice)
         if not audio:
             raise RuntimeError(f"no audio returned for scene {scene.id!r}")
         (audio_dir / f"{scene.id}.mp3").write_bytes(audio)
