@@ -3,6 +3,17 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 15:27 — fix/serve-share-windows — Claude Code
+- **Hecho:** `scripts/serve.sh` arranca en Windows (`PYTHONPATH` con `;`, igual que `check.sh`). `scripts/share.sh` usa
+  `cloudflared` si está instalado y, si no, `localhost.run` (ahora contra `127.0.0.1`). `BACKEND.md`: una línea.
+- **Estado:** `bash check.sh` pasa (148 tests). Real, por el enlace de `share.sh`: pregunta en 4,3 s y su mp3 en 0,9 s.
+- **Decisiones:** el enlace público sale del ordenador de David con su clave de ElevenLabs (`VOICE_ENGINE=eleven` solo en
+  ese proceso), así todos oyen a Matilda sin tener la clave. `localhost.run` daba ~5 KB/s: la voz se cortaba.
+- **Bloqueos:** micrófono real sin probar. El audio de las respuestas no tiene tope global de caracteres.
+- **Para Samuel:** he tocado tus dos scripts y una línea de `BACKEND.md`; en Windows `serve.sh` daba «No module named
+  'finagent'» y el túnel de `share.sh` respondía «no tunnel». Sin probar en Linux/Mac ni la rama de `localhost.run`.
+- **Siguiente:** pasar el enlace al equipo para probar el micrófono; tope diario de caracteres en `voice.py`.
+
 ## 2026-11-15 — docs/voice-readme — Claude Code
 - **Hecho:** `VOICE.md` (en inglés, para jurado y mentores): qué hace la voz, cómo ejecutarla con y sin clave, motores y
   respaldos, protecciones de gasto, variables de `.env`, cómo se leen las cifras y cómo usarla desde `/ask`.

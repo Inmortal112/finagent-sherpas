@@ -14,7 +14,7 @@ question (typed or spoken) ─▶ transcribe ─▶ model picks a scene and answ
 ```bash
 pip install -r requirements.txt
 scripts/serve.sh            # http://localhost:8000/chat, and the address for a phone on the same Wi-Fi
-scripts/share.sh            # a temporary public https link (SSH tunnel through localhost.run, no account)
+scripts/share.sh            # a temporary public https link (cloudflared if installed, else localhost.run; no account)
 ```
 
 `/chat` is a plain page for the team: it asks the worry first, writes each answer little by little, plays it,
