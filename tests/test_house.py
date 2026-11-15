@@ -139,3 +139,23 @@ def test_repaired_house_uses_the_best_combination_of_moves():
 def test_tied_combinations_keep_the_shortest_one():
     best = house.best_combination(_load("daniel-emily-johnson")["score"])
     assert (best["score_after"], len(best["moves"])) == (60, 2)
+
+
+def test_each_family_is_offered_worries_taken_from_their_own_plan():
+    import json
+    import re
+    from pathlib import Path
+
+    from finagent import brain, guard
+    cases = Path(__file__).resolve().parents[1] / "cases"
+    assert set(house.WORRIES) == {case.name for case in cases.iterdir() if case.is_dir()}
+    for slug, suggested in house.WORRIES.items():
+        persona = (cases / slug / "persona.md").read_text(encoding="utf-8")
+        concerns = persona.split("## Objective concerns")[1].split("## Tensions")[0]
+        for concern, text in suggested:
+            assert re.search(rf"\*\*{concern}\b", concerns), f"{slug}: {concern} is not a concern of this plan"
+            assert not guard.spelled_numbers(text) and "$" not in text and "%" not in text
+        diagnostic = json.loads((cases / slug / "financial-health.json").read_text(encoding="utf-8"))
+        intro = brain.build(diagnostic).scenes[0]
+        assert intro.visual.data["worries"] == [text for _, text in suggested] and len(suggested) == 3
+    assert house.worries({"case": {"slug": "someone-new"}}) == []

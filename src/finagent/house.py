@@ -29,6 +29,21 @@ PART_NARRATIVE = {
 SOLID_FROM = 70
 CRACKED_FROM = 40
 
+# What the family can tap under "What worries you most about money?", per case: (concern in the family's
+# `persona.md`, the same concern as a worry in their own words). Sherpas records no worries the family said
+# themselves ("Subjective concerns: none"), so these are the plan's own "Objective concerns", most serious
+# first, offered as suggestions: the family still chooses one or writes their own. No figures here.
+WORRIES = {
+    "samantha-lewis": (("O1", "Will my savings last?"), ("O3", "Paying for college"),
+                       ("O2", "Spending more than I bring in")),
+    "michael-carter": (("O2", "Buying my home in 2027"), ("O1", "Retiring with enough"),
+                       ("O3", "Being covered if something happens to me")),
+    "timothy-melanie-weah": (("O2", "Our credit card"), ("O4", "Paying for the children's college"),
+                             ("O1", "Being covered if something happens to one of us")),
+    "daniel-emily-johnson": (("O1", "Retiring when we planned"), ("O8", "Paying for college"),
+                             ("O4", "Having enough set aside for an emergency")),
+}
+
 # Sherpas' step title (lower case) -> the same step in words a family uses. No figures here.
 PLAIN_MOVE_TITLES = {
     "raise mortality coverage": "Add more life insurance",
@@ -269,3 +284,8 @@ def part_paid_card_balance(diagnostic: dict, move: dict) -> float | None:
     if not paid or not balance or float(paid.group(1).replace(",", "")) >= balance:
         return None
     return balance
+
+
+def worries(diagnostic: dict) -> list[str]:
+    """The worries to suggest to this family, from their plan's own concerns. Empty for a case we do not know."""
+    return [text for _, text in WORRIES.get(diagnostic["case"]["slug"], ())]
