@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 18:00 — feat/stage-plain-steps — Claude Code
+- **Hecho:** los pasos se ven en palabras de la familia: `house.plain_title` («Raise mortality coverage» → «Add more life
+  insurance»), `brain` lo pasa en `visual.data.plain_title` (y `plain_moves` en `all_moves`), la página lo usa en la
+  tarjeta, en «Which one do you start with?» y en «Chosen: …». «high effort» → «More work». El `action` de Sherpas
+  queda plegado en «What your plan says, word for word». Dos tests en `test_house.py`.
+- **Estado:** `bash check.sh` pasa (158 tests). Visto en el navegador (Michael y Samantha, `run --all` con Edge).
+- **Decisiones:** sin cifras en los títulos llanos; `scene.title` sigue siendo el de Sherpas (decisión y ficha del asesor).
+- **Bloqueos:** ninguno. Venía de una auditoría hecha sobre el servidor viejo del 8000; la web nueva está en el 8001.
+- **Para Samuel:** he tocado `brain.py` (dos claves nuevas en `visual.data`) y `house.py`. El contrato no cambia.
+- **Para Raúl:** he tocado `stage_page.html` (tarjeta de paso, botones del final y nota de elección).
+- **Siguiente:** frases de la narración más cortas y sin cifras que no aportan, si Samuel está de acuerdo.
+
 ## 2026-11-15 16:45 — fix/ask-iphone-voice — Claude Code
 - **Hecho:** `/ask/stream` empieza con un comentario de 2 KB (`STREAM_PADDING` en `server.py`) para que Safari entregue
   el evento `thinking` al momento. En `stage_page.html` y `chat_page.html`: el `click` que sigue a un toque ya no cuenta

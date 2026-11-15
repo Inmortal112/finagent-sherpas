@@ -29,6 +29,20 @@ PART_NARRATIVE = {
 SOLID_FROM = 70
 CRACKED_FROM = 40
 
+# Sherpas' step title (lower case) -> the same step in words a family uses. No figures here.
+PLAIN_MOVE_TITLES = {
+    "raise mortality coverage": "Add more life insurance",
+    "add life cover": "Add more life insurance",
+    "add umbrella cover": "Add umbrella insurance",
+    "close a coverage gap": "Close a gap in your insurance",
+    "pay down revolving card": "Pay down the credit card",
+    "raise annual savings": "Save what is left over each year",
+    "lower the withdrawal rate": "Plan to spend less from savings in retirement",
+    "raise growth allocation toward glide": "Put more of your investments in stocks",
+    "reduce growth allocation toward glide": "Put a little less of your investments in stocks",
+    "reduce single-name concentration": "Spread out money held in one investment",
+}
+
 # Word in a move's title -> house part it repairs. First match wins, so the order matters.
 MOVE_PARTS = (
     (("cover", "insurance", "umbrella"), "roof"),
@@ -54,6 +68,14 @@ def state(pillar_score: float) -> str:
     if pillar_score >= SOLID_FROM:
         return "solid"
     return "cracked" if pillar_score >= CRACKED_FROM else "broken"
+
+
+def plain_title(title: str) -> str:
+    """A step's name in everyday words, for the family. Sherpas' own title stays for the advisor.
+
+    Words only, never a figure. A title not in the table is shown as Sherpas wrote it.
+    """
+    return PLAIN_MOVE_TITLES.get(title.strip().lower(), title)
 
 
 def part_for_move(title: str) -> str | None:
