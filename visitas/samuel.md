@@ -1,5 +1,15 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/voice-stt-fallback — Claude Code
+- **Hecho:** `voice_stt_model.py` (nuevo) y `voice.transcribe_async`: si Scribe falla, la grabación la transcribe
+  `gemini-3.5-flash-lite` por el proxy. Tests en `tests/test_voice_stt.py`.
+- **Estado:** `./check.sh` pasa (132 tests). Real: pregunta hablada en webm → respuesta en 4,9 s; silencio → 422.
+- **Decisiones:** Scribe sigue siendo el primero; el respaldo solo entra si Scribe da error y hay `TEAM_KEY`.
+- **Bloqueos:** el proxy sigue dando 401 en ElevenLabs (hablar y transcribir). Enlace público sin abrir.
+- **Para David:** he tocado tu etapa (`voice.py`, 12 líneas, y `Transcript.engine` puede valer `"model"`). El motivo:
+  sin tu clave personal nadie más podía preguntar por voz. Si prefieres otra forma, cámbialo.
+- **Siguiente:** probar `/chat` con micrófono real en el móvil (necesita el enlace https de `scripts/share.sh`).
+
 ## 2026-11-15 — feat/brain-family-experience — Claude Code
 - **Hecho:** por persona (escena `person_<nombre>` en Weah y Johnson; `/ask` con `person`), modo `simple` /
   `complete` (narración y respuestas), `POST /worry`, `GET /reminders` + `POST /follow-up`, `POST /ask/stream`
