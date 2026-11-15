@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 23:32 — feat/stage-house-3d-camera — Claude Code
+- **Hecho:** paso 3 de la casa 3D (sigue solo con `?house=3d`): la cámara. En `web/house3d.js`, una vista por parte
+  (`VIEWS`); al cambiar el foco la cámara se desliza 0,9 s hasta esa parte y vuelve a la casa entera cuando no hay
+  foco. Vale para el scroll por capítulos y para las preguntas (`turnHome`). `stage_page.html` no cambia.
+- **Estado:** `bash check.sh` pasa (165). Navegador a 375×812 y 1280×800: las cinco partes con `goToPart` y una
+  pregunta con `turnHome`. Consola sin errores de la página. **iPhone real sin probar.**
+- **Decisiones:** solo se dibuja mientras la cámara se mueve. Dos deslizamientos a tirones (más de 45 ms por imagen)
+  y la cámara pasa a saltar; más de 150 ms y vuelve la casa dibujada.
+- **Bloqueos:** ninguno. `out/families/` sigue con páginas viejas (`finagent.run --all` para ver el 3D en todas).
+- **Para Raúl:** el plan de la casa 3D está completo detrás del interruptor; el 17 se decide si pasa a ser lo normal.
+- **Siguiente:** prueba en el iPhone de David; después, 3D por defecto en el modo completo si va bien.
+
 ## 2026-11-15 23:25 — feat/stage-house-3d-states — Claude Code
 - **Hecho:** paso 2 de la casa 3D (sigue solo con `?house=3d`). `web/house3d.js` hace ya lo mismo que `paint()`:
   estados (grietas; roto = agujero en el tejado, ladrillo visto, fuga y charco, ramas secas), brillo de lo reparado,

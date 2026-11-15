@@ -9,8 +9,8 @@
 //   home.dispose()
 //
 // It shows the same four things as paint() in the page: each part's state, the part in focus, the garden
-// drying up and the glow of what was repaired. Plan and what is left out: 02-DOCS/ftd/stage-casa-3d.md.
-// The camera does not move yet.
+// drying up and the glow of what was repaired. And the camera tells the story: it glides to the part in
+// focus and back to the whole home. Plan and what is left out: 02-DOCS/ftd/stage-casa-3d.md.
 import * as THREE from "./vendor/three.module.min.js";
 
 const INK = 0x23232e, WALL = 0xffffff, STONE = 0xbfc1d0, PIPE = 0x6586fc, JOINT = 0x4565d6, CRACK = 0x44445d;
@@ -22,10 +22,21 @@ const REPAIRED_TINT = new THREE.Color(0x5a4fd0);
 const GLYPH = { solid: "✓", cracked: "!", broken: "✕", repaired: "✓" };
 const STATE_COLOR = { solid: "#4565d6", cracked: "#c9871f", broken: "#d6455d", repaired: "#774be5" };  // if the page has no --solid…
 
-const TARGET = new THREE.Vector3(0, 1.6, 0);                  // the camera looks at the middle of the home
-const FROM = new THREE.Vector3(0.55, 0.32, 0.77).normalize(); // from the front, a little to the right and above
-const HALF_WIDTH = 5.4, HALF_HEIGHT = 3.1, DEPTH = 2.5;       // the room the home and its garden need around TARGET
+// Where the camera stands for the whole home and for each part: the point it looks at ("at"), the side it
+// looks from ("from": right, up, front) and the room that must fit on the screen around that point.
+// A part is seen closer and from its own side, but never so close that the rest of the home is lost.
+const VIEWS = {
+  home: { at: [0, 1.6, 0], from: [0.55, 0.32, 0.77], halfWidth: 5.4, halfHeight: 3.1, depth: 2.5 },
+  roof: { at: [0.2, 3.1, 0], from: [0.6, 0.5, 0.72], halfWidth: 3.8, halfHeight: 2.5, depth: 2.2 },
+  walls: { at: [0, 1.6, 0.6], from: [0.3, 0.16, 0.94], halfWidth: 3.2, halfHeight: 2.1, depth: 2.2 },
+  plumbing: { at: [1.9, 1.5, 0.7], from: [0.86, 0.2, 0.47], halfWidth: 2.3, halfHeight: 1.9, depth: 1.8 },
+  foundations: { at: [0, 0.7, 1.0], from: [0.36, 0.14, 0.92], halfWidth: 3.3, halfHeight: 1.7, depth: 2.2 },
+  garden: { at: [-2.5, 1.5, 0.8], from: [-0.12, 0.26, 0.96], halfWidth: 3.0, halfHeight: 2.2, depth: 2.0 },
+};
 const FOV = 32;
+const GLIDE_MS = 900;        // short and slow: nobody should feel the room move
+const SLOW_FRAME_MS = 45;    // a glide that averages worse than this (about 22 frames a second) is a jerky one
+const HOPELESS_FRAME_MS = 150;
 
 function mesh(geometry, color, x = 0, y = 0, z = 0) {
   const m = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color, flatShading: true }));
@@ -195,23 +206,71 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
 
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 100);
   let alive = true, queued = 0;
+  let view = "home", glide = null, slowGlides = 0, still = false, placed = false;
 
-  // Drawn only when something changes: a home that stands still costs no battery.
+  // Where the camera must be to show that view on this screen.
+  function pose(name) {
+    const v = VIEWS[name] || VIEWS.home;
+    // As close as the view allows: its height decides on a wide screen, its width on a phone held upright.
+    const slope = Math.tan(THREE.MathUtils.degToRad(FOV) / 2);
+    return {
+      at: new THREE.Vector3(...v.at), from: new THREE.Vector3(...v.from).normalize(),
+      distance: Math.max(v.halfHeight / slope, v.halfWidth / (slope * camera.aspect)) + v.depth,
+    };
+  }
+  let now = pose(view);
+  function place() {
+    camera.position.copy(now.at).addScaledVector(now.from, now.distance);
+    camera.lookAt(now.at);
+  }
+
+  // Drawn only when something changes, or while the camera glides: a home that stands still costs no battery.
   function draw() {
     if (!alive || queued) return;
-    queued = requestAnimationFrame(() => { queued = 0; if (alive) renderer.render(scene, camera); });
+    queued = requestAnimationFrame(frame);
+  }
+  function frame(time) {
+    queued = 0;
+    if (!alive) return;
+    if (glide) {
+      if (glide.start == null) glide.start = glide.last = time;
+      const gap = time - glide.last;
+      if (gap > 0 && gap < 500) { glide.spent += gap; glide.frames += 1; }   // a longer gap is a hidden tab, not a slow phone
+      glide.last = time;
+      const t = Math.min(1, (time - glide.start) / GLIDE_MS);
+      const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;   // starts and stops gently
+      now.at.lerpVectors(glide.from.at, glide.to.at, eased);
+      now.from.lerpVectors(glide.from.from, glide.to.from, eased).normalize();
+      now.distance = glide.from.distance + (glide.to.distance - glide.from.distance) * eased;
+      place();
+      if (t >= 1) { const done = glide; glide = null; if (judge(done)) return; }
+    }
+    renderer.render(scene, camera);
+    if (glide) draw();
+  }
+  // After each glide: was it smooth? Twice jerky and the camera stops gliding (it jumps instead); hopeless and
+  // the drawn home takes over. True when the 3D home has been given up.
+  function judge(done) {
+    if (done.frames < 5) return false;
+    const average = done.spent / done.frames;
+    if (average > HOPELESS_FRAME_MS) { onFail(); return true; }
+    if (average > SLOW_FRAME_MS && ++slowGlides >= 2) still = true;
+    return false;
+  }
+  function aim(name) {
+    if (!VIEWS[name]) name = "home";
+    if (name === view && placed) return;
+    view = name;
+    if (!placed || still) { glide = null; now = pose(name); place(); placed = true; return; }
+    glide = { from: { at: now.at.clone(), from: now.from.clone(), distance: now.distance }, to: pose(name), start: null, last: 0, spent: 0, frames: 0 };
   }
   function resize() {
     const w = host.clientWidth, h = host.clientHeight;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
-    // As close as the home allows: its height decides on a wide screen, its width on a phone held upright.
-    const slope = Math.tan(THREE.MathUtils.degToRad(FOV) / 2);
-    const distance = Math.max(HALF_HEIGHT / slope, HALF_WIDTH / (slope * camera.aspect)) + DEPTH;
-    camera.position.copy(TARGET).addScaledVector(FROM, distance);
-    camera.lookAt(TARGET);
     camera.updateProjectionMatrix();
+    if (glide) glide.to = pose(view); else { now = pose(view); place(); }
     draw();
   }
   const watcher = new ResizeObserver(resize);
@@ -243,6 +302,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
         if (faded) color.lerp(FADED, FADE);
       });
     }
+    aim(focus && states[focus] ? focus : "home");
     draw();
   }
 
