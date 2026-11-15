@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 18:40 — feat/brain-narration-plain — Claude Code
+- **Hecho:** narración completa de Samantha y Michael (las del pitch) reescrita a mano: frases cortas, una idea por
+  parte, sin «X out of Y points» (ya está en pantalla), sin decimales ni cifras que no aportan. La intro abre con su
+  pregunta (Samantha: 82 «strong» pero sin ahorros a los 73; Michael: casa en 2027 y retiro a los 58).
+- **Estado:** `bash check.sh` pasa (158). Las 20 escenas aceptadas por `guard`. Palabras: 509 → 364 y 411 → 364;
+  voz Edge: 134 s y 143 s. Cada frase comparada con las observaciones de Sherpas de esa escena.
+- **Decisiones:** modo sencillo, Weah y Johnson sin tocar. `model` sigue diciendo `deepseek-flash`.
+- **Bloqueos:** ninguno.
+- **Para Samuel:** he cambiado 20 textos tuyos; léelos y cambia lo que no te guste. El paso 2 de Michael ya no cita
+  $10,300 (no está claro si «cutting withdrawals to $10,300/year» es el nuevo retiro o la rebaja).
+- **Siguiente:** lo mismo con Weah y Johnson; audio de ElevenLabs cuando los textos estén aprobados.
+
 ## 2026-11-15 18:00 — feat/stage-plain-steps — Claude Code
 - **Hecho:** los pasos se ven en palabras de la familia: `house.plain_title` («Raise mortality coverage» → «Add more life
   insurance»), `brain` lo pasa en `visual.data.plain_title` (y `plain_moves` en `all_moves`), la página lo usa en la

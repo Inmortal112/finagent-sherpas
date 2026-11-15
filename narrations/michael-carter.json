@@ -1,16 +1,16 @@
 {
   "model": "deepseek-flash",
   "scenes": {
-    "intro": "Hello, Michael. You are about to see your financial life drawn as your own home. Your overall score is 26 out of 100, which is in the critical band. You earn and save well, but the same dollars are being pulled in several directions at once.",
-    "pillar_savings_and_cash_flow": "Your plumbing, which is savings and cash flow, is broken. It scores 0 out of 25 points. You save well, but your cash flow runs about $8,336 a year short. That leaves less room for the home purchase and vacation you are planning.",
-    "pillar_debt": "Your walls, which are debt, are solid, scoring 8 out of 10 points. Your debt is manageable, but the $3,500 credit card at 20% costs you the most for its size. That card is small, yet paying it off faster would compete with saving for your home.",
-    "pillar_investments": "Your garden, which is investments, is cracked, scoring 11 out of 25 points. You hold $145,000 in invested savings, but your mix of stocks is below the target you chose. That gap means your savings may not grow as fast as you hoped for retirement.",
-    "pillar_liquidity_and_emergency_fund": "Your foundations, which are your emergency fund and cash, are broken, scoring 4 out of 20 points. You are $16,530 short of the cash cushion the plan recommends. Without it, a gap in your income would hit your home purchase and daily life quickly.",
-    "pillar_insurance_and_protection": "Your roof, which is insurance and protection, is broken, scoring 4 out of 20 points. Your life insurance falls $720,000 short of what the plan recommends. You also have no umbrella cover, so a serious claim could reach the savings you are building.",
-    "move_1": "A step your plan already includes is adding umbrella cover. It repairs your roof, and takes your score from 26 to 31. This kind of policy adds a layer of protection if someone makes a claim against you.",
-    "move_2": "Another step is to take less out of your savings each year. This repairs your plumbing and lifts your score from 26 to 62. It means your money lasts longer in retirement.",
-    "move_3": "A further step is to move more of your invested money into stocks. This repairs your garden and takes your score from 26 to 31. More stocks can help your savings grow over time.",
-    "timeline": "Looking ahead, you plan to retire at 58. On the current plan, your savings run out at age 85, before the plan ends. After that, you would rely mostly on Social Security, and some planned spending would go unpaid."
+    "intro": "Hello, Michael. You want two things: to buy a home in 2027 and to retire at 58. Your score is 26 out of 100, which Sherpas calls critical. That sounds hard, but you start from strength: you save $43,000 a year. The problem is that the same dollars are being asked to do too many jobs at once.",
+    "pillar_savings_and_cash_flow": "Your plumbing, your savings and cash flow, is broken. You save well, but each year about $8,336 more goes out than comes in. Retirement, the home and your cash cushion all pull on the same income.",
+    "pillar_debt": "Your walls, your debt, are solid. What you owe is manageable. The one to watch is a $3,500 credit card at 20%: small, but your most expensive debt.",
+    "pillar_investments": "Your garden, your investments, is cracked. You have $145,000 invested, but less of it is in stocks than the growth plan you chose. At 37, that gap can cost you years of growth.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations, your emergency cash, are broken. You have $30,000 set aside, $16,530 short of the minimum cushion we suggest. And the home purchase in January 2027 would use up that cash.",
+    "pillar_insurance_and_protection": "Your roof, your insurance, is broken. Your life cover is $720,000 short of what is recommended, and you have no umbrella policy. If something went wrong, the savings you are building would be exposed.",
+    "move_1": "The easiest step is umbrella insurance: $1M of extra cover in case someone makes a big claim against you. It takes your score from 26 to 31.",
+    "move_2": "The biggest step is about later: plan to take less out of your savings each year once you retire, so they last longer. On its own, it takes your score from 26 to 62, the largest jump of the three.",
+    "move_3": "The third step: put more of your invested money in stocks, closer to the growth mix you chose, moving about $19,900. It takes your score from 26 to 31.",
+    "timeline": "Now the years ahead. You plan to retire at 58. On today's plan, your savings run out at 85, six years before the plan ends at 91. After that you would rely mostly on Social Security. That trade-off is the one to talk through with your advisor."
   },
   "simple": {
     "intro": "Michael, your financial health score is 26 out of 100. Let's walk through your home room by room to see what is strong and what needs work.",
