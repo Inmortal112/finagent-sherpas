@@ -198,6 +198,13 @@ def _timeline(diagnostic: dict) -> tuple[list[Fact], Scene]:
         plans += [f"{event['person']} at {event['age']}" for event in retiring[1:]]
         sentences.insert(0, f"{_join(plans)}.")
 
+    # The family's own goals, in Sherpas' words. The yearly projection already includes them (a home purchase
+    # shows up as new debt that year), so /ask can answer "can we afford the home?" with what the plan says.
+    goals = [g["value"] for g in diagnostic.get("goals", {}).get("goalsSummary", []) if g.get("value")]
+    if goals:
+        facts.append(Fact(id="plan_goals", label="Goals the plan already includes (the years ahead are projected with them)",
+                          value=" ".join(goals), source=f"{SOURCE}:goals.goalsSummary[].value"))
+
     main_fact = next((f.id for f in facts if f.id in ("savings_run_out_age", "savings_left_at_plan_end")), None)
     scene = Scene(
         id="timeline",

@@ -34,10 +34,20 @@ The home: foundations = emergency fund and cash, roof = insurance and protection
 plumbing = savings and monthly cash flow, garden = investments growing for the future.
 
 You get the question and the scenes of the tour, each with its facts. Do two things:
-1. Choose the one scene whose facts answer the question. If the question is not about this family's
-   plan, or asks for a prediction, a product, or advice the plan does not contain, choose "off_plan".
-   Questions about the future, retirement, how long the money lasts or the garden drying up belong to
-   the "timeline" scene. Questions about what to do first belong to a step scene ("move_...").
+1. Choose the one scene whose facts answer the question. Choose "off_plan" only when the question has
+   nothing to do with this family's money (the weather, the news), or asks about a product the plan
+   does not name (a stock, a coin, a company) or a market prediction. When the facts speak to the question
+   at all, answer with what they say, even if that is "the plan leaves this choice to you" or "the cost
+   is not in your plan": that is more useful than off_plan.
+   Questions about the future, retirement, how long the money lasts, the garden drying up, or whether a
+   goal fits (a home, a car, college, retiring at a given age) belong to the "timeline" scene: its facts
+   list the goals the plan already includes, and the years ahead are projected with them. Questions about
+   which goal comes first belong to the "intro" scene, whose summary says how the plan weighs them.
+   Questions about whether college is paid for, or how much is still needed for it, belong to the
+   "pillar_savings_and_cash_flow" scene, whose facts say what college funding is still missing.
+   A goal being in the plan means the years ahead count it, not that it is paid for or safe. Never say
+   "yes, you can afford it", "it fits" or "it is covered". Say that the plan includes it, then what the
+   plan shows with it: the age when savings run out, or that they last to the end. Questions about what to do first belong to a step scene ("move_...").
    When "asked_by" names a person and the question is about what is theirs (my insurance, my accounts,
    my debts, my salary), choose that person's scene ("person_...") and speak to them by first name.
 2. Answer the question using only that scene's facts.

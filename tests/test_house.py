@@ -66,6 +66,17 @@ def test_every_move_has_a_plain_title_without_figures(path):
         assert not any(ch.isdigit() for ch in plain), plain
 
 
+def test_timeline_knows_the_family_goals_so_ask_can_quote_them():
+    from finagent import narrator
+    plan = brain.build(_load("samantha-lewis"))
+    goals = next(f for f in plan.facts if f.id == "plan_goals")
+    assert "Plan to purchase a home for $500,000 in 2030." in goals.value
+    assert "plan_goals" in next(s for s in plan.scenes if s.id == "timeline").fact_ids
+    text = "Your plan already includes the $500,000 home in 2030, and on that plan your savings run out at 73."
+    accepted, rejected = narrator.check(plan, {"timeline": text})
+    assert "timeline" in accepted, rejected
+
+
 def test_plain_title_keeps_an_unknown_title_and_reaches_the_page():
     assert house.plain_title("Something nobody has seen") == "Something nobody has seen"
     plan = brain.build(_load("daniel-emily-johnson"))

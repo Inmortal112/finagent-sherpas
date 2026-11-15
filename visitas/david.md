@@ -3,6 +3,19 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 20:10 — feat/brain-ask-family-question — Claude Code
+- **Hecho:** `/ask` contesta la pregunta de cada familia. `brain`: hecho `plan_goals` en `timeline` (los objetivos
+  tal como los escribe Sherpas; la proyección ya los incluye: la deuda salta el año de la compra). `ask.py`:
+  `off_plan` solo para lo ajeno al plan (tiempo, una acción, una moneda); «¿qué va primero?» → `intro`; «¿está
+  pagada la universidad?» → ahorro; nunca «yes, you can afford it». Un test en `test_house.py`.
+- **Estado:** `bash check.sh` pasa (159). Real (deepseek-flash, ~21 preguntas en total): «Can I afford the second
+  home in 2030?» → «The plan already includes … $500,000 in 2030. On today's projection, your savings run out at 73»;
+  Johnson «What comes first…?» → «Sherpas does not rank them…»; Bitcoin y el tiempo siguen `off_plan`.
+- **Decisiones:** un objetivo en el plan no es un objetivo pagado: la respuesta dice lo que muestra el plan con él.
+- **Bloqueos:** ninguno. Ojo: tras parar un `serve.sh` en segundo plano, uvicorn sigue vivo y ocupa el puerto.
+- **Para Samuel:** he tocado el `SYSTEM_PROMPT` de `ask.py` (paso 1) y `_timeline` en `brain.py`. Contrato igual.
+- **Siguiente:** audio de ElevenLabs de la narración cuando los textos tengan el visto bueno.
+
 ## 2026-11-15 19:20 — feat/brain-narration-plain-couples — Claude Code
 - **Hecho:** igual que con Samantha y Michael, narración completa de los Weah y los Johnson reescrita a mano (13
   escenas cada una). Intro con su pregunta: Weah, a dónde va el efectivo que sobra; Johnson, universidad y retiro
