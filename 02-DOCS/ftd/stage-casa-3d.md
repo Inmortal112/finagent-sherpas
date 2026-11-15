@@ -51,7 +51,9 @@ Fuera (recortado para llegar a tiempo):
 - Modelos descargados, texturas, interior, sombras realistas y efectos de postproceso.
 - Girar la casa con el dedo: en el móvil se pelea con el scroll.
 - Una casa distinta por familia en 3D (como mucho, un color).
-- Etiquetas flotantes sobre cada parte: se usa la leyenda que ya existe.
+- ~~Etiquetas flotantes sobre cada parte~~: al final sí hay una marca por parte, porque en el móvil la leyenda está oculta
+  y sin ella no se distinguía «agrietado» de «roto».
+- Gotas que caen de las tuberías: en 3D están quietas (animarlas obliga a dibujar sin parar; se verá con la cámara).
 - **Intro bajando desde las nubes: aparcada.** Solo cuando todo lo demás esté acabado, y preguntando antes a David.
 
 ## Archivos
@@ -71,7 +73,8 @@ Abierta como archivo suelto (sin servidor), la página cae a 2D: el navegador no
 
 1. **Hecho (15 nov, `feat/stage-house-3d-switch`):** three.js en el repo, interruptor y casa 3D quieta con las 5 partes.
    Falta la primera prueba en iPhone.
-2. **16 nov, tarde:** los cuatro estados, el brillo, el jardín y atenuar las partes sin foco.
+2. **Hecho (15 nov, `feat/stage-house-3d-states`):** los cuatro estados, el brillo, el jardín y atenuar las partes sin foco.
+   Además: una marca redonda por parte (✓ ! ✕, con los colores de la leyenda) y tocar una parte lleva a su capítulo.
 3. **17 nov, mañana:** la cámara (scroll y `turnHome`).
 4. **Solo si la decisión del 17 a las 14:00 es «sí»:** 3D por defecto en el modo completo.
 
