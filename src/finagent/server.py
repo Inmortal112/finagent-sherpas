@@ -140,6 +140,12 @@ async def _answer(diagnostic: dict, plan: Presentation, session: dict, question:
     return {"session_id": session["session_id"], **turn}
 
 
+# Safari (every browser on an iPhone) holds back the start of a streamed reply until about 1 KB has arrived, so
+# the first small event would only show up together with the answer, seconds later. A comment line of that size,
+# which the page ignores, makes it hand over what follows straight away.
+STREAM_PADDING = ":" + " " * 2048 + "\n\n"
+
+
 def _event(name: str, data: dict) -> str:
     return f"event: {name}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
 
@@ -188,6 +194,7 @@ async def ask_stream(family: str = Form(...), question: str | None = Form(None),
     pace = min(max(pace_ms, 0), 400) / 1000
 
     async def events():
+        yield STREAM_PADDING
         yield _event("thinking", {"session_id": prepared[2]["session_id"], "question": prepared[3]})
         turn = await _answer(*prepared)
         yield _event("turn", {key: value for key, value in turn.items() if key != "text"})

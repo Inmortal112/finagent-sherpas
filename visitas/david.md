@@ -3,6 +3,19 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 16:45 — fix/ask-iphone-voice — Claude Code
+- **Hecho:** `/ask/stream` empieza con un comentario de 2 KB (`STREAM_PADDING` en `server.py`) para que Safari entregue
+  el evento `thinking` al momento. En `stage_page.html` y `chat_page.html`: el `click` que sigue a un toque ya no cuenta
+  como segundo toque, y «mantener pulsado» pasa de 0,6 s a 1 s. `tests/test_family_experience.py` ignora el comentario.
+- **Estado:** `bash check.sh` pasa (150 tests). Chromium por el enlace público: toque/toque envía una sola grabación y
+  el texto de la pregunta sale en 1,0 s. **Sin confirmar en iPhone**: son hipótesis a partir de los tiempos de David.
+- **Decisiones:** medido con el iPhone de David: el servidor responde en 0,5-0,8 s, pero él veía «…» varios segundos, y
+  5 de 7 grabaciones llegaron de menos de 1 s y sin palabras (422).
+- **Bloqueos:** ninguno.
+- **Para Samuel:** he tocado `server.py` (4 líneas) y un test tuyo. El relleno es un comentario SSE: la página lo ignora.
+- **Para Raúl:** otra vez el bloque del micrófono de la escena.
+- **Siguiente:** que David repita la prueba en el iPhone.
+
 ## 2026-11-15 16:20 — fix/stage-tap-to-talk — Claude Code
 - **Hecho:** el micrófono pasa de «mantener pulsado» a «tocar para hablar» en `stage_page.html` y `chat_page.html`: un
   toque empieza, otro envía; mantener pulsado (≥0,6 s) y soltar sigue valiendo. Se envía solo a los 30 s. El archivo
