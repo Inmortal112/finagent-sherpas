@@ -907,10 +907,10 @@ function turnHome(part) {
 }
 
 /* ---- tap to talk: one tap starts, the next tap sends. Holding the button while you speak works too. ---- */
-const HOLD_MS = 600;              // a press at least this long is "hold to talk": letting go sends
+const HOLD_MS = 1000;             // a press at least this long is "hold to talk": letting go sends (a slow tap is not)
 const MAX_RECORDING_MS = 30000;   // a forgotten recording sends itself
 const ASK_HINT = $("question").placeholder;
-let recorder = null, chunks = [], starting = false, pressedAt = 0, recordingTimer = 0;
+let recorder = null, chunks = [], starting = false, pressedAt = 0, recordingTimer = 0, byPointer = false;
 const mic = $("mic");
 // Browsers record in different formats (Chrome: webm, iPhone: mp4, Firefox: ogg); the name tells the server which.
 function recordingName(blob) {
@@ -956,13 +956,15 @@ function micPressed() {
   pressedAt = Date.now();
   startTalking();
 }
-mic.addEventListener("pointerdown", (event) => { event.preventDefault(); micPressed(); });
+mic.addEventListener("pointerdown", (event) => { event.preventDefault(); byPointer = true; micPressed(); });
 mic.addEventListener("pointerup", () => {
   // Let go after a long press: that was hold to talk. After a quick tap it keeps listening until the next tap.
   if (recorder && pressedAt && Date.now() - pressedAt >= HOLD_MS) stopTalking();
   pressedAt = 0;
 });
-mic.addEventListener("click", (event) => { if (event.detail === 0) micPressed(); });   // keyboard: Enter or Space
+// A tap or a mouse press has already been handled by pointerdown; the click that follows it must not count as
+// a second tap (it stopped the recording at once on an iPhone). A click on its own is the keyboard.
+mic.addEventListener("click", () => { if (byPointer) byPointer = false; else micPressed(); });
 mic.addEventListener("contextmenu", (event) => event.preventDefault());                // long press on a phone
 
 showSound();

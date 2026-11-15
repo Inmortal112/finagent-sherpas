@@ -113,7 +113,8 @@ def client(tmp_path, monkeypatch):
 
 
 def _events(text: str) -> list[tuple[str, dict]]:
-    blocks = [block for block in text.split("\n\n") if block.strip()]
+    # A block that starts with ":" is a comment (the padding that makes Safari show the first event at once).
+    blocks = [block for block in text.split("\n\n") if block.strip() and not block.startswith(":")]
     return [(block.split("\n")[0].removeprefix("event: "), json.loads(block.split("\n")[1].removeprefix("data: ")))
             for block in blocks]
 
@@ -121,6 +122,7 @@ def _events(text: str) -> list[tuple[str, dict]]:
 def test_the_answer_is_written_little_by_little_and_stays_in_the_history(client):
     reply = client.post("/ask/stream", data={"family": WEAH, "question": "When do we retire?", "pace_ms": 0})
     assert reply.headers["content-type"].startswith("text/event-stream")
+    assert reply.text.startswith(":") and reply.text.index("event: thinking") > 1024, "padding first, for Safari"
     events = _events(reply.text)
     names = [name for name, _ in events]
     assert names[0] == "thinking" and names[1] == "turn" and names[-1] == "done"
