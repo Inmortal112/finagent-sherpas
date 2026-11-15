@@ -1,19 +1,19 @@
 {
   "model": "deepseek-flash",
   "scenes": {
-    "intro": "Daniel and Emily, welcome. What you are looking at is your financial plan drawn as your own home, room by room. Your overall score is 52 out of 100, which Sherpas calls vulnerable, and about $15,032 a year is left over after everything is paid. Let's walk through each part together.",
-    "pillar_savings_and_cash_flow": "Your plumbing is cracked: savings and cash flow score 16 out of 30 points. There is money left over each month, but your ready cash is $87,860 short of what this household should have set aside. A surprise bill would go on a card, and that is where the pipe leaks.",
-    "pillar_debt": "Your walls are solid: debt scores 15 out of 20 points. The mortgage and loans are heavy but you are keeping up with them. The $18,000 card at 24.9% is the costly one, quietly taking more of your month than anything else here.",
-    "pillar_investments": "Your garden is cracked: investments score 8 out of 15 points. Most of what you own is the house itself, and your two retirement accounts hold $250,000 with nothing new going in. The plants are healthy, but they are not being fed, so the years that matter most are slipping by.",
-    "pillar_liquidity_and_emergency_fund": "Your foundations are solid: your emergency fund and ready cash score 13 out of 15 points. You keep $19,000 within reach and nothing sits idle. It is real protection, though it would only carry you a short way if both paychecks stopped at once.",
-    "pillar_insurance_and_protection": "Your roof is broken: insurance and protection scores 0 out of 20 points. There is no umbrella policy, the cover that sits above your home and car insurance, against a recommended $1,000,000. If a serious accident or a large claim came, it would reach into your savings and the income you both earn.",
-    "person_daniel": "Daniel, this is your part of the home. You bring in $160,000 a year, and the card and the student loan sit in your name. Your life cover is $250,000, which leaves a gap of $1,350,000 for Emily and the children if something happened to you.",
-    "person_emily": "Emily, this is your part of the home. You bring in $120,000 a year, and the savings, the college fund and the brokerage account are in your name. Your life cover is $200,000, a gap of $1,000,000 against what the plan suggests, and that gap would land on Daniel and the children.",
-    "move_1": "One step your plan already worked out is adding more life cover, so the roof over this family is properly built. It means $1,166,000 more cover in place. That takes your score from 52 out of 100 to 57 out of 100.",
-    "move_2": "The second step is adding umbrella cover, a layer of protection that sits above your home and car insurance. It puts $1M of that cover on the roof. Your score moves from 52 out of 100 to 56 out of 100.",
-    "move_3": "This step sends the $15,032 a year you have left over into savings instead of letting it sit, so more of it works toward your later years. It repairs the plumbing, and your score rises from 52 out of 100 to 55 out of 100.",
-    "all_moves": "Put the life cover and the umbrella cover in place together and the roof is rebuilt. Your score goes from 52 out of 100 to 60 out of 100. That is the largest single jump the plan holds.",
-    "timeline": "Looking ahead, the plan has Daniel retiring at 62 and Emily at 60, with the debts cleared by 2047. From there, your savings and investments are projected to last to the end of the plan, with $260,272 left. It holds, but only if the saving keeps up in the years before."
+    "intro": "Daniel and Emily, welcome. You are juggling college for Oliver and Sophia and retiring in your early sixties. Your score is 52 out of 100, which Sherpas calls vulnerable. About $15,032 a year is left over, and every one of those needs pulls on it. Sherpas does not rank them: that order is yours to decide together.",
+    "pillar_savings_and_cash_flow": "Your plumbing, your savings and cash flow, is cracked. About $15,032 a year is left over, a thin margin. And nothing is going into your retirement accounts today.",
+    "pillar_debt": "Your walls, your debt, are solid. The mortgage is big, but you keep up with it. The one to watch is the $18,000 card at 24.9%, your most expensive debt by far.",
+    "pillar_investments": "Your garden, your investments, is cracked. Your two retirement accounts hold $250,000, but nothing new is going in, and what you build before you retire matters a great deal.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations, your emergency cash, are marked solid, yet the cushion itself is thin: $19,000, well short of the 8 to 9 months of essentials recommended. If a paycheck stopped, this is what you would lean on first.",
+    "pillar_insurance_and_protection": "Your roof, your insurance, is broken. You have no umbrella policy, and both of your life policies are far below what is recommended. With Oliver and Sophia at home, this is the part of your home most exposed.",
+    "person_daniel": "Daniel, this is your part of the home. You bring in $160,000 a year, and the credit card and a student loan are in your name. Your life cover is $250,000, which is $1,350,000 short of the minimum recommended.",
+    "person_emily": "Emily, this is your part of the home. You bring in $120,000 a year, and the savings, the college fund and the brokerage account are in your name. Your life cover is $200,000, which is $1,000,000 short of the minimum recommended.",
+    "move_1": "The first step: add more life insurance, about $1,166,000 more cover for the family. It takes your score from 52 to 57.",
+    "move_2": "The second step: add $1M of umbrella insurance, extra cover above your home and car insurance. Your score goes from 52 to 56.",
+    "move_3": "The third step: put the $15,032 you have left over each year into retirement savings instead of letting it sit. Your score goes from 52 to 55.",
+    "all_moves": "Do the first two together, the life cover and the umbrella, and your roof is rebuilt. Your score goes from 52 to 60.",
+    "timeline": "Now the years ahead. Daniel plans to retire at 62 and Emily at 60. On today's plan your money lasts, with about $260,272 left at the end. But it leans on your savings for about half of what you will spend, so what you build before you retire matters a great deal."
   },
   "simple": {
     "intro": "Hello Daniel and Emily. You are about to see your financial health score of 52 out of 100, which is called vulnerable.",
