@@ -3,6 +3,19 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 19:20 — feat/brain-narration-plain-couples — Claude Code
+- **Hecho:** igual que con Samantha y Michael, narración completa de los Weah y los Johnson reescrita a mano (13
+  escenas cada una). Intro con su pregunta: Weah, a dónde va el efectivo que sobra; Johnson, universidad y retiro
+  tiran de los mismos $15,032 y Sherpas no los ordena.
+- **Estado:** `bash check.sh` pasa (158). Las 26 escenas aceptadas por `guard`. Palabras: 664 → 463 y 608 → 449;
+  voz Edge: 182 s y 179 s.
+- **Decisiones:** las dos frases dudosas de los Johnson, resueltas: fuera «largest single jump»; la condición del
+  `timeline` ahora es la de Sherpas («leans on your savings for about half»). Cimientos de los Johnson: «marked
+  solid, yet the cushion itself is thin» ($19,000 frente a 8-9 meses), antes decía «real protection».
+- **Bloqueos:** ninguno.
+- **Para Samuel:** 26 textos tuyos más; léelos. Modo sencillo sin tocar en las cuatro familias.
+- **Siguiente:** audio de ElevenLabs de las cuatro familias cuando deis el visto bueno a los textos.
+
 ## 2026-11-15 18:40 — feat/brain-narration-plain — Claude Code
 - **Hecho:** narración completa de Samantha y Michael (las del pitch) reescrita a mano: frases cortas, una idea por
   parte, sin «X out of Y points» (ya está en pantalla), sin decimales ni cifras que no aportan. La intro abre con su
