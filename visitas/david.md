@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 — feat/voice-stt — Claude Code
+- **Hecho:** `voice.transcribe_async(audio, filename)` → `Transcript(text, engine)`: la pregunta hablada a texto con
+  ElevenLabs Scribe (mismas claves que la voz). Acepta webm/ogg/mp3/wav/m4a. Tests y ficha `voz-stt.md`.
+- **Estado:** `bash check.sh` pasa. Real: mp3 y webm/Opus transcritos bien en 0,6–0,8 s.
+- **Decisiones:** nunca lanza error: si falla o hay silencio, `text=None` y la página pide escribir la pregunta.
+- **Bloqueos:** falta probarlo con una grabación real del micrófono en la página.
+- **Para Samuel:** en `/ask` (FastAPI, `UploadFile`): `heard = await voice.transcribe_async(await file.read(), file.filename)`;
+  si `heard.text` es `None`, devuelve un error amable. Luego LLM → guard → `voice.speak_async(answer)`.
+- **Para Raúl:** graba con `MediaRecorder` (webm por defecto) y manda el archivo tal cual a `/ask` como formulario
+  (`multipart/form-data`, campo `file`). No hace falta convertir nada.
+- **Siguiente:** probar el recorrido entero cuando existan `/ask` y el micrófono de la página.
+
 ## 2026-11-15 — feat/voice-speak — Claude Code
 - **Hecho:** `voice.speak_async(text)` / `voice.speak(text)` → `SpokenAudio(audio, duration_s, engine)`: un texto a MP3
   para las respuestas de `/ask`. Mismos motores, respaldos, `to_speech` y caché. Tests y ficha `voz-respuestas.md`.

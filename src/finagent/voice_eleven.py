@@ -1,4 +1,5 @@
-"""ElevenLabs engine for `voice` (VOICE_ENGINE=eleven). Only the standard library: no new dependency.
+"""ElevenLabs for `voice`: speech (VOICE_ENGINE=eleven) and speech to text (Scribe, for spoken questions).
+Only the standard library: no new dependency.
 
 Two ways to reach ElevenLabs, picked from .env:
 - ELEVENLABS_API_KEY set -> straight to api.elevenlabs.io with that (personal, student) account.
@@ -124,6 +125,50 @@ async def synthesize_all(texts: dict[str, str], parallel: int) -> dict[str, byte
 def _post(request: urllib.request.Request) -> bytes:
     with urllib.request.urlopen(request, timeout=TIMEOUT_S) as response:
         return response.read()
+
+
+# --- Speech to text (Scribe) --------------------------------------------------------------------
+# The family's spoken question -> text. Same two routes as speech: personal key, else Sherpas proxy.
+DIRECT_STT_URL = "https://api.elevenlabs.io/v1/speech-to-text"
+DEFAULT_STT_MODEL = "scribe_v2"
+PROXY_STT_MODEL_NAMES = {"scribe_v2": "scribe-v2", "scribe_v1": "scribe-v1"}
+MAX_AUDIO_BYTES = 10 * 1024 * 1024  # a held-down mic button is seconds of audio, never this much
+
+
+def transcribe(audio: bytes, filename: str, language: str = "en") -> str:
+    """Text of one recorded question. Raises on any failure; `voice.transcribe_async` catches it."""
+    if not audio:
+        raise ValueError("empty audio")
+    if len(audio) > MAX_AUDIO_BYTES:
+        raise ValueError(f"audio is {len(audio)} bytes, the limit is {MAX_AUDIO_BYTES}")
+    model = (os.getenv("ELEVEN_STT_MODEL") or DEFAULT_STT_MODEL).strip().replace("-", "_")
+    if key := (os.getenv("ELEVENLABS_API_KEY") or "").strip():
+        fields = {"model_id": model, "language_code": language, "tag_audio_events": "false"}
+        request = _multipart(DIRECT_STT_URL, {"xi-api-key": key}, fields, audio, filename)
+    else:
+        team_key = (os.getenv("TEAM_KEY") or "").strip()
+        proxy = (os.getenv("LLM_PROXY_URL") or "").strip().rstrip("/")
+        if not (team_key and proxy):
+            raise RuntimeError("no ElevenLabs key: set ELEVENLABS_API_KEY, or TEAM_KEY and LLM_PROXY_URL, in .env")
+        base = proxy if proxy.endswith("/v1") else f"{proxy}/v1"
+        fields = {"model": PROXY_STT_MODEL_NAMES.get(model, model), "language": language}
+        request = _multipart(f"{base}/audio/transcriptions", {"Authorization": f"Bearer {team_key}"},
+                             fields, audio, filename)
+    return json.loads(_post(request))["text"].strip()
+
+
+def _multipart(url: str, headers: dict, fields: dict, audio: bytes, filename: str) -> urllib.request.Request:
+    """A multipart/form-data upload (what a browser form sends), built by hand: no extra library."""
+    boundary = "----finagent" + hashlib.sha256(audio[:4096] + filename.encode()).hexdigest()[:24]
+    parts = []
+    for name, value in fields.items():
+        parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"\r\n\r\n{value}\r\n'.encode())
+    safe_name = os.path.basename(filename).replace('"', "") or "question.webm"
+    parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="{safe_name}"\r\n'
+                 f"Content-Type: application/octet-stream\r\n\r\n".encode() + audio + b"\r\n")
+    parts.append(f"--{boundary}--\r\n".encode())
+    headers = {**headers, "Content-Type": f"multipart/form-data; boundary={boundary}"}
+    return urllib.request.Request(url, data=b"".join(parts), headers=headers, method="POST")
 
 
 # --- MP3 duration -------------------------------------------------------------------------------

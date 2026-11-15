@@ -117,6 +117,35 @@ def speak(text: str, language: str = "en") -> SpokenAudio:
     return asyncio.run(speak_async(text, language))
 
 
+@dataclass(frozen=True)
+class Transcript:
+    """What the family said. `text` is None when it could not be transcribed (ask them to type it)."""
+    text: str | None
+    engine: str  # "eleven" or "none"
+
+
+async def transcribe_async(audio: bytes, filename: str = "question.webm", language: str = "en") -> Transcript:
+    """The family's spoken question (any browser recording: webm, ogg, mp3, wav, m4a...) -> text.
+
+    Uses ElevenLabs Scribe with the same keys as the voice (ELEVENLABS_API_KEY, else TEAM_KEY via the
+    proxy). Never raises: on any failure, or if nothing was said, `text` is None. Inside FastAPI:
+        heard = await voice.transcribe_async(await file.read(), file.filename)
+    """
+    _load_env()
+    from finagent import voice_eleven
+    try:
+        text = await asyncio.to_thread(voice_eleven.transcribe, audio, filename, language)
+        return Transcript(text or None, "eleven")
+    except Exception as exc:
+        log.warning("speech to text failed (%s: %s); ask the family to type", type(exc).__name__, exc)
+        return Transcript(None, "none")
+
+
+def transcribe(audio: bytes, filename: str = "question.webm", language: str = "en") -> Transcript:
+    """`transcribe_async` for code that is not async (scripts, tests)."""
+    return asyncio.run(transcribe_async(audio, filename, language))
+
+
 def _load_env() -> None:
     try:
         from dotenv import load_dotenv
