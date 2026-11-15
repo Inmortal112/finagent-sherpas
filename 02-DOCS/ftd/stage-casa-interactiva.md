@@ -38,6 +38,9 @@ lateral con el modelo (`/ask/stream`) y un altavoz calla la voz. Aspecto de la w
 - Elegir paso: `POST /decision` → «Your advisor will see it, and we check in with you in three days.»
 - Abierta como archivo (`file://`): 12 capítulos dibujados; el chat avisa de que hace falta el servidor.
 - Sin comprobar: micrófono real (mantener pulsado), Safari/iPhone real, y cómo suena la narración al deslizar.
+- **verify** (commit `9b603a2`, limpio, ya sobre `origin/main`): `./check.sh` → 139 passed; `compileall src contracts` → ok;
+  servidor en :8010 → `/healthz` `{"ok":true}`; recorrido sin ventana → 12 capítulos, sin errores de consola.
+  HERRAMIENTA-AUSENTE: `ruff` y `mypy` no están en `.venv`. Veredicto: PASA (con lo «sin comprobar» de arriba).
 
 ## Siguiente
 Que Samuel y Raúl la abran (`scripts/serve.sh` → http://localhost:8000) y digan qué cambiar; después PR.
