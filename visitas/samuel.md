@@ -1,5 +1,18 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/stage-house-journey — Claude Code — la escena real
+- **Hecho:** `stage.py` deja de ser un mock: genera `out/index.html` desde `stage_page.html` (nuevo). Nota primero,
+  luego la casa de la familia; al deslizar cambia (cinco partes, los años del plan, cada paso reparando su parte,
+  la casa con todo hecho y «¿por cuál empiezas?»). Botón «?» → chat lateral con `/ask/stream`, voz y micrófono;
+  el altavoz calla la voz. Estilo de sherpaswealth.com. `brain`: `home` en `intro` y `dates` en `timeline`.
+- **Estado:** `./check.sh` pasa (139 tests). Probado en Chromium (escritorio y móvil) con el servidor real.
+- **Decisiones:** los años enseñan el plan actual (no hay proyección «con los pasos hechos»); una parte tocada por
+  un paso se dibuja «reparada». Sin `combined_moves` no se enseña nota conjunta. El contrato no cambia.
+- **Bloqueos:** micrófono y iPhone real sin probar. Sin push todavía: falta el visto bueno de Samuel.
+- **Para Raúl:** he tocado tu etapa (`stage.py` entero y la plantilla nueva) porque Samuel me lo pidió. Es un punto
+  de partida: cámbialo o tíralo si tu versión va por otro lado. Ficha: `02-DOCS/ftd/stage-casa-interactiva.md`.
+- **Para David:** la página pone `audio_path` de cada escena al llegar a su tarjeta y `audio_url` de cada respuesta.
+- **Siguiente:** revisarla entre los tres en el punto de las 21:00.
 ## 2026-11-15 — feat/brain-narration-fast-model — Claude Code
 - **Hecho:** la narración pasa de `gpt-5-mini` a `deepseek-flash` (`narrator.py`, `.env.example`) y las cuatro
   `narrations/<familia>.json` están **regeneradas** con él, en modo completo y sencillo, con las escenas por

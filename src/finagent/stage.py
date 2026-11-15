@@ -1,33 +1,32 @@
-"""Stage 3 (owner: C). Presentation -> something the jury watches.
+"""Stage 3 (owner: C). Presentation -> the page the family (and the jury) sees.
 
-MOCK: one static HTML page. Replace the body with the real player (slides synced
-to audio, avatar, questions); keep the signature.
+One self-contained page (`stage_page.html`) with the `Presentation` inside it: the score first, then the
+family's home, which changes as they scroll (a walk through its five parts, the years of the plan, each
+step of the plan repairing its part). A "?" button opens a chat that asks the backend (`/ask/stream`);
+opened as a plain file, everything but the chat still works.
 """
+import json
 from html import escape
 from pathlib import Path
 
 from contracts.schemas import Presentation
 
+TEMPLATE = Path(__file__).with_name("stage_page.html")
+
+
+def page(presentation: Presentation) -> str:
+    """The whole page as text. The data travels as JSON that cannot close its own <script> tag."""
+    data = json.dumps(presentation.model_dump(), ensure_ascii=False).replace("<", "\\u003c")
+    return (
+        TEMPLATE.read_text(encoding="utf-8")
+        .replace("__LANG__", presentation.language)
+        .replace("__CLIENT_NAME__", escape(presentation.client_name))
+        .replace("__PRESENTATION_JSON__", data)
+    )
+
 
 def render(presentation: Presentation, out_dir: Path) -> Path:
-    facts = {f.id: f for f in presentation.facts}
-    blocks = []
-    for scene in presentation.scenes:
-        fact = facts.get(scene.visual.data.get("fact_id", ""))
-        figure = f"<p class='n'>{escape(str(fact.value))} {escape(fact.unit)}</p>" if fact else ""
-        blocks.append(
-            f"<section><h2>{escape(scene.title)}</h2>{figure}"
-            f"<p>{escape(scene.narration)}</p><small>{scene.duration_s} s</small></section>"
-        )
-    html = (
-        f"<!doctype html><html lang='{presentation.language}'><meta charset='utf-8'>"
-        f"<title>{escape(presentation.client_name)}</title>"
-        "<style>body{font-family:system-ui;max-width:640px;margin:2rem auto;padding:0 1rem}"
-        "section{border:1px solid #ccc;border-radius:8px;padding:1rem;margin:1rem 0}"
-        ".n{font-size:2.5rem;margin:0}</style>"
-        f"<h1>{escape(presentation.client_name)}</h1>{''.join(blocks)}</html>"
-    )
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / "index.html"
-    path.write_text(html, encoding="utf-8")
+    path.write_text(page(presentation), encoding="utf-8")
     return path
