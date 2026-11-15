@@ -1,5 +1,17 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/stage-full-integration — Claude Code — web completa comprobada
+- **Hecho:** unida `feat/stage-full-experience` con `main`. Visita entera recorrida con Playwright (13 pasos, móvil):
+  familia, persona, modo, preocupación, chat con seguimiento, recarga, paso, vuelta a los 3 días y ficha del
+  asesor. Ficha `verificacion-web-completa.md`.
+- **Estado:** `./check.sh` pasa (153 tests). `run --all`: 8 páginas y 92 mp3. Cero errores de consola.
+- **Decisiones:** narración sencilla de `pillar_debt` de los Weah reescrita a mano (era la plantilla). Regla nueva
+  en las instrucciones de `/ask`: un paso hace solo lo que dicen sus hechos.
+- **Bloqueos:** el puerto 8000 lo ocupa un servidor viejo (pid 398275) con el mock antiguo; la web buena está en
+  el 8001. Lo tiene que parar Samuel.
+- **Para David:** cambia un texto más del modo sencillo (`timothy-melanie-weah` `pillar_debt`).
+- **Siguiente:** que Samuel recorra la web. Pendiente: a veces `/ask` dice que pagar $6,800 «salda» la tarjeta.
+
 ## 2026-11-15 — fix/narration-part-score — Claude Code
 - **Hecho:** leídos los textos del pitch (Samantha y Michael, dos modos) y los pasos, personas y línea del tiempo
   de Weah y Johnson. Corregidas dos frases a mano. `guard.part_scored_out_of_100` (nuevo): rechaza «roof score …
@@ -11,6 +23,19 @@
 - **Para David:** cambian dos textos del modo sencillo (`michael-carter` `move_1`, `samantha-lewis`
   `pillar_investments`): su audio guardado ya no vale.
 - **Siguiente:** comprobar la página completa cuando la otra sesión termine `feat/stage-full-experience`.
+
+## 2026-11-15 — feat/stage-full-experience — Claude Code — la experiencia entera en la página
+- **Hecho:** `finagent.run --all` genera `out/families/<familia>/<modo>/` (página y voz) para las cuatro familias en
+  los dos modos. La página (`stage_page.html`) añade: modo «Simply / In full», «I am …» en parejas, «What worries
+  you most?» antes del recorrido, volver a los 3 días con el seguimiento (la parte queda reparada), la nota del
+  asesor en un panel y el chat que recupera sus respuestas al recargar. Guía en inglés: `STAGE.md`.
+- **Estado:** `./check.sh` pasa (152 tests). Recorrido entero probado en Chromium con el servidor real.
+- **Decisiones:** cambiar de familia o de modo navega a su página generada (con voz); si no existe, se redibuja con
+  `/presentation` (sin voz de narración). La sesión, la persona y el sonido se guardan en el navegador.
+- **Bloqueos:** micrófono e iPhone real sin probar. `out/` no está en git: tras clonar, `finagent.run --all`.
+- **Para Raúl:** todo sigue siendo un punto de partida para tu etapa; `STAGE.md` explica cómo está hecho.
+- **Para David:** tus cambios del micrófono (tocar para hablar, iPhone) siguen intactos. La narración usa Edge.
+- **Siguiente:** que Samuel la recorra entera y diga qué cambiar; ensayo con móvil real.
 
 ## 2026-11-15 — feat/stage-integration — Claude Code — primera web comprobada
 - **Hecho:** unidas la casa interactiva (`feat/stage-house-journey`) y `main` (con el resumen del historial en

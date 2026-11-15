@@ -34,7 +34,7 @@ $env:PYTHONPATH="src;."; .venv\Scripts\python -m pytest -q tests; .venv\Scripts\
 Abre `out/index.html`.
 
 **Voz:** funciona sin clave (voces gratuitas). Para la voz de la demo (ElevenLabs), las opciones, el coste y cómo
-usarla desde `/ask`: [`VOICE.md`](VOICE.md).
+usarla desde `/ask`: [`VOICE.md`](VOICE.md). La página (la casa interactiva): [`STAGE.md`](STAGE.md).
 Backend (preguntas en vivo, historial, avisos y cómo compartir un enlace): [`BACKEND.md`](BACKEND.md).
 
 ## Cómo trabajamos
