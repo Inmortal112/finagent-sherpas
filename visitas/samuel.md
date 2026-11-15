@@ -1,5 +1,16 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-16 00:20 — docs/readme-project-overview — Claude Code — README del proyecto
+- **Hecho:** `README.md` reescrito en inglés: qué es Under One Roof, en qué se basa (pilar → parte de la casa) y
+  cómo funciona. Arreglado un test que fallaba de 00:00 a 01:00: `/reminders` usaba el día local y las fechas
+  guardadas son UTC. Ficha `readme-proyecto.md`.
+- **Estado:** `./check.sh` pasa (165). Antes del arreglo fallaba 1 test en `main` a esa hora.
+- **Decisiones:** el README resume y enlaza a `STAGE.md`, `BACKEND.md` y `VOICE.md`; no los repite.
+- **Bloqueos:** el repo sigue privado; lo cambia Samuel.
+- **Para David:** el README en inglés ya está; queda el párrafo de entrega. Revísalo si quieres cambiar algo de la voz.
+- **Para Raúl:** sigue pendiente tu decisión sobre la casa 3D (el 17 a las 14:00).
+- **Siguiente:** hacer público el repo; párrafo de entrega; prueba en iPhone real.
+
 ## 2026-11-15 — feat/stage-full-integration — Claude Code — web completa comprobada
 - **Hecho:** unida `feat/stage-full-experience` con `main`. Visita entera recorrida con Playwright (13 pasos, móvil):
   familia, persona, modo, preocupación, chat con seguimiento, recarga, paso, vuelta a los 3 días y ficha del

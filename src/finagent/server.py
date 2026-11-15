@@ -24,7 +24,7 @@ import os
 import re
 import time
 from collections import deque
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
@@ -247,7 +247,7 @@ def reminders(session_id: str, today: str | None = None) -> dict:
     """What to say when the family comes back. `today` (YYYY-MM-DD) lets the demo travel in time."""
     session = _session(session_id)
     try:
-        day = date.fromisoformat(today) if today else date.today()
+        day = date.fromisoformat(today) if today else datetime.now(timezone.utc).date()
     except ValueError:
         raise HTTPException(422, "today must look like 2026-11-18") from None
     return sessions.reminders(session, _diagnostic(session["family"]), day)

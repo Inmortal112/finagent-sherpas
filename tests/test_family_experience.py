@@ -1,6 +1,6 @@
 """Per person, two modes, the worry, reminders and the answer written little by little. No network."""
 import json
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -152,7 +152,7 @@ def test_the_worry_is_asked_first_and_reaches_the_advisor(client):
 
 def test_reminders_check_in_on_day_3_and_announce_the_plan_dates(client):
     session_id = client.post("/decision", json={"family": WEAH, "scene_id": "move_1"}).json()["session_id"]
-    today = date.today()
+    today = datetime.now(timezone.utc).date()
 
     def due(day):  # plan dates depend on the day the test runs: they are checked below with fixed dates
         reply = client.get("/reminders", params={"session_id": session_id, "today": day.isoformat()}).json()
@@ -189,7 +189,7 @@ def test_not_yet_with_what_got_in_the_way_reaches_the_advisor(client):
 
 def test_a_visit_without_a_step_gets_a_nudge_and_no_follow_up(client):
     session_id = client.post("/ask", data={"family": WEAH, "question": "When do we retire?"}).json()["session_id"]
-    later = (date.today() + timedelta(days=4)).isoformat()
+    later = (datetime.now(timezone.utc).date() + timedelta(days=4)).isoformat()
     due = client.get("/reminders", params={"session_id": session_id, "today": later}).json()["due"]
     assert [d["kind"] for d in due if d["kind"] != "plan_date"] == ["no_step_yet"]
     assert client.post("/follow-up", json={"session_id": session_id, "done": True}).status_code == 422
