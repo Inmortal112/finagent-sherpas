@@ -25,7 +25,7 @@ una pareja, la preocupación antes del recorrido, la vuelta a los 3 días y la n
 - [x] 6. El chat recupera el historial al recargar (`/history`) → recargar y ver las respuestas.
 - [x] 7. Volver a los 3 días (`/reminders?today=`, `/follow-up`) → la parte queda reparada.
 - [x] 8. Nota del asesor (`/advisor-note`) en un panel → captura.
-- [~] 9. `STAGE.md` en inglés, entrada en `visitas/samuel.md`, `verify`, servidor arrancado para Samuel.
+- [x] 9. `STAGE.md` en inglés, entrada en `visitas/samuel.md`, `verify`, servidor arrancado para Samuel.
 
 ## Evidencia
 - 1: `finagent.run --all` (Edge, 2 min) → 8 páginas en `out/families/<familia>/<modo>/`, 92 mp3, ninguno vacío.
@@ -38,10 +38,12 @@ una pareja, la preocupación antes del recorrido, la vuelta a los 3 días y la n
   - recargar: 5 mensajes recuperados, paso elegido, tejado reparado, persona Melanie;
   - «Simply» lleva a `/simple/`, `body.simple`, letra grande y menos datos.
 - `./check.sh` → 152 passed (2 tests nuevos de la escena).
-- 9: `STAGE.md` escrito y enlazado en el README. Servidor: ver *Siguiente*.
+- 9: `STAGE.md` escrito y enlazado en el README. Servidor en :8001 → `/healthz` ok, página de Samantha, página
+  sencilla de Weah 200, `intro.mp3` de Michael 200 (92 KB). El :8000 lo ocupa un servidor viejo (pid 398275) que
+  sirve el mock antiguo y que no se me permitió parar.
 - Sin comprobar: micrófono, iPhone real, cómo suena la voz Edge de punta a punta, modo sencillo en móvil.
 - Visto y no tocado (es del cerebro): en modo sencillo algunas escenas de Weah usan la frase de plantilla
   («Your walls are cracked. Debt score 12 out of 20 points.»), no un texto propio.
 
 ## Siguiente
-Samuel la prueba en http://localhost:8000 (servidor arrancado desde este worktree). La otra sesión une y sube la rama.
+Samuel la prueba en http://localhost:8001 (servidor arrancado desde este worktree) y para el servidor viejo del 8000. La otra sesión une y sube la rama.
