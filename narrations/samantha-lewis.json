@@ -1,16 +1,16 @@
 {
   "model": "deepseek-flash",
   "scenes": {
-    "intro": "Hello, Samantha. Your financial health score is 82 out of 100, and Sherpas calls that strong. Over the next few minutes you'll see your plan drawn as your own home, from the foundations to the roof. We'll walk through each part and what it means for you, Ethan and Ava.",
-    "pillar_savings_and_cash_flow": "Your plumbing is solid. Savings and cash flow scores 22 out of 30 points. You save 24% of your income, a strong habit, but your outgoings run about $6,418 a year short, and none of that saving goes into retirement accounts yet. In practice, your everyday cash has to cover that gap each year.",
-    "pillar_debt": "Your walls are solid. Debt scores 20 out of 20 points. You carry no debt, and your home is owned outright with $900,000 of equity. No loan payments pull at your monthly cash. Even so, only $750 of your cash sits above both your reserve and your goals coming up soon, so there is little slack.",
-    "pillar_investments": "Your garden is cracked, and investments score 10 out of 15 points. Most of your wealth is your home, about 65% of it, and a home is not easy to spend. Your invested savings sit at 85.1% in stocks, a little above the 80.0% you aim for. College and retirement both have to come out of the same everyday cash.",
-    "pillar_liquidity_and_emergency_fund": "Your foundations are solid, and your emergency fund scores 15 out of 15 points. Your cash covers 7.9 months of essential expenses, more than the 5 to 6 months suggested. Once you set aside the goals coming up soon, that cover falls to 6.1 months, so a surprise bill would eat into it faster than you might think.",
-    "pillar_insurance_and_protection": "Your roof is solid, and insurance and protection scores 14 out of 20 points. You hold $2,000,000 of term life cover, within the range recommended for your household, protecting Ethan and Ava if your income ever stopped. Underneath your umbrella, the cover behind your home and auto policies shows as unconfirmed, so a large claim could reach your own money.",
-    "move_1": "A step your plan already worked out: adding homeowners insurance on your main home, which closes a gap in your cover. It repairs your roof and lifts your score from 82 out of 100 to 84 out of 100.",
-    "move_2": "Another step in the plan: spreading out the money you hold in a single fund, trimming it from 39% to 25% of your investments. That repairs your garden and moves your score from 82 out of 100 to 83 out of 100.",
-    "move_3": "The plan also shifts your mix from 85% in stocks to 80%, moving about $17,100. That repairs your garden, lifting your score from 82 out of 100 to 83 out of 100.",
-    "timeline": "Now look ahead, Samantha. You plan to retire at 65, and on this plan your savings and investments run out at age 73, with $1,448,673 of planned spending unpaid by the end. The plan shows no debt from 2059. Those later years are where the pressure sits, since college for Ethan and Ava competes for the same dollars."
+    "intro": "Hello, Samantha. Your score is 82 out of 100, and Sherpas calls that strong. And yet, on today's plan, your savings run out when you are 73. Let's walk through your home, part by part, and see where that gap comes from.",
+    "pillar_savings_and_cash_flow": "Your plumbing, your savings, is solid. You save 24% of your income, a strong habit. But none of it goes into a retirement account or a college fund yet, and each year about $6,418 more goes out than comes in.",
+    "pillar_debt": "Your walls, your debt, are solid. You owe nothing, and your home is fully paid off. That leaves your income free for college and for retirement.",
+    "pillar_investments": "Your garden, your investments, is cracked. About 65% of what you own is your home, and a home is not money you can easily spend. Your invested savings also lean a little more on stocks than you planned.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations, your emergency cash, are solid: $80,000, more than the 5 to 6 months of essentials we suggest. But once the vacation and Ethan's college payment are paid, only $750 is left above that cushion. It is sound today, with little room to spare.",
+    "pillar_insurance_and_protection": "Your roof, your insurance, is solid. Your $2,000,000 of life cover protects Ethan and Ava if your income ever stopped. One thing to check: your home and your car show as uninsured in the data, so that cover is worth confirming.",
+    "move_1": "The first step is the simplest: make sure your home is insured. It closes a gap in your cover and lifts your score from 82 to 84.",
+    "move_2": "The second step: about 39% of your investments sit in a single fund. Bringing that down to 25% spreads the risk. Your score goes from 82 to 83.",
+    "move_3": "The third step is a small one: move your investments from 85% in stocks to 80%, the mix you are aiming for. Your score goes from 82 to 83.",
+    "timeline": "Now the years ahead. You plan to retire at 65. On today's plan, your savings run out at 73, and some of what you planned to spend would go unpaid. That is the real question in your plan: not how much you save, but where those savings go."
   },
   "simple": {
     "intro": "Samantha, this is your money plan shown as your home. Your score is 82 out of 100, which is strong.",
