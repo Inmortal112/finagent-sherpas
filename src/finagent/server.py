@@ -294,5 +294,8 @@ def chat_page() -> FileResponse:
     return FileResponse(Path(__file__).with_name("chat_page.html"), media_type="text/html")
 
 
+# What the page loads when asked for the home in 3D (?house=3d): house3d.js and three.js, kept in the repo.
+app.mount("/web", StaticFiles(directory=Path(__file__).with_name("web")), name="web")
+
 if (ROOT / "out").is_dir():  # last, so it never hides the routes above
     app.mount("/", StaticFiles(directory=ROOT / "out", html=True), name="page")

@@ -64,3 +64,19 @@ def test_the_page_offers_what_the_backend_can_do():
     page = stage.page(brain.build(_load(CASES[0])))
     for route in ("/ask/stream", "/worry", "/decision", "/reminders", "/follow-up", "/advisor-note", "/history"):
         assert route in page, f"the page never calls {route}"
+
+
+def test_the_3d_home_is_served_from_the_repo_and_only_when_asked_for():
+    from fastapi.testclient import TestClient
+    from finagent import server
+
+    client = TestClient(server.app)
+    home = client.get("/web/house3d.js")
+    assert home.status_code == 200 and "javascript" in home.headers["content-type"]
+    assert './vendor/three.module.min.js' in home.text, "three.js comes from the repo, never from the internet"
+    assert "http://" not in home.text and "https://" not in home.text
+    assert client.get("/web/vendor/three.module.min.js").status_code == 200
+
+    page = stage.page(brain.build(_load(CASES[0])))
+    assert 'id="house"' in page and 'id="house3d" hidden' in page, "the drawn home stays and the 3D one starts hidden"
+    assert 'wanted !== "3d" || MODE === "simple"' in page, "3D only with ?house=3d and never in the simple mode"

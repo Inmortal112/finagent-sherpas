@@ -58,16 +58,19 @@ Fuera (recortado para llegar a tiempo):
 
 | Archivo | Cambio |
 |---|---|
-| `src/finagent/vendor/three.module.min.js` | Nuevo. three.js (licencia MIT, se guarda con su licencia) |
-| `src/finagent/house3d.js` | Nuevo. La casa 3D, aparte para no engordar `stage_page.html` |
-| `src/finagent/stage.py` | Copia los dos archivos anteriores a `out/vendor/` |
-| `src/finagent/stage_page.html` | Unas 20 líneas: con `?house=3d` carga `house3d.js`; al final de `paint()` le pasa estados, foco y `lush` |
+| `src/finagent/web/vendor/three.module.min.js` | Nuevo. three.js 0.170.0 del paquete oficial de npm (un solo archivo, 692 KB; licencia MIT en `three.LICENSE`) |
+| `src/finagent/web/house3d.js` | Nuevo. La casa 3D, aparte para no engordar `stage_page.html` |
+| `src/finagent/server.py` | Una línea: sirve `src/finagent/web/` en `/web` (así no hay que copiar nada a cada carpeta de `out/`) |
+| `src/finagent/stage_page.html` | Unas 35 líneas: con `?house=3d` carga `/web/house3d.js`; al final de `paint()` le pasa estados, foco y `lush` |
+
+`?house=3d` se recuerda mientras la pestaña siga abierta (para que sobreviva al cambiar de familia); `?house=2d` lo apaga.
 
 Abierta como archivo suelto (sin servidor), la página cae a 2D: el navegador no deja cargar módulos así.
 
 ## Orden: PRs pequeños
 
-1. **16 nov, mañana:** three.js en el repo, interruptor y casa 3D quieta con las 5 partes. Primera prueba en iPhone.
+1. **Hecho (15 nov, `feat/stage-house-3d-switch`):** three.js en el repo, interruptor y casa 3D quieta con las 5 partes.
+   Falta la primera prueba en iPhone.
 2. **16 nov, tarde:** los cuatro estados, el brillo, el jardín y atenuar las partes sin foco.
 3. **17 nov, mañana:** la cámara (scroll y `turnHome`).
 4. **Solo si la decisión del 17 a las 14:00 es «sí»:** 3D por defecto en el modo completo.

@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 23:17 — feat/stage-house-3d-switch — Claude Code
+- **Hecho:** primer paso de la casa 3D, solo con `?house=3d` (la página por defecto no cambia). `web/house3d.js`: casa
+  quieta con las 5 partes, hecha con formas simples. `web/vendor/three.module.min.js`: three.js 0.170.0 dentro del repo
+  (692 KB, MIT). `stage_page.html`: `tryHouse3d()` y una llamada al final de `paint()`. Un test en `test_stage.py`.
+- **Estado:** `bash check.sh` pasa (165). Navegador, 375×812 y 1280×800: se ve la casa 3D; `?house=2d` vuelve al dibujo;
+  si se pierde el contexto gráfico vuelve sola al dibujo. Consola sin errores de la página. **iPhone real sin probar.**
+- **Decisiones:** nunca 3D en «Simply» ni con «reducir movimiento». Se dibuja solo cuando algo cambia (batería).
+- **Bloqueos:** ninguno. Las páginas de `out/families/` son de antes: para ver ahí el 3D, `finagent.run --all`.
+- **Para Raúl:** he tocado `stage_page.html` (`paint()`, arranque y un `<div id="house3d">` junto al SVG).
+- **Para Samuel:** una línea en `server.py`: `app.mount("/web", …)` para servir `src/finagent/web/`.
+- **Siguiente:** que David la vea en su iPhone; PR 2: estados, brillo, jardín y foco en 3D.
+
 ## 2026-11-15 23:40 — docs/stage-house-3d-plan — Claude Code
 - **Hecho:** solo un plan, sin código: `02-DOCS/ftd/stage-casa-3d.md`. La casa pasa a 3D con la opción intermedia:
   casa 3D (three.js) + cámara que se desliza de parte en parte con el scroll y con `turnHome`. El resto de la
