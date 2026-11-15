@@ -77,3 +77,13 @@ def test_every_saved_scene_in_the_repo_is_accepted(path):
     assert set(accepted) == {s.id for s in template.scenes}, "every scene has its own narration"
     built = brain.build(diagnostic)
     assert {s.id: s.narration for s in built.scenes} == accepted
+
+
+def test_a_part_of_the_home_cannot_score_out_of_100():
+    diagnostic = json.loads((ROOT / "cases" / "michael-carter" / "financial-health.json").read_text(encoding="utf-8"))
+    template = brain.build_template(diagnostic)
+    wrong = "Your plan adds umbrella cover. It lifts your roof score to 31 out of 100."
+    right = "Your plan adds umbrella cover. It repairs your roof and lifts your score to 31 out of 100."
+    accepted, rejected = narrator.check(template, {"move_1": wrong})
+    assert not accepted and "only the overall score is out of 100" in rejected["move_1"]
+    assert narrator.check(template, {"move_1": right})[0] == {"move_1": right}
