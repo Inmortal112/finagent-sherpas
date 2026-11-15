@@ -1,27 +1,27 @@
 {
-  "model": "gpt-5-mini",
+  "model": "deepseek-flash",
   "scenes": {
-    "intro": "Hello Michael. You're about to see your financial health as Sherpas mapped it to your home. Your financial health score is 26 out of 100 and Sherpas call that critical. You hold $30,000 of cash, so near-term needs like the planned home purchase could leave you short.",
-    "pillar_savings_and_cash_flow": "Your plumbing is broken. Savings and cash flow score is 0 out of 25. You have $30,000 in cash, so the January 2027 home purchase would leave you with no cushion for bills.",
-    "pillar_debt": "Your walls are solid. Debt score is 8 out of 10. The $3,500 credit card at 20% is the most expensive piece, but overall your debts are manageable and monthly payments are not the main strain on your budget.",
-    "pillar_investments": "Your garden is cracked. Investments score is 11 out of 25. You have $145,000 in invested savings, so how that money is placed toward growth will affect your ability to reach retirement targets.",
-    "pillar_liquidity_and_emergency_fund": "Your foundations are broken. Liquidity and emergency fund score is 4 out of 20. You have $30,000 of cash, so a loss of income or the January 2027 home purchase could leave you unable to cover monthly bills.",
-    "pillar_insurance_and_protection": "Your roof is broken. Insurance and protection score is 4 out of 20. You have $180,000 of life insurance, well below recommended levels, and with no umbrella policy a large liability could force you to use your savings to cover debts.",
-    "move_1": "This step strengthens your roof and raises your score from 26 out of 100 to 31 out of 100. It means buying $1M of umbrella protection so a big liability would not sweep away your savings.",
-    "move_2": "This step repairs your plumbing and raises your score from 26 out of 100 to 62 out of 100. It cuts withdrawals to $10,300 a year, which slows how fast savings are used and stretches your money in retirement.",
-    "move_3": "This step improves your garden and lifts your score from 26 out of 100 to 31 out of 100. It moves about $19,900 of your invested savings toward more stocks so that your invested pool can do more work for retirement.",
-    "timeline": "You plan to retire at 58. Debts are paid off by 2057 and savings and investments run out at 85, which means about $32,439 of planned spending would go unpaid by then."
+    "intro": "Hello, Michael. You are about to see your financial life drawn as your own home. Your overall score is 26 out of 100, which is in the critical band. You earn and save well, but the same dollars are being pulled in several directions at once.",
+    "pillar_savings_and_cash_flow": "Your plumbing, which is savings and cash flow, is broken. It scores 0 out of 25 points. You save well, but your cash flow runs about $8,336 a year short. That leaves less room for the home purchase and vacation you are planning.",
+    "pillar_debt": "Your walls, which are debt, are solid, scoring 8 out of 10 points. Your debt is manageable, but the $3,500 credit card at 20% costs you the most for its size. That card is small, yet paying it off faster would compete with saving for your home.",
+    "pillar_investments": "Your garden, which is investments, is cracked, scoring 11 out of 25 points. You hold $145,000 in invested savings, but your mix of stocks is below the target you chose. That gap means your savings may not grow as fast as you hoped for retirement.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations, which are your emergency fund and cash, are broken, scoring 4 out of 20 points. You are $16,530 short of the cash cushion the plan recommends. Without it, a gap in your income would hit your home purchase and daily life quickly.",
+    "pillar_insurance_and_protection": "Your roof, which is insurance and protection, is broken, scoring 4 out of 20 points. Your life insurance falls $720,000 short of what the plan recommends. You also have no umbrella cover, so a serious claim could reach the savings you are building.",
+    "move_1": "A step your plan already includes is adding umbrella cover. It repairs your roof, and takes your score from 26 to 31. This kind of policy adds a layer of protection if someone makes a claim against you.",
+    "move_2": "Another step is to take less out of your savings each year. This repairs your plumbing and lifts your score from 26 to 62. It means your money lasts longer in retirement.",
+    "move_3": "A further step is to move more of your invested money into stocks. This repairs your garden and takes your score from 26 to 31. More stocks can help your savings grow over time.",
+    "timeline": "Looking ahead, you plan to retire at 58. On the current plan, your savings run out at age 85, before the plan ends. After that, you would rely mostly on Social Security, and some planned spending would go unpaid."
   },
   "simple": {
-    "intro": "Hello Michael, this shows your financial health as your home. Your score is 26 out of 100, which Sherpas calls critical.",
-    "pillar_savings_and_cash_flow": "Your plumbing is broken. Your score is 0 out of 25, so pay is stretched and cash won't cover the coming home and vacation.",
-    "pillar_debt": "Your walls are solid. Your debt score is 8 out of 10, so debts are manageable and the credit card is the costly piece.",
-    "pillar_investments": "Your garden is cracked. Your investments score is 11 out of 25, with most wealth invested but the stock mix short of your growth target.",
-    "pillar_liquidity_and_emergency_fund": "Your foundations are broken. Your emergency fund score is 4 out of 20, so your cash cushion is lean and could not cover an income interruption.",
-    "pillar_insurance_and_protection": "Your roof is broken. Your protection score is 4 out of 20, so life cover and umbrella are far below what's needed and savings are exposed.",
-    "move_1": "This step adds broad liability cover to protect against big claims. It repairs the roof and raises your score to 31 out of 100.",
-    "move_2": "This step cuts what you withdraw from savings each year to ease cash flow pressure. It repairs the plumbing and raises your score to 62 out of 100.",
-    "move_3": "This step shifts more of your invested savings toward growth to match your plan. It repairs the garden and raises your score to 31 out of 100.",
-    "timeline": "You plan to retire as scheduled and reach debt freedom before your money runs out. Your savings and investments run out at age 85."
+    "intro": "Michael, your financial health score is 26 out of 100. Let's walk through your home room by room to see what is strong and what needs work.",
+    "pillar_savings_and_cash_flow": "Your plumbing is savings and cash flow, and it is broken. It scores 0 out of 25, so there is little spare cash each month.",
+    "pillar_debt": "Your walls are debt, and they are solid. They score 8 out of 10. Your debts are small compared to your income.",
+    "pillar_investments": "Your garden is investments, and it is cracked. It scores 11 out of 25. Most of your money is there, so it matters.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations are your emergency fund and cash, and they are broken. They score 4 out of 20. You have less set aside than is safe.",
+    "pillar_insurance_and_protection": "Your roof is insurance and protection, and it is broken. It scores 4 out of 20. You have little cover if something goes wrong.",
+    "move_1": "Your plan adds umbrella cover, which protects you if someone sues you. It lifts your roof score to 31 out of 100.",
+    "move_2": "Your plan takes less money out of savings each year. This repairs your plumbing and lifts the score to 62 out of 100.",
+    "move_3": "Your plan moves more of your long term money into stocks. This repairs your garden and lifts the score to 31 out of 100.",
+    "timeline": "Your savings run out at age 85 on this plan. Your debts get paid off along the way, but later spending goes unpaid."
   }
 }

@@ -1,5 +1,30 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/brain-narration-fast-model — Claude Code
+- **Hecho:** la narración pasa de `gpt-5-mini` a `deepseek-flash` (`narrator.py`, `.env.example`) y las cuatro
+  `narrations/<familia>.json` están **regeneradas** con él, en modo completo y sencillo, con las escenas por
+  persona. Ficha `brain-narracion-modelo-rapido.md`.
+- **Estado:** `./check.sh` pasa (132 tests). Las 92 escenas aceptadas por `guard`, ninguna en plantilla.
+- **Decisiones:** un solo modelo de texto en todo el producto (el mismo que `/ask`). Generar no fue más rápido
+  (7-8 min por tanda) y costó $0,21 entre las dos tandas; gasto total del equipo: $0,41 de $50. Una regeneración
+  completa apunta ahora en el JSON el modelo que la escribió.
+- **Bloqueos:** ninguno. Nadie ha leído ni escuchado aún los textos nuevos.
+- **Para David:** los textos de las cuatro familias han cambiado: los mp3 guardados en caché ya no valen y
+  ElevenLabs volverá a cobrar esos caracteres. Espera a que Samuel dé el visto bueno a los textos antes de generar.
+- **Para Raúl:** los ids de escena no cambian; solo el texto de `narration`.
+- **Siguiente:** Samuel revisa los textos de Samantha y Michael.
+
+## 2026-11-15 — feat/brain-narration-fast-model — Claude Code — documento de escalabilidad
+- **Hecho:** `escalabilidad.md` (raíz): cómo crece el producto dando más contexto al modelo. Forma elegida por
+  Samuel: **resumen del historial**. Ficha `02-DOCS/ftd/escalabilidad.md`. Solo documentación; no hay código nuevo.
+- **Estado:** `./check.sh` pasa (110 tests).
+- **Decisiones:** hoy `/ask` guarda el historial pero no se lo envía al modelo (cada pregunta es independiente).
+  La propuesta añade a cada pregunta un resumen corto de la sesión, **sin cifras** (para no tocar `guard`), y el
+  último turno literal. Primero un resumen hecho con código (`advisor_note`); con el modelo solo si se queda corto.
+- **Bloqueos:** ninguno. Falta decidir si se construye antes de la congelación (18 nov, 18:00).
+- **Para David y Raúl:** leedlo y decid si lo veis útil para la demo. No cambia la forma de `/ask` para la página.
+- **Siguiente:** si se aprueba, issue y rama `feat/brain-ask-summary`.
+
 ## 2026-11-15 — feat/voice-stt-fallback — Claude Code
 - **Hecho:** `voice_stt_model.py` (nuevo) y `voice.transcribe_async`: si Scribe falla, la grabación la transcribe
   `gemini-3.5-flash-lite` por el proxy. Tests en `tests/test_voice_stt.py`.

@@ -25,7 +25,7 @@ log = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[2]
 NARRATIONS_DIR = ROOT / "narrations"
-DEFAULT_MODEL = "gpt-5-mini"
+DEFAULT_MODEL = "deepseek-flash"
 
 SYSTEM_PROMPT = """\
 You write what a calm, warm voice says while a family looks at their financial plan drawn as their own home.
@@ -257,7 +257,10 @@ def main(args: list[str]) -> int:
         result = generate(template, diagnostic, mode=mode, only=only)
         texts = {**already, **result["scenes"]}
         saved[MODE_KEY[mode]] = {scene.id: texts[scene.id] for scene in template.scenes if scene.id in texts}
-        saved.setdefault("model", result["model"])
+        if missing_only:
+            saved.setdefault("model", result["model"])  # a top-up keeps the name of the model that wrote most of it
+        else:
+            saved["model"] = result["model"]            # everything in this mode was rewritten
         saved.pop("template_kept", None), saved.pop("usage", None)
         path.write_text(json.dumps(saved, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         kept += len(result["template_kept"])
