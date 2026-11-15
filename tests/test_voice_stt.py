@@ -5,7 +5,7 @@ import urllib.error
 
 import pytest
 
-from finagent import voice, voice_eleven
+from finagent import voice, voice_eleven, voice_stt_model
 
 RECORDING = b"\x1aE\xdf\xa3" + bytes(2_000)  # starts like a browser webm recording; content does not matter
 
@@ -88,3 +88,57 @@ def test_can_be_awaited_inside_a_running_event_loop(scribe):
         return await voice.transcribe_async(RECORDING)
 
     assert asyncio.run(route()).text == "What does my roof mean?"
+
+
+# --- fallback: a model that listens, through the proxy, when Scribe fails ---------------------------------------
+
+@pytest.fixture
+def listening_model(scribe, monkeypatch):
+    """Scribe refuses (as the proxy did on 2026-11-15) and the proxy keys are set."""
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "")
+    monkeypatch.setenv("TEAM_KEY", "team-test-key")
+    monkeypatch.setenv("LLM_PROXY_URL", "https://proxy.example")
+    monkeypatch.setenv("STT_FALLBACK_MODEL", "")
+
+    def refuse(request):
+        raise urllib.error.HTTPError(request.full_url, 401, "Invalid API key", {}, None)
+
+    monkeypatch.setattr(voice_eleven, "_post", refuse)
+    calls, reply = [], {"text": "Why does my garden dry up?"}
+
+    def fake_post(request):
+        calls.append(request)
+        return json.dumps({"choices": [{"message": {"content": reply["text"]}}]}).encode()
+
+    monkeypatch.setattr(voice_stt_model, "_post", fake_post)
+    return calls, reply
+
+
+def test_when_scribe_fails_the_listening_model_transcribes(listening_model):
+    calls, _ = listening_model
+    heard = voice.transcribe(RECORDING, "question.webm")
+    assert heard == voice.Transcript("Why does my garden dry up?", "model")
+    request = calls[0]
+    assert request.full_url == "https://proxy.example/v1/chat/completions"
+    assert request.get_header("Authorization") == "Bearer team-test-key"
+    body = json.loads(request.data)
+    assert body["model"] == "gemini-3.5-flash-lite"
+    assert body["messages"][0]["content"][1]["file"]["file_data"].startswith("data:audio/webm;base64,")
+
+
+@pytest.mark.parametrize("said", ["NONE", "none.", "  "])
+def test_the_listening_model_hears_silence_as_no_text(listening_model, said):
+    listening_model[1]["text"] = said
+    assert voice.transcribe(RECORDING).text is None
+
+
+def test_the_listening_model_is_not_asked_for_an_empty_recording(listening_model):
+    assert voice.transcribe(b"").text is None and not listening_model[0]
+
+
+def test_if_the_listening_model_fails_too_the_family_types(listening_model, monkeypatch):
+    def refuse(request):
+        raise urllib.error.URLError("no network")
+
+    monkeypatch.setattr(voice_stt_model, "_post", refuse)
+    assert voice.transcribe(RECORDING) == voice.Transcript(None, "none")

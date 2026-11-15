@@ -86,6 +86,8 @@ within 90 days, said as month and year. `today` lets a demo jump ahead.
 - Models: `ASK_MODEL=deepseek-flash`, fallback `ASK_FALLBACK_MODEL=gemini-3.5-flash-lite` after 8 s. Measured:
   an answer in 2.6 to 4.4 s, well under a cent each. `gpt-5-mini` took 11 to 28 s, so it only writes the narration.
 - The answer does not wait for the voice: the mp3 is made when the page asks for it.
+- Spoken questions: ElevenLabs Scribe first; if it fails, `gemini-3.5-flash-lite` listens to the recording through
+  the proxy (`voice_stt_model.py`, 1.3 to 2.4 s). A whole spoken question was answered in 4.9 s.
 
 ## Files and tests
 

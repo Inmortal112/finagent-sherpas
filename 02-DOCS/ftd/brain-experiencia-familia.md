@@ -38,7 +38,7 @@ suena y releerla después.
 - **Enlace público temporal** por túnel SSH (sin instalar nada): vive mientras el ordenador esté encendido.
 
 ## Checklist
-- [ ] 1 · Pregunta hablada real → transcrita y respondida. **No conseguido:** ver Evidencia (clave de ElevenLabs del proxy inválida).
+- [x] 1 · Pregunta hablada real → transcrita y respondida (con el modelo de respaldo; ver «Añadido después»).
 - [x] 4 (parte) · Servidor accesible por la red local; `scripts/serve.sh`, `scripts/share.sh` y `Dockerfile` escritos.
 - [ ] 4 (parte) · Enlace público abierto y `Dockerfile` construido. **Sin hacer:** ver Evidencia.
 - [x] 5 · Escena por persona en Weah y Johnson; `/ask` con `person` → tests y prueba real.
@@ -77,6 +77,18 @@ suena y releerla después.
 - Gasto (`/key/info`): $0.31 de $50.
 - **verify (15 nov, sobre `3002269` + cambios sin commit):** `./check.sh` → `126 passed`, `OK`; `compileall src
   contracts tests` → sin errores. `ruff` y `mypy`: HERRAMIENTA-AUSENTE. Veredicto: PASA para lo marcado; 1 y parte del 4, pendientes.
+
+## Añadido después (15 nov, rama `feat/voice-stt-fallback`): punto 1 conseguido
+- `voice_stt_model.py`: si Scribe falla, transcribe `gemini-3.5-flash-lite` por el proxy (acepta el webm del
+  navegador tal cual). `voice.transcribe_async` lo usa de respaldo; sin `TEAM_KEY` no se intenta. Es la etapa de
+  David: anotado en `visitas/samuel.md`.
+- Medido antes de escribirlo: wav 2,4 s, webm 1,3 s, mp3 1,3 s, las tres «Why does my garden dry up?».
+  `gpt-5-mini` y `deepseek-flash` no aceptan audio (404).
+- Servidor real, grabación webm/Opus → `/ask`: `heard_from: voice`, pregunta transcrita bien, `timeline` / `garden`,
+  200 en 4,9 s. → `/ask/stream` (Weah, Timothy): «How much life insurance do I have, and is it enough?» →
+  `person_timothy`, 28 trozos. Silencio de 2 s → 422 «I could not hear the question…».
+- `./check.sh` → `132 passed`.
+- Límite: las grabaciones son voz sintetizada (edge-tts) pasada a webm con ffmpeg, no un micrófono de verdad.
 
 ## Siguiente
 Samuel: lanzar `scripts/share.sh` para el enlace público, avisar a los mentores de la clave de ElevenLabs del proxy y
