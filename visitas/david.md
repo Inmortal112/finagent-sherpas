@@ -3,6 +3,16 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 — docs/voice-readme — Claude Code
+- **Hecho:** `VOICE.md` (en inglés, para jurado y mentores): qué hace la voz, cómo ejecutarla con y sin clave, motores y
+  respaldos, protecciones de gasto, variables de `.env`, cómo se leen las cifras y cómo usarla desde `/ask`.
+  `README.md`: una línea que enlaza a `VOICE.md`. `.env.example`: `ELEVEN_STT_MODEL` y `VOICE_CACHE_DIR`.
+- **Estado:** `bash check.sh` pasa. Comandos del documento probados (PowerShell, mock, eleven) y ejemplos de la tabla verificados.
+- **Decisiones:** la voz se documenta aparte para no chocar con el README final, que reescribiremos entre los tres.
+- **Bloqueos:** ninguno.
+- **Para Samuel y Raúl:** al rehacer el README de la entrega, enlazad `VOICE.md` en vez de copiarlo.
+- **Siguiente:** probar el recorrido entero cuando existan `/ask` y el micrófono.
+
 ## 2026-11-15 — feat/voice-stt — Claude Code
 - **Hecho:** `voice.transcribe_async(audio, filename)` → `Transcript(text, engine)`: la pregunta hablada a texto con
   ElevenLabs Scribe (mismas claves que la voz). Acepta webm/ogg/mp3/wav/m4a. Tests y ficha `voz-stt.md`.
