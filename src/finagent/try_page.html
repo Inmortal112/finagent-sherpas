@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Under One Roof · backend test page</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; color: #1c2430; }
+  h1 { font-size: 1.4rem; margin-bottom: .2rem; }
+  p.note { color: #5b6675; margin-top: 0; }
+  form { display: flex; gap: .5rem; flex-wrap: wrap; margin: 1rem 0; }
+  select, input, button { font: inherit; padding: .6rem .7rem; border: 1px solid #b8c0cc; border-radius: 8px; }
+  input { flex: 1; min-width: 12rem; }
+  button { background: #1f5f8b; color: #fff; border-color: #1f5f8b; cursor: pointer; }
+  button.plain { background: #fff; color: #1f5f8b; }
+  button:disabled { opacity: .5; cursor: wait; }
+  .turn { border: 1px solid #d5dbe3; border-radius: 10px; padding: .8rem 1rem; margin: .7rem 0; }
+  .turn h2 { font-size: 1rem; margin: 0 0 .4rem; }
+  .tag { display: inline-block; font-size: .8rem; background: #e8eef5; border-radius: 99px; padding: .1rem .6rem; margin-right: .3rem; }
+  .meta { color: #5b6675; font-size: .8rem; }
+  audio { width: 100%; margin-top: .5rem; }
+  pre { background: #f3f5f8; padding: .8rem; border-radius: 8px; overflow-x: auto; font-size: .85rem; }
+</style>
+<h1>Under One Roof · backend test page</h1>
+<p class="note">For the team, to try the backend. This is not the product page: the real one is the stage.</p>
+
+<form id="ask">
+  <select id="family" aria-label="Family"></select>
+  <input id="question" placeholder="Ask about the plan, e.g. Why does my garden dry up?" required>
+  <button id="send">Ask</button>
+</form>
+<button class="plain" id="new">New session</button>
+<button class="plain" id="note">Advisor's note</button>
+<p class="meta" id="session"></p>
+
+<h2>Your questions</h2>
+<div id="history"><p class="meta">No questions yet.</p></div>
+<pre id="advisor" hidden></pre>
+
+<script>
+const $ = id => document.getElementById(id);
+const key = () => "session:" + $("family").value;
+const sessionId = () => localStorage.getItem(key());
+
+function turnHtml(t) {
+  const el = document.createElement("div");
+  el.className = "turn";
+  const h = document.createElement("h2"); h.textContent = t.question; el.append(h);
+  const p = document.createElement("p"); p.textContent = t.text; el.append(p);
+  for (const label of [t.house_part || "not in the plan", t.scene_id, t.source].filter(Boolean)) {
+    const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = label; el.append(tag);
+  }
+  const meta = document.createElement("div"); meta.className = "meta";
+  meta.textContent = new Date(t.asked_at).toLocaleString(); el.append(meta);
+  if (t.audio_url) {
+    const audio = document.createElement("audio");
+    audio.controls = true; audio.preload = "none"; audio.src = t.audio_url; el.append(audio);
+  }
+  return el;
+}
+
+async function showHistory() {
+  $("advisor").hidden = true;
+  $("session").textContent = sessionId() ? "Session " + sessionId() : "No session yet for this family.";
+  const box = $("history");
+  box.replaceChildren();
+  const reply = sessionId() ? await fetch("/history?session_id=" + sessionId()) : null;
+  if (!reply || !reply.ok) { box.innerHTML = '<p class="meta">No questions yet.</p>'; return; }
+  const turns = (await reply.json()).turns;
+  for (const t of turns.reverse()) box.append(turnHtml(t));
+}
+
+$("ask").addEventListener("submit", async event => {
+  event.preventDefault();
+  const body = new FormData();
+  body.append("family", $("family").value);
+  body.append("question", $("question").value);
+  if (sessionId()) body.append("session_id", sessionId());
+  $("send").disabled = true; $("send").textContent = "Thinking…";
+  try {
+    const reply = await fetch("/ask", { method: "POST", body });
+    const data = await reply.json();
+    if (!reply.ok) { alert(data.detail || "Something went wrong"); return; }
+    localStorage.setItem(key(), data.session_id);
+    $("question").value = "";
+    await showHistory();
+  } finally { $("send").disabled = false; $("send").textContent = "Ask"; }
+});
+
+$("new").addEventListener("click", () => { localStorage.removeItem(key()); showHistory(); });
+$("note").addEventListener("click", async () => {
+  if (!sessionId()) return;
+  const reply = await fetch("/advisor-note?session_id=" + sessionId());
+  $("advisor").textContent = JSON.stringify(await reply.json(), null, 2);
+  $("advisor").hidden = false;
+});
+$("family").addEventListener("change", showHistory);
+
+fetch("/families").then(r => r.json()).then(families => {
+  for (const f of families) {
+    const option = document.createElement("option");
+    option.value = f.family; option.textContent = `${f.client_name} · ${f.score}/100 · ${f.band}`;
+    $("family").append(option);
+  }
+  $("family").value = "samantha-lewis";
+  showHistory();
+});
+</script>
+</html>
