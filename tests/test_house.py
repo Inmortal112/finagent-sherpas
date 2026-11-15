@@ -57,6 +57,23 @@ def test_every_move_repairs_a_part(path):
         assert house.part_for_move(move["title"]) in house.PARTS, move["title"]
 
 
+@pytest.mark.parametrize("path", CASES, ids=lambda p: p.parent.name)
+def test_every_move_has_a_plain_title_without_figures(path):
+    diagnostic = json.loads(path.read_text(encoding="utf-8"))
+    for move in diagnostic["score"]["top_moves"]:
+        plain = house.plain_title(move["title"])
+        assert plain != move["title"], f"no plain title for {move['title']!r}"
+        assert not any(ch.isdigit() for ch in plain), plain
+
+
+def test_plain_title_keeps_an_unknown_title_and_reaches_the_page():
+    assert house.plain_title("Something nobody has seen") == "Something nobody has seen"
+    plan = brain.build(_load("daniel-emily-johnson"))
+    move = next(s for s in plan.scenes if s.id == "move_1")
+    assert move.title == "Raise mortality coverage"  # Sherpas' title stays for the advisor
+    assert move.visual.data["plain_title"] == "Add more life insurance"
+
+
 @pytest.mark.parametrize("title, part", [
     ("Add umbrella cover", "roof"), ("Raise mortality coverage", "roof"), ("Pay down revolving card", "walls"),
     ("Raise annual savings", "plumbing"), ("Lower the withdrawal rate", "plumbing"),

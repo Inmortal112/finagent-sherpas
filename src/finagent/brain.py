@@ -123,6 +123,7 @@ def build_template(diagnostic: dict, language: str = "en") -> Presentation:
                 narration=f"A step your plan already worked out: {move['title']}. {effect}{repair}",
                 visual=Visual(kind="kpi", data={
                     "fact_id": after_id, "house_part": part, "action": move["action"], "effort": move["effort"],
+                    "plain_title": house.plain_title(move["title"]),
                     "score_before": move["score_before"], "score_after": move["score_after"],
                 }),
                 fact_ids=[before_id, after_id, action_id],
@@ -144,6 +145,7 @@ def build_template(diagnostic: dict, language: str = "en") -> Presentation:
                 ),
                 visual=Visual(kind="score", data={
                     "fact_id": "all_moves_score_after", "moves": best["moves"],
+                    "plain_moves": [house.plain_title(m) for m in best["moves"]],
                     "score_before": score["published_score"], "score_after": best["score_after"],
                 }),
                 fact_ids=["score", "all_moves_score_after"],

@@ -170,6 +170,9 @@ main { transition: padding-right .35s; }
 .fromto .to { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .fromto span { color: var(--ink-3); font-size: .85rem; }
 .action { margin-top: .9rem; padding: .9rem 1rem; border-radius: 14px; background: var(--mist); border: 1px solid #e3ecff; color: var(--ink-2); font-size: .95rem; }
+details.action { padding: .55rem 1rem; font-size: .85rem; }
+details.action summary { cursor: pointer; color: var(--ink-2); font-size: .85rem; }
+details.action[open] summary { margin-bottom: .4rem; }
 .say { margin-top: 1.1rem; display: inline-flex; align-items: center; gap: .45rem; border: 0; background: none; padding: 0; color: var(--blue); font-size: .88rem; font-weight: 500; }
 .say svg { width: 16px; height: 16px; }
 
@@ -450,6 +453,10 @@ const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls)
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 const PARTS = ["roof", "walls", "plumbing", "foundations", "garden"];
+// A step in the family's words (brain's plain_title); Sherpas' own wording stays folded away for experts.
+const stepName = (s) => s.visual.data.plain_title || s.title;
+const EFFORT = { low: "Quick to do", medium: "Some work", high: "More work" };
+const effortWords = (e) => EFFORT[e] || `${e} effort`;
 const PART_OF = { roof: "Protection", walls: "Debt", plumbing: "Cash flow", foundations: "Emergency fund", garden: "Investments" };
 const GLYPH = { solid: "✓", cracked: "!", broken: "✕", repaired: "✓" };
 const SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6"/></svg>';
@@ -604,10 +611,10 @@ function build() {
   // 5. the advisor's steps, one repair each
   moves.forEach((s, i) => {
     const d = s.visual.data, gain = d.score_after - d.score_before;
-    add({ id: s.id, tag: `Step ${i + 1} of ${moves.length}`, title: s.title, part: d.house_part, scene: s, move: i, html: `
-      <div class="eyebrow mono">Step ${i + 1}${d.house_part ? ` · repairs the ${esc(d.house_part)}` : ""} <span class="chip" style="padding:.1rem .6rem;font-family:var(--sans);letter-spacing:0;text-transform:none">${esc(d.effort)} effort</span></div>
-      <h2>${esc(s.title)}</h2>
-      <div class="action">${esc(d.action)}</div>
+    add({ id: s.id, tag: `Step ${i + 1} of ${moves.length}`, title: stepName(s), part: d.house_part, scene: s, move: i, html: `
+      <div class="eyebrow mono">Step ${i + 1}${d.house_part ? ` · repairs the ${esc(d.house_part)}` : ""} <span class="chip" style="padding:.1rem .6rem;font-family:var(--sans);letter-spacing:0;text-transform:none">${esc(effortWords(d.effort))}</span></div>
+      <h2>${esc(stepName(s))}</h2>
+      <details class="action"><summary>What your plan says, word for word</summary>${esc(s.title)}: ${esc(d.action)}</details>
       <div class="fromto"><b class="from">${esc(d.score_before)}</b><span>→</span><b class="to">${esc(d.score_after)}</b><span>${gain > 0 ? "your score with this step alone" : "on its own the score stays; it counts together with the others"}</span></div>
       <p>${esc(s.narration)}</p>` });
   });
@@ -619,11 +626,11 @@ function build() {
   add({ id: "repaired", tag: "Every step done", title: "Your home, repaired", scene: all || null, final: true, html: `
     <div class="eyebrow mono">If you take every step</div>
     <h2>Your home, with the plan carried out.</h2>
-    ${all ? `<div class="fromto"><b class="from">${esc(all.visual.data.score_before)}</b><span>→</span><b class="to">${esc(all.visual.data.score_after)}</b><span>${esc(all.visual.data.moves.join(" + "))}</span></div><p>${esc(all.narration)}</p>`
+    ${all ? `<div class="fromto"><b class="from">${esc(all.visual.data.score_before)}</b><span>→</span><b class="to">${esc(all.visual.data.score_after)}</b><span>${esc((all.visual.data.plain_moves || all.visual.data.moves).join(" + "))}</span></div><p>${esc(all.narration)}</p>`
           : `<p>Sherpas scored each step on its own, so there is no single combined score to promise here. Each repair below shows what it changes by itself.</p>`}
     ${left.length ? `<p class="note">No step in this plan touches the ${esc(left.join(" or the "))} yet. That is a good question for your advisor, or for the “?” button.</p>` : ""}
     <div class="eyebrow mono" style="margin-top:1.4rem">Which one do you start with?</div>
-    <div class="steps">${moves.map((s) => `<button data-step="${esc(s.id)}"><span><b>${esc(s.title)}</b><small>${esc(s.visual.data.effort)} effort · ${esc(s.visual.data.score_before)} → ${esc(s.visual.data.score_after)}</small></span><span aria-hidden="true">→</span></button>`).join("")}</div>
+    <div class="steps">${moves.map((s) => `<button data-step="${esc(s.id)}"><span><b>${esc(stepName(s))}</b><small>${esc(effortWords(s.visual.data.effort))} · ${esc(s.visual.data.score_before)} → ${esc(s.visual.data.score_after)}</small></span><span aria-hidden="true">→</span></button>`).join("")}</div>
     <div class="chosen-note" id="chosenNote" aria-live="polite"></div>
     <div class="back" id="backBox" hidden>
       <div class="eyebrow mono">A few days later · try it now</div>
@@ -989,14 +996,14 @@ $("modal").addEventListener("click", (e) => { if (e.target === $("modal")) $("mo
 async function chooseStep(button) {
   document.querySelectorAll("[data-step]").forEach((b) => b.classList.toggle("chosen", b === button));
   const step = scene(button.dataset.step);
-  $("chosenNote").textContent = `Chosen: ${step.title}. Tell your advisor this is where you start.`;
+  $("chosenNote").textContent = `Chosen: ${stepName(step)}. Tell your advisor this is where you start.`;
   if (!(await api.ready) || !api.family) return;
   try {
     const response = await fetch(api.base + "/decision", { method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ family: api.family, scene_id: step.id, session_id: api.session }) });
     if (response.ok) {
       setSession((await response.json()).session_id);
-      $("chosenNote").textContent = `Chosen: ${step.title}. Your advisor will see it, and we check in with you in three days.`;
+      $("chosenNote").textContent = `Chosen: ${stepName(step)}. Your advisor will see it, and we check in with you in three days.`;
     }
   } catch (e) { /* the choice still shows on the page */ }
 }
