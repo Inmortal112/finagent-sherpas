@@ -29,6 +29,7 @@ que la familia pueda volver a verla y da al asesor una ficha con lo que pregunta
 | `POST /decision` | JSON `{family, scene_id, session_id}`: el paso que eligen (`move_N`) |
 | `GET /advisor-note?session_id=` | Preguntas, partes más preguntadas, lo que el plan no cubre y el paso elegido |
 | `GET /answers/{session}/{turn}.mp3` | La respuesta hablada (se genera en la primera petición y se guarda) |
+| `GET /try` | Página sencilla para el equipo: preguntar, ver el historial y la ficha del asesor |
 
 Respuesta de `/ask`: `session_id`, `turn_id`, `asked_at`, `question`, `text`, `scene_id`, `house_part`, `fact_ids`,
 `source` (`model` / `approved_narration` / `off_plan` / `unavailable`), `heard_from`, `audio_url`.
@@ -65,6 +66,8 @@ Respuesta de `/ask`: `session_id`, `turn_id`, `asked_at`, `question`, `text`, `s
   ["garden", "roof"]` y la decisión `move_1`; el mp3 de `t1` se sirvió (127 584 bytes, `audio/mpeg`).
 - **verify (15 nov, sobre `656e78b` + cambios sin commit):** `./check.sh` → `109 passed`, `OK`; `compileall src
   contracts tests` → sin errores. `ruff` y `mypy`: HERRAMIENTA-AUSENTE. Veredicto: PASA.
+- Añadido después: página `/try` (`try_page.html`) → `GET /try` 200, `text/html`; `./check.sh` → `110 passed`.
+  Su JavaScript no se ha probado en un navegador desde aquí.
 - Sin comprobar: pregunta hablada con una grabación real del micrófono (solo con un doble en el test); la página de
   Raúl llamando a estas rutas; varias personas a la vez.
 

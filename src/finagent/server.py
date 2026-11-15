@@ -9,6 +9,7 @@
     POST /decision                      the step the family chose
     GET  /advisor-note?session_id=...   what they asked, what the plan did not cover, what they chose
     GET  /answers/{session}/{turn}.mp3  that answer spoken (made on the first request, then kept)
+    GET  /try                           a plain page for the team to ask questions and read the history
     /                                   the page in out/, when it exists
 """
 import asyncio
@@ -125,6 +126,12 @@ async def spoken_answer(session_id: str, turn_id: str) -> FileResponse:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(spoken.audio)
     return FileResponse(path, media_type="audio/mpeg")
+
+
+@app.get("/try", include_in_schema=False)
+def try_page() -> FileResponse:
+    """A plain page to try the backend by hand. Not the product: that is the stage's page."""
+    return FileResponse(Path(__file__).with_name("try_page.html"), media_type="text/html")
 
 
 if (ROOT / "out").is_dir():  # last, so it never hides the routes above

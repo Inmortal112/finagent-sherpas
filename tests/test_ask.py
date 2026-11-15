@@ -144,6 +144,11 @@ def test_bad_requests_are_refused(client):
     assert client.get("/answers/unknown-session/t1.mp3").status_code == 404
 
 
+def test_the_team_test_page_is_served(client):
+    page = client.get("/try")
+    assert page.status_code == 200 and "/ask" in page.text and "/history" in page.text
+
+
 def test_families_and_presentation(client):
     families = client.get("/families").json()
     assert len(families) == 4 and {"family", "client_name", "score", "band"} <= set(families[0])
