@@ -2,9 +2,10 @@
 
 Engines, chosen with VOICE_ENGINE in .env:
 - "edge" (default): free Microsoft Edge neural voices via edge-tts. Needs internet, no key.
+- "eleven": ElevenLabs, better voice, billed per character (see voice_eleven.py). For the demo.
 - "mock": no audio, duration estimated from the text length.
 
-If the real engine fails (no internet, service down), the stage falls back to "mock"
+If an engine fails (no key, no internet, over budget), the stage falls back: eleven -> edge -> mock,
 so the pipeline never breaks. `narration` is never modified: the engine receives
 `speech_text.to_speech(narration)`, a copy rewritten the way a person says it ("$15,032/yr" ->
 "$15,032 a year").
@@ -44,6 +45,14 @@ def synthesize(presentation: Presentation, out_dir: Path) -> Presentation:
     result = presentation.model_copy(deep=True)
     engine = os.getenv("VOICE_ENGINE", "edge").strip().lower()
 
+    if engine == "eleven":
+        try:
+            asyncio.run(_eleven_all(result.scenes, Path(out_dir), result.language))
+            return result
+        except Exception as exc:  # any failure must not break the pipeline
+            log.warning("ElevenLabs failed (%s: %s); falling back to edge-tts", type(exc).__name__, exc)
+            engine = "edge"
+
     if engine == "edge":
         voice = os.getenv("VOICE_NAME") or DEFAULT_VOICES[result.language]
         try:
@@ -70,6 +79,19 @@ def _mock_all(scenes: list[Scene]) -> None:
     for scene in scenes:
         scene.audio_path = None
         scene.duration_s = round(max(2.0, len(scene.narration) / 15), 1)
+
+
+async def _eleven_all(scenes: list[Scene], out_dir: Path, language: str) -> None:
+    from finagent import voice_eleven
+
+    texts = {scene.id: to_speech(scene.narration, language) for scene in scenes}
+    audios = await voice_eleven.synthesize_all(texts, MAX_PARALLEL_REQUESTS)
+    audio_dir = out_dir / AUDIO_DIR
+    audio_dir.mkdir(parents=True, exist_ok=True)
+    for scene in scenes:
+        (audio_dir / f"{scene.id}.mp3").write_bytes(audios[scene.id])
+        scene.audio_path = f"{AUDIO_DIR}/{scene.id}.mp3"
+        scene.duration_s = round(voice_eleven.mp3_duration_s(audios[scene.id]), 1)
 
 
 async def _edge_all(scenes: list[Scene], out_dir: Path, voice: str, language: str) -> None:
