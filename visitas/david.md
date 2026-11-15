@@ -3,6 +3,17 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 23:53 — docs/stage-house-3d-for-raul — Claude Code
+- **Hecho:** nota para Raúl al final de `02-DOCS/ftd/stage-casa-3d.md`: el 3D pasa a él, con tres caminos comparados.
+- **Estado:** `bash check.sh` pasa (165). Solo documentación.
+- **Decisiones:** a David el 3D actual le parece cutre (maqueta de formas simples, no como el vídeo). No pasa a ser lo
+  normal tal como está; la página por defecto sigue en 2D.
+- **Bloqueos:** ninguno.
+- **Para Raúl:** **el 3D es tuyo desde ahora.** Lee la sección «Para Raúl» de la ficha y elige camino: pulir el 3D,
+  imagen realista con cámara (el aspecto del vídeo, necesita una imagen generada) o quedarnos en 2D. Decisión el 17 a
+  las 14:00 tras probar en el iPhone de David. Avisa en tu `visitas/raul.md` si lo coges o no.
+- **Siguiente:** David sigue con la voz y la entrega (micro en iPhone, audio final, README, vídeo).
+
 ## 2026-11-15 23:32 — feat/stage-house-3d-camera — Claude Code
 - **Hecho:** paso 3 de la casa 3D (sigue solo con `?house=3d`): la cámara. En `web/house3d.js`, una vista por parte
   (`VIEWS`); al cambiar el foco la cámara se desliza 0,9 s hasta esa parte y vuelve a la casa entera cuando no hay

@@ -2,7 +2,7 @@
 
 - Fecha: 2026-11-15 · Rama: `docs/stage-house-3d-plan` (solo este plan; el código irá en ramas `feat/stage-house-3d-*`)
 - Decide: David, tras la decisión del equipo de hacer la casa en 3D. Etapa de Raúl (escena).
-- Estado: **plan aprobado por David, sin código todavía.**
+- Estado: **pasos 1–3 fusionados detrás de `?house=3d` (PRs #51–#53). Pasa a Raúl** (ver «Para Raúl» al final).
 
 ## Intención
 
@@ -104,3 +104,24 @@ página) y entrada en `visitas/david.md` con línea «Para Raúl».
 
 - Quién lo programa (por defecto, David con Claude Code). **Raúl, Samuel: si alguno ya está tocando la casa o
   `stage_page.html`, decidlo en vuestro archivo de `visitas/` antes del 16 por la mañana.**
+
+## Para Raúl: lo que queda (15 nov, noche)
+
+David ha visto el 3D y **le parece cutre**: es una maqueta de formas simples y colores planos, y él esperaba algo
+parecido al vídeo de referencia (imágenes fotorrealistas). Por eso **el 3D no pasa a ser lo normal tal como está** y
+**se queda en tus manos**. Lo que funciona y puedes reutilizar: estados, brillo, jardín, foco, marcas ✓ ! ✕ y cámara
+por partes, todo en `src/finagent/web/house3d.js` con la misma entrada (`update({ states, focus, lush })`).
+
+El vídeo casi seguro no es 3D en directo, sino imágenes o vídeos ya hechos que el scroll hace avanzar. Tres caminos:
+
+| Camino | Cómo se vería | Coste aprox. | Pega |
+|---|---|---|---|
+| 1. Pulir el 3D actual | Maqueta cuidada (sombras suaves, luz, césped, tejas, cielo): «diorama», no realista | ½ jornada | Nunca fotorrealista |
+| 2. Imagen realista + cámara | Una imagen fotorrealista de la casa (generada con IA); zoom y desplazamiento a cada parte; grietas, fugas y brillo dibujados encima | 1 jornada + conseguir la imagen | Depende de la imagen; los estados son capas encima, no la casa cambiando |
+| 3. Quedarse en 2D | Como hoy | 0 | Sin efecto «wow» |
+
+El camino 2 es el único con el aspecto del vídeo y no necesita WebGL (va en cualquier móvil). Necesita una imagen
+con las cinco partes visibles (tejado, paredes, tuberías por fuera, cimientos, jardín); la API del hackatón no genera
+imágenes. **Tú decides el camino.** Sea cual sea, mantener: 2D por defecto hasta probarlo en el iPhone de David, nunca
+en «Simply», nada cargado de internet, y la decisión del **17 nov a las 14:00**. Intro de las nubes: aparcada; preguntar
+a David antes.
