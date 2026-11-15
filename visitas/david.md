@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 23:40 — docs/stage-house-3d-plan — Claude Code
+- **Hecho:** solo un plan, sin código: `02-DOCS/ftd/stage-casa-3d.md`. La casa pasa a 3D con la opción intermedia:
+  casa 3D (three.js) + cámara que se desliza de parte en parte con el scroll y con `turnHome`. El resto de la
+  página no cambia.
+- **Estado:** `bash check.sh` pasa (164). No se ha tocado `stage_page.html`.
+- **Decisiones:** la casa 2D se queda de respaldo (sin WebGL, a tirones, y siempre en «Simply»); three.js dentro del
+  repo; todo detrás de `?house=3d`; **decisión el 17 nov a las 14:00** tras probar en iPhone; si no va, seguimos en 2D.
+- **Bloqueos:** ninguno.
+- **Para Raúl y Samuel:** leed la ficha antes de tocar la casa. Si ya estáis con ella o con `stage_page.html`,
+  decidlo en vuestro `visitas/` antes del 16 por la mañana, que empiezo con el primer PR (`feat/stage-house-3d-*`).
+- **Siguiente:** PR 1: three.js en el repo, interruptor y casa 3D quieta; primera prueba en el iPhone.
+
 ## 2026-11-15 22:30 — feat/stage-mobile-chat-sheet — Claude Code
 - **Hecho:** en el móvil (≤860 px) el chat es una hoja en la mitad de abajo, bajo la casa (que ya es fija arriba),
   así se ve la casa girar al preguntar. Sugerencias en una fila que se desliza. `turnHome` salta a la casa sin
