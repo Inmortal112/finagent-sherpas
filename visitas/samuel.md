@@ -1,5 +1,17 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-16 00:55 — fix/brain-ask-partial-paydown — Claude Code
+- **Hecho:** `/ask` ya no dice que pagar $6,800 «salda» la tarjeta de los Weah. El paso lleva un hecho nuevo (el
+  saldo de hoy, $18,000) y `guard.claims_debt_cleared` rechaza «clears / pays off…» en ese paso. Ficha
+  `brain-ask-pago-parcial.md`.
+- **Estado:** `./check.sh` pasa (166). Modelo real: 6 de 6 respuestas correctas.
+- **Decisiones:** no se calcula «lo que queda» ($11,200): se dan las dos cifras de Sherpas y «the rest is still owed».
+- **Bloqueos:** ninguno. Gasto del equipo: $0.63 de $50 (caduca el 21 nov).
+- **Para David:** ningún texto guardado cambia; el audio sigue valiendo.
+- **Para Raúl:** `visual.data.pays_part_of_debt` es nuevo en los pasos (true solo en `move_1` de los Weah), por si
+  la página quiere dibujar la pared «reparada a medias».
+- **Siguiente:** decidir dónde se aloja la web para la entrega.
+
 ## 2026-11-16 00:20 — docs/readme-project-overview — Claude Code — README del proyecto
 - **Hecho:** `README.md` reescrito en inglés: qué es Under One Roof, en qué se basa (pilar → parte de la casa) y
   cómo funciona. Arreglado un test que fallaba de 00:00 a 01:00: `/reminders` usaba el día local y las fechas

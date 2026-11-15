@@ -120,6 +120,11 @@ def check(presentation: Presentation, texts: dict[str, str]) -> tuple[dict[str, 
         for phrase in guard.part_scored_out_of_100(text):
             problems.setdefault(scene_id, []).append(
                 f"only the overall score is out of 100, not a part of the home: {phrase}")
+    pays_part = {scene.id for scene in presentation.scenes if scene.visual.data.get("pays_part_of_debt")}
+    for scene_id in pays_part & texts.keys():
+        for phrase in guard.claims_debt_cleared(texts[scene_id]):
+            problems.setdefault(scene_id, []).append(
+                f"this step pays only part of the debt, so it is not cleared or paid off: {phrase}")
     accepted = {scene_id: text for scene_id, text in texts.items() if scene_id not in problems}
     return accepted, {scene_id: "; ".join(reasons) for scene_id, reasons in problems.items()}
 
@@ -180,6 +185,8 @@ def _brief(presentation: Presentation, diagnostic: dict) -> dict:
             "outline": scene.narration,
             "facts": [{"label": facts[i].label, "say_as": _say_as(facts[i])} for i in scene.fact_ids],
         }
+        if data.get("pays_part_of_debt"):
+            entry["note"] = "This step pays part of the debt. The rest is still owed: never say it is cleared or paid off."
         for key in ("house_part", "state", "effort", "house", "person"):
             if data.get(key):
                 entry[key] = data[key]
