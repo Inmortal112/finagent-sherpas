@@ -107,6 +107,8 @@ main { transition: padding-right .35s; }
   color: #fff; font-size: .78rem; font-weight: 500; vertical-align: middle; opacity: 0; transform: translateY(4px); transition: .4s; }
 .score-chip .delta.show { opacity: 1; transform: none; }
 #house { flex: 1; min-height: 0; width: 100%; --lush: 1; transition: --lush .7s; }
+#house3d { flex: 1; min-height: 0; width: 100%; position: relative; }   /* the home in 3D, only with ?house=3d */
+#house3d canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .toast { position: absolute; left: 50%; bottom: 6.4rem; transform: translate(-50%, 8px); background: var(--ink); color: #fff;
   border-radius: 999px; padding: .45rem 1rem; font-size: .84rem; opacity: 0; transition: .35s; white-space: nowrap; pointer-events: none; max-width: 92%; overflow: hidden; text-overflow: ellipsis; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -295,7 +297,7 @@ button:disabled { opacity: .45; cursor: default; }
   .scene-top { padding: .7rem .9rem 0; }
   .legend { display: none; }
   .toast { bottom: .5rem; font-size: .78rem; }
-  #house { margin-bottom: 2.3rem; }
+  #house, #house3d { margin-bottom: 2.3rem; }
   .brand span { display: none; }
   .chapters { padding: 4vh 0 30vh; }
   .chapter { min-height: 62vh; align-items: flex-start; padding-top: 1rem; scroll-margin-top: 48svh; }
@@ -428,6 +430,7 @@ button:disabled { opacity: .45; cursor: default; }
             <g class="pin"><circle cx="488" cy="285" r="12"/><text x="488" y="285"></text></g>
           </g>
         </svg>
+        <div id="house3d" hidden></div>
         <div class="toast" id="toast"></div>
         <div class="legend" id="legend"></div>
       </div>
@@ -757,6 +760,32 @@ function update() {
   paint();
 }
 
+/* ---- the home in 3D: only when asked for (?house=3d), never in the simple mode. The drawn home is the fallback. ---- */
+let house3d = null;
+function drawnHome() {
+  if (house3d) { house3d.dispose(); house3d = null; }
+  $("house3d").hidden = true;
+  $("house").style.display = "";
+}
+async function tryHouse3d() {
+  // ?house=3d turns it on and ?house=2d off; it is remembered while the tab is open, so it survives a change of family.
+  const asked = new URLSearchParams(location.search).get("house");
+  try { if (asked) sessionStorage.setItem("uor-house", asked); } catch (e) { /* private window */ }
+  let wanted = asked;
+  try { wanted = wanted || sessionStorage.getItem("uor-house"); } catch (e) { /* private window */ }
+  if (wanted !== "3d" || MODE === "simple" || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  try {
+    const { mount } = await import(SITE + "web/house3d.js");   // served by the backend; opened as a file this fails
+    $("house3d").hidden = false;
+    house3d = mount($("house3d"), drawnHome);
+    $("house").style.display = "none";
+    paint();
+  } catch (e) {
+    console.warn("The 3D home could not start; showing the drawn one.", e);
+    drawnHome();
+  }
+}
+
 function stateOf(part) {
   if (doneParts.has(part)) return "repaired";
   const chapter = chapters[active] || {};
@@ -770,11 +799,13 @@ function paint() {
   const focus = askFocus || chapter.part || null;
   $("house").classList.toggle("focus", Boolean(focus));
   let lush = 1;
+  const states = {};
   PARTS.forEach((part) => {
     const node = $("p-" + part); let state = stateOf(part) || "solid";
     node.style.display = baseStates[part] ? "" : "none";
     if (chapter.years && part === "garden" && timeline.points[yearIndex].investable_assets <= 0) state = "broken";
     node.dataset.state = state;
+    states[part] = baseStates[part] ? state : null;
     node.classList.toggle("on", focus === part);
     node.querySelector(".pin text").textContent = GLYPH[state];
     const chip = $("legend").querySelector(`[data-part="${part}"]`);
@@ -798,6 +829,7 @@ function paint() {
     score = d.score_after; delta = "+" + (d.score_after - d.score_before);
   }
   $("house").style.setProperty("--lush", lush);
+  if (house3d) house3d.update({ states, focus, lush });
   $("whenTag").textContent = tag;
   $("whenTitle").textContent = title;
   if ($("chipScore").textContent !== String(score)) $("chipScore").textContent = score;
@@ -893,6 +925,7 @@ async function switchTo(family, mode) {
     api.family = family; api.session = null; MODE = mode;
     $("log").innerHTML = "";
     build();
+    if (MODE === "simple") drawnHome();
     await afterBackend();
     scrollTo({ top: 0 });
   } catch (e) { $("family").value = api.family; }
@@ -1252,6 +1285,7 @@ mic.addEventListener("contextmenu", (event) => event.preventDefault());         
 
 showSound();
 build();
+tryHouse3d();
 api.ready = findBackend();
 afterBackend();
 </script>
