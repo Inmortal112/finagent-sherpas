@@ -12,6 +12,17 @@
 - **Para Raúl:** los ids de escena no cambian; solo el texto de `narration`.
 - **Siguiente:** Samuel revisa los textos de Samantha y Michael.
 
+## 2026-11-15 — feat/brain-narration-fast-model — Claude Code — documento de escalabilidad
+- **Hecho:** `escalabilidad.md` (raíz): cómo crece el producto dando más contexto al modelo. Forma elegida por
+  Samuel: **resumen del historial**. Ficha `02-DOCS/ftd/escalabilidad.md`. Solo documentación; no hay código nuevo.
+- **Estado:** `./check.sh` pasa (110 tests).
+- **Decisiones:** hoy `/ask` guarda el historial pero no se lo envía al modelo (cada pregunta es independiente).
+  La propuesta añade a cada pregunta un resumen corto de la sesión, **sin cifras** (para no tocar `guard`), y el
+  último turno literal. Primero un resumen hecho con código (`advisor_note`); con el modelo solo si se queda corto.
+- **Bloqueos:** ninguno. Falta decidir si se construye antes de la congelación (18 nov, 18:00).
+- **Para David y Raúl:** leedlo y decid si lo veis útil para la demo. No cambia la forma de `/ask` para la página.
+- **Siguiente:** si se aprueba, issue y rama `feat/brain-ask-summary`.
+
 ## 2026-11-15 — feat/brain-ask — Claude Code
 - **Hecho:** backend FastAPI (`server.py`): `/ask`, `/history`, `/decision`, `/advisor-note`, `/families`,
   `/presentation/{family}`. `ask.py` (pregunta → escena + respuesta, con `guard`) y `sessions.py` (historial en
