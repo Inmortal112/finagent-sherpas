@@ -306,6 +306,14 @@ button:disabled { opacity: .45; cursor: default; }
   .ask-fab { top: auto; bottom: 1.1rem; transform: none; }
   .ask-fab:hover { transform: scale(1.05); }
   .ask-fab::after { display: none; }
+  /* On a phone the chat is a sheet under the home, so the family sees the home turn to the part they ask about. */
+  .chat { top: calc(47svh - .5rem); width: 100%; border-radius: 22px 22px 0 0; transform: translateY(100%); }
+  body.chat-open .chat { transform: none; box-shadow: 0 -24px 60px -30px rgba(0,0,0,.45); }
+  .chat header { padding: .7rem 1rem; }
+  .log { padding: .8rem 1rem; }
+  .chat form { padding: .7rem 1rem calc(.8rem + env(safe-area-inset-bottom)); }
+  .suggest { flex-wrap: nowrap; overflow-x: auto; padding: 0 1rem .6rem; scrollbar-width: none; }
+  .suggest button { flex: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -1175,7 +1183,9 @@ function turnHome(part) {
   askFocus = part;
   clearTimeout(askFocusTimer);
   askFocusTimer = setTimeout(() => { askFocus = null; paint(); }, 9000);
-  if ($("journey").getBoundingClientRect().top > innerHeight * 0.4) $("journey").scrollIntoView();
+  // Instant, not smooth: the chat log scrolls smoothly as the answer streams in, and Chrome cancels one smooth
+  // scroll when another starts, which left the page on the hero instead of the home.
+  if ($("journey").getBoundingClientRect().top > innerHeight * 0.4) $("journey").scrollIntoView({ behavior: "instant" });
   paint();
 }
 
