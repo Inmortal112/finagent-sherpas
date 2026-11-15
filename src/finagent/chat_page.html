@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Under One Roof · chat</title>
+<style>
+  :root { --ink:#1c2430; --soft:#5b6675; --line:#d5dbe3; --blue:#1f5f8b; --mine:#e3eef7; --paper:#f6f7f9; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; margin: 0; color: var(--ink); background: var(--paper); }
+  main { max-width: 720px; margin: 0 auto; padding: 1rem; display: flex; flex-direction: column; min-height: 100dvh; }
+  h1 { font-size: 1.25rem; margin: 0; }
+  p.note { color: var(--soft); margin: .2rem 0 .8rem; font-size: .9rem; }
+  .bar { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-bottom: .6rem; }
+  select, input, button { font: inherit; padding: .55rem .7rem; border: 1px solid #b8c0cc; border-radius: 10px; background: #fff; color: var(--ink); }
+  button { cursor: pointer; }
+  button.main { background: var(--blue); color: #fff; border-color: var(--blue); }
+  button:disabled { opacity: .5; cursor: wait; }
+  body.simple { font-size: 1.2rem; }
+  body.simple button, body.simple input { padding: .9rem 1rem; }
+  #log { flex: 1; display: flex; flex-direction: column; gap: .6rem; padding: .6rem 0; }
+  .msg { max-width: 88%; padding: .7rem .9rem; border-radius: 14px; line-height: 1.45; background: #fff; border: 1px solid var(--line); }
+  .msg.me { align-self: flex-end; background: var(--mine); border-color: #c6dbec; }
+  .msg .meta { color: var(--soft); font-size: .78rem; margin-top: .35rem; }
+  .tag { display: inline-block; font-size: .75rem; background: #e8eef5; border-radius: 99px; padding: .05rem .55rem; margin-right: .3rem; }
+  .msg audio { width: 100%; margin-top: .5rem; height: 2.2rem; }
+  .msg .choices { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .5rem; }
+  .cursor::after { content: "▍"; animation: blink 1s steps(2) infinite; color: var(--blue); }
+  @keyframes blink { 50% { opacity: 0; } }
+  form#ask { display: flex; gap: .5rem; position: sticky; bottom: 0; background: var(--paper); padding: .6rem 0; }
+  form#ask input { flex: 1; min-width: 0; }
+  #mic.on { background: #b3261e; color: #fff; border-color: #b3261e; }
+  pre { background: #fff; border: 1px solid var(--line); padding: .8rem; border-radius: 10px; overflow-x: auto; font-size: .82rem; white-space: pre-wrap; }
+</style>
+<main>
+  <h1>Under One Roof · chat</h1>
+  <p class="note">For the team, to try the backend. The product page is the stage; this is only the conversation.</p>
+
+  <div class="bar">
+    <select id="family" aria-label="Family"></select>
+    <select id="person" aria-label="Who is using it" hidden></select>
+    <select id="mode" aria-label="Mode">
+      <option value="complete">Complete mode</option>
+      <option value="simple">Simple mode</option>
+    </select>
+  </div>
+  <div class="bar">
+    <button id="steps">Choose a first step</button>
+    <button id="later">Come back in 3 days</button>
+    <button id="note">Advisor's note</button>
+    <button id="new">New session</button>
+  </div>
+
+  <div id="log" aria-live="polite"></div>
+  <pre id="advisor" hidden></pre>
+
+  <form id="ask">
+    <input id="question" placeholder="Ask about your plan…" autocomplete="off" required>
+    <button type="button" id="mic" title="Hold to talk">Hold to talk</button>
+    <button class="main" id="send">Ask</button>
+  </form>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const WORRY = "Before we begin: what worries you most about money right now? Tell me in your own words.";
+let families = [], busy = false;
+
+const key = () => "session:" + $("family").value + ":" + ($("person").value || "");
+const sessionId = () => localStorage.getItem(key());
+const api = (path, options) => fetch(path, options).then(async r => {
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.detail || "Something went wrong");
+  return data;
+});
+const postJson = (path, body) => api(path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+
+function bubble(text, mine) {
+  const el = document.createElement("div");
+  el.className = "msg" + (mine ? " me" : "");
+  const body = document.createElement("div"); body.className = "body"; body.textContent = text; el.append(body);
+  $("log").append(el);
+  el.scrollIntoView({ behavior: "smooth", block: "end" });
+  return el;
+}
+
+function finish(el, turn, play) {
+  el.querySelector(".body").classList.remove("cursor");
+  const meta = document.createElement("div"); meta.className = "meta";
+  for (const label of [turn.house_part || (turn.source === "off_plan" ? "not in the plan" : null), turn.scene_id].filter(Boolean)) {
+    const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = label; meta.append(tag);
+  }
+  meta.append(new Date(turn.asked_at).toLocaleString());
+  el.append(meta);
+  if (turn.audio_url) {
+    const audio = document.createElement("audio");
+    audio.controls = true; audio.preload = play ? "auto" : "none"; audio.src = turn.audio_url;
+    if (play) audio.addEventListener("canplay", () => audio.play().catch(() => {}), { once: true });
+    el.append(audio);
+  }
+}
+
+// Server-sent events over fetch (EventSource cannot POST). Calls on(event, data) for each one.
+async function readEvents(response, on) {
+  const reader = response.body.getReader(), decoder = new TextDecoder();
+  let buffer = "";
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let cut;
+    while ((cut = buffer.indexOf("\n\n")) >= 0) {
+      const block = buffer.slice(0, cut); buffer = buffer.slice(cut + 2);
+      const name = (block.match(/^event: (.*)$/m) || [])[1];
+      const data = (block.match(/^data: (.*)$/m) || [])[1];
+      if (name && data) on(name, JSON.parse(data));
+    }
+  }
+}
+
+function form(extra) {
+  const body = new FormData();
+  body.append("family", $("family").value);
+  body.append("mode", $("mode").value);
+  if ($("person").value) body.append("person", $("person").value);
+  if (sessionId()) body.append("session_id", sessionId());
+  for (const [name, value] of Object.entries(extra)) {
+    if (value instanceof Blob) body.append(name, value, "question.webm"); else body.append(name, value);
+  }
+  return body;
+}
+
+async function ask(extra, shownQuestion) {
+  if (busy) return;
+  busy = true; $("send").disabled = true;
+  const mine = bubble(shownQuestion || "…", true);
+  const answer = bubble("", false);
+  answer.querySelector(".body").classList.add("cursor");
+  try {
+    const response = await fetch("/ask/stream", { method: "POST", body: form(extra) });
+    if (!response.ok) throw new Error((await response.json().catch(() => ({}))).detail || "Something went wrong");
+    await readEvents(response, (name, data) => {
+      if (name === "thinking") { localStorage.setItem(key(), data.session_id); mine.querySelector(".body").textContent = data.question; }
+      if (name === "delta") { answer.querySelector(".body").textContent += data.text; answer.scrollIntoView({ block: "end" }); }
+      if (name === "done") finish(answer, data, true);
+    });
+  } catch (error) {
+    answer.querySelector(".body").classList.remove("cursor");
+    answer.querySelector(".body").textContent = error.message;
+  } finally { busy = false; $("send").disabled = false; }
+}
+
+async function sendWorry(text) {
+  busy = true; $("send").disabled = true;
+  bubble(text, true);
+  const answer = bubble("", false);
+  try {
+    const turn = await postJson("/worry", { family: $("family").value, worry: text, session_id: sessionId(), person: $("person").value || null, mode: $("mode").value });
+    localStorage.setItem(key(), turn.session_id);
+    answer.querySelector(".body").textContent = turn.text;
+    finish(answer, turn, true);
+  } catch (error) { answer.querySelector(".body").textContent = error.message; }
+  finally { busy = false; $("send").disabled = false; }
+}
+
+let awaitingWorry = false;
+async function open() {
+  $("advisor").hidden = true;
+  $("log").replaceChildren();
+  document.body.classList.toggle("simple", $("mode").value === "simple");
+  let history = null;
+  if (sessionId()) history = await api("/history?session_id=" + sessionId()).catch(() => null);
+  if (history) {
+    for (const turn of history.turns) { bubble(turn.question, true); finish(bubble(turn.text, false), turn, false); }
+    if (history.decision) bubble("You chose a first step: " + history.decision.title + ".", false);
+  }
+  awaitingWorry = !history || (history.turns.length === 0 && history.worries.length === 0);
+  if (awaitingWorry) bubble(WORRY, false);
+}
+
+$("ask").addEventListener("submit", event => {
+  event.preventDefault();
+  const text = $("question").value.trim();
+  if (!text || busy) return;
+  $("question").value = "";
+  if (awaitingWorry) { awaitingWorry = false; sendWorry(text); } else ask({ question: text }, text);
+});
+
+// Hold to talk, like sending a voice note.
+let recorder = null, chunks = [];
+async function startTalking() {
+  if (busy || recorder) return;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    chunks = [];
+    recorder = new MediaRecorder(stream);
+    recorder.ondataavailable = event => chunks.push(event.data);
+    recorder.onstop = () => {
+      stream.getTracks().forEach(track => track.stop());
+      const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+      recorder = null; $("mic").classList.remove("on"); $("mic").textContent = "Hold to talk";
+      awaitingWorry = false;
+      if (blob.size > 800) ask({ file: blob }, "🎤 …");
+    };
+    recorder.start();
+    $("mic").classList.add("on"); $("mic").textContent = "Listening…";
+  } catch (error) { bubble("I cannot use the microphone here. You can type your question instead.", false); }
+}
+const stopTalking = () => { if (recorder && recorder.state === "recording") recorder.stop(); };
+$("mic").addEventListener("pointerdown", startTalking);
+$("mic").addEventListener("pointerup", stopTalking);
+$("mic").addEventListener("pointerleave", stopTalking);
+
+$("steps").addEventListener("click", async () => {
+  const plan = await api("/presentation/" + $("family").value + "?mode=" + $("mode").value);
+  const el = bubble("These are the steps your plan already worked out. Which one would you take first?", false);
+  const box = document.createElement("div"); box.className = "choices";
+  for (const scene of plan.scenes.filter(s => s.id.startsWith("move_"))) {
+    const button = document.createElement("button"); button.textContent = scene.title;
+    button.addEventListener("click", async () => {
+      const chosen = await postJson("/decision", { family: $("family").value, scene_id: scene.id, session_id: sessionId() });
+      localStorage.setItem(key(), chosen.session_id);
+      bubble("You chose: " + scene.title + ". " + scene.narration, false);
+    });
+    box.append(button);
+  }
+  el.append(box);
+});
+
+$("later").addEventListener("click", async () => {
+  if (!sessionId()) { bubble("Ask something first, so there is a visit to come back to.", false); return; }
+  const day = new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10);
+  const back = await api("/reminders?session_id=" + sessionId() + "&today=" + day);
+  bubble("Three days later (" + back.today + ")", true);
+  if (!back.due.length) bubble("Nothing is due today. Next in your plan: " + (back.upcoming[0] ? back.upcoming[0].name + ", " + back.upcoming[0].label : "nothing dated") + ".", false);
+  for (const item of back.due) {
+    const el = bubble(item.text, false);
+    if (item.kind !== "check_in") continue;
+    const box = document.createElement("div"); box.className = "choices";
+    for (const [label, done] of [["Yes, I did", true], ["Not yet", false]]) {
+      const button = document.createElement("button"); button.textContent = label;
+      button.addEventListener("click", async () => {
+        const reply = await postJson("/follow-up", { session_id: sessionId(), done });
+        bubble(done ? "Well done. That part of your home is repaired: " + reply.repaired_house_part + "." : "That is all right. It stays on your list, and your advisor will know.", false);
+      });
+      box.append(button);
+    }
+    el.append(box);
+  }
+});
+
+$("note").addEventListener("click", async () => {
+  if (!sessionId()) return;
+  $("advisor").textContent = JSON.stringify(await api("/advisor-note?session_id=" + sessionId()), null, 2);
+  $("advisor").hidden = false; $("advisor").scrollIntoView({ behavior: "smooth" });
+});
+$("new").addEventListener("click", () => { localStorage.removeItem(key()); open(); });
+$("mode").addEventListener("change", open);
+$("person").addEventListener("change", open);
+$("family").addEventListener("change", () => {
+  const people = (families.find(f => f.family === $("family").value) || {}).people || [];
+  $("person").replaceChildren();
+  $("person").hidden = people.length < 2;
+  if (people.length > 1) for (const name of people) { const o = document.createElement("option"); o.value = name; o.textContent = "I am " + name; $("person").append(o); }
+  open();
+});
+
+api("/families").then(list => {
+  families = list;
+  for (const f of list) {
+    const option = document.createElement("option");
+    option.value = f.family; option.textContent = `${f.client_name} · ${f.score}/100 · ${f.band}`;
+    $("family").append(option);
+  }
+  $("family").value = "samantha-lewis";
+  $("family").dispatchEvent(new Event("change"));
+});
+</script>
+</html>

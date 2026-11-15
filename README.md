@@ -35,6 +35,7 @@ Abre `out/index.html`.
 
 **Voz:** funciona sin clave (voces gratuitas). Para la voz de la demo (ElevenLabs), las opciones, el coste y cómo
 usarla desde `/ask`: [`VOICE.md`](VOICE.md).
+Backend (preguntas en vivo, historial, avisos y cómo compartir un enlace): [`BACKEND.md`](BACKEND.md).
 
 ## Cómo trabajamos
 

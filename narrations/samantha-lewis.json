@@ -12,9 +12,16 @@
     "move_3": "This step repairs the garden by moving some invested money toward a bit less growth. The plan moves about $17,100 of your invested holdings into slightly less growth and lifts your overall score to 83 out of 100. Concretely, this nudges your portfolio mix so it is a little less dependent on high-growth swings.",
     "timeline": "Look ahead: this timeline shows your house through the years and retirement at 65. On the current plan your savings and investments run out at age 73 in the projection. That means from retirement at 65 the projection shows savings exhausted at 73, so later years would need other income sources to cover planned spending."
   },
-  "template_kept": [],
-  "usage": {
-    "prompt_tokens": 4401,
-    "completion_tokens": 6846
+  "simple": {
+    "intro": "Hello Samantha. You are about to see your financial health score: 82 out of 100.",
+    "pillar_savings_and_cash_flow": "Your plumbing is solid with a score of 22 out of 30. It covers near bills now, while college and retirement compete for the same cash.",
+    "pillar_debt": "Your walls are solid with a score of 20 out of 20; no loan payments, but the cash cushion is thin.",
+    "pillar_investments": "Your garden is cracked with a score of 10 out of 15. Most wealth sits in your home, so cash and investments must pay for college and retirement.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations are solid with a score of 15 out of 15. It is easy to reach, but has little slack once near-term goals are set.",
+    "pillar_insurance_and_protection": "Your roof is solid with a score of 14 out of 20. Life insurance and umbrella stand ready, but check the underlying home and auto cover.",
+    "move_1": "This repair fixes the roof by adding homeowners insurance on your primary home and raises your score to 84 out of 100.",
+    "move_2": "This step spreads out the money held in a single fund, repairing the garden and lifting your score to 83 out of 100.",
+    "move_3": "This step slightly reduces how much of your invested mix aims for fast growth, calming the garden and lifting your score to 83 out of 100.",
+    "timeline": "Looking ahead, your savings and investments run out at age 73. When you retire, that means you'll need to plan how to cover spending after savings stop."
   }
 }
