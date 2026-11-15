@@ -1,0 +1,10 @@
+.git
+.venv
+.env
+.env.*
+.worktrees
+out
+data
+__pycache__
+.pytest_cache
+*.pdf

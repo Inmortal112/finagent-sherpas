@@ -248,8 +248,8 @@ def _person(diagnostic: dict, first_name: str) -> tuple[list[Fact], Scene]:
         id=f"person_{slug}",
         title=f"{first_name}'s part of the home",
         narration=" ".join(sentences),
-        visual=Visual(kind="text", data={"person": first_name, "house_part": "roof",
-                                         "fact_id": f"person_{slug}_life_cover", **view}),
+        # no single `house_part`: a person's part runs through the whole home (their cover, accounts, debts)
+        visual=Visual(kind="text", data={"person": first_name, "fact_id": f"person_{slug}_life_cover", **view}),
         fact_ids=[f.id for f in facts],
     )
     return facts, scene
