@@ -1,5 +1,18 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/stage-full-experience — Claude Code — la experiencia entera en la página
+- **Hecho:** `finagent.run --all` genera `out/families/<familia>/<modo>/` (página y voz) para las cuatro familias en
+  los dos modos. La página (`stage_page.html`) añade: modo «Simply / In full», «I am …» en parejas, «What worries
+  you most?» antes del recorrido, volver a los 3 días con el seguimiento (la parte queda reparada), la nota del
+  asesor en un panel y el chat que recupera sus respuestas al recargar. Guía en inglés: `STAGE.md`.
+- **Estado:** `./check.sh` pasa (152 tests). Recorrido entero probado en Chromium con el servidor real.
+- **Decisiones:** cambiar de familia o de modo navega a su página generada (con voz); si no existe, se redibuja con
+  `/presentation` (sin voz de narración). La sesión, la persona y el sonido se guardan en el navegador.
+- **Bloqueos:** micrófono e iPhone real sin probar. `out/` no está en git: tras clonar, `finagent.run --all`.
+- **Para Raúl:** todo sigue siendo un punto de partida para tu etapa; `STAGE.md` explica cómo está hecho.
+- **Para David:** tus cambios del micrófono (tocar para hablar, iPhone) siguen intactos. La narración usa Edge.
+- **Siguiente:** que Samuel la recorra entera y diga qué cambiar; ensayo con móvil real.
+
 ## 2026-11-15 — feat/stage-integration — Claude Code — primera web comprobada
 - **Hecho:** unidas la casa interactiva (`feat/stage-house-journey`) y `main` (con el resumen del historial en
   `/ask`). Comprobación de extremo a extremo en `02-DOCS/ftd/verificacion-primera-web.md`. Sin cambios de código.

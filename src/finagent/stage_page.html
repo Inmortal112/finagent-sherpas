@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>__CLIENT_NAME__ · Under One Roof</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' fill='none' stroke='%234565d6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12.5 13 4l10 8.5M6 11v10h14V11M11 21v-5.5h4V21'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -80,6 +81,12 @@ body.muted .sound .off { display: block; }
 .band[data-colour="red"] i { background: #f0647c; }
 .hero .pill { margin-top: 2.2rem; }
 .hero .hint { display: block; margin-top: 1.1rem; color: #717390; }
+
+.opts { display: flex; flex-wrap: wrap; gap: .6rem 1rem; justify-content: center; margin-top: 1.5rem; }
+.seg { display: inline-flex; align-items: center; gap: .15rem; padding: .25rem; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; }
+.seg span { color: #9799b1; padding: 0 .5rem 0 .8rem; }
+.seg button { border: 0; background: none; color: #dfe0e8; border-radius: 999px; padding: .4rem .95rem; font-size: .88rem; }
+.seg button.on { background: #fff; color: var(--ink); }
 
 /* ---------- the journey ---------- */
 main { transition: padding-right .35s; }
@@ -195,6 +202,31 @@ main { transition: padding-right .35s; }
 .steps button b { font-weight: 500; }
 .chosen-note { margin-top: .8rem; color: var(--repaired); font-size: .9rem; font-weight: 500; min-height: 1.4em; }
 
+.worry, .due { margin-top: 1.2rem; padding: 1rem; border-radius: 16px; background: var(--mist); border: 1px solid #e3ecff; }
+.worry b { display: block; font-weight: 500; font-size: 1.08rem; margin-top: .3rem; }
+.worry form { display: flex; gap: .5rem; margin-top: .7rem; }
+.worry input { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 999px; padding: .6rem 1rem; background: #fff; }
+.worry .pill { padding: .6rem 1.1rem; }
+.worry .chips button { cursor: pointer; }
+.card p.answer { color: var(--ink); font-weight: 400; }
+.back { margin-top: 1.3rem; padding-top: 1.1rem; border-top: 1px solid var(--line-2); }
+.back .pill { margin-top: .6rem; }
+.due { margin-top: .7rem; font-size: .95rem; color: var(--ink-2); }
+.due .row { display: flex; gap: .5rem; margin-top: .7rem; flex-wrap: wrap; }
+.due .pill { padding: .5rem 1.1rem; font-size: .88rem; margin: 0; }
+.modal { position: fixed; inset: 0; z-index: 60; background: rgba(10,12,20,.55); backdrop-filter: blur(6px); display: none; place-items: center; padding: 1rem; }
+.modal.open { display: grid; }
+.sheet { position: relative; background: #fff; border-radius: 22px; max-width: 34rem; width: 100%; max-height: 86vh; overflow: auto; padding: 1.7rem; }
+.sheet h3 { font-weight: 500; font-size: 1.45rem; margin: .3rem 0 .2rem; letter-spacing: -.02em; }
+.sheet h4 { margin: 1.1rem 0 .3rem; font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); font-weight: 400; }
+.sheet ul { margin: 0; padding-left: 1.1rem; }
+.sheet ul, .sheet p { color: var(--ink-2); font-size: .95rem; margin-top: 0; margin-bottom: 0; }
+.sheet .icon-btn { position: absolute; top: 1rem; right: 1rem; color: var(--ink-2); }
+body.simple { font-size: 112%; }
+body.simple .card p { font-size: 1.2rem; font-weight: 400; }
+body.simple .figs, body.simple .events, body.simple .note, body.simple .rows.own { display: none; }
+body.simple .ask-fab { width: 76px; height: 76px; font-size: 2rem; }
+
 .rail { display: flex; gap: 4px; padding: .7rem .2rem 0; }
 .rail button { flex: 1; height: 4px; padding: 0; border: 0; border-radius: 2px; background: var(--line); transition: background .3s; position: relative; }
 .rail button::after { content: ""; position: absolute; inset: -10px 0; }
@@ -297,6 +329,7 @@ button:disabled { opacity: .45; cursor: default; }
         <div class="num"><b id="heroScore">0</b><span>out of 100</span></div>
       </div>
       <div class="band" id="heroBand"><i></i><span></span></div>
+      <div class="opts" id="opts"></div>
       <p class="lede">A score is hard to feel. A home is not. This is your plan, as the home you live in.</p>
       <button class="pill primary" id="enter">Step inside your home <span aria-hidden="true">↓</span></button>
       <span class="mono hint">Then scroll · the voice starts with you</span>
@@ -407,6 +440,8 @@ button:disabled { opacity: .45; cursor: default; }
   </form>
 </aside>
 
+<div class="modal" id="modal"><div class="sheet" id="sheet" role="dialog" aria-label="What your advisor receives"></div></div>
+
 <script id="presentation" type="application/json">__PRESENTATION_JSON__</script>
 <script>
 "use strict";
@@ -421,7 +456,16 @@ const SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 
 let P = JSON.parse($("presentation").textContent);
 let chapters = [], active = -1, yearIndex = 0, entered = false, askFocus = null, askFocusTimer = 0;
-let baseStates = {}, moves = [], timeline = null, chosenStep = null;
+let baseStates = {}, moves = [], timeline = null, chosenStep = null, person = null;
+const doneParts = new Set();   // parts repaired because the family said they took the step
+const store = {
+  get(key) { try { return localStorage.getItem(key); } catch (e) { return null; } },
+  set(key, value) { try { if (value == null) localStorage.removeItem(key); else localStorage.setItem(key, value); } catch (e) { /* private window */ } },
+};
+// A page made by `finagent.run --all` lives in families/<family>/<mode>/ and knows both from its address.
+const WHERE = location.pathname.match(/^(.*\/)families\/([^/]+)\/(complete|simple)\/(?:index\.html)?$/);
+const SITE = WHERE ? WHERE[1] : location.pathname.replace(/[^/]*$/, "");
+let MODE = WHERE ? WHERE[3] : "complete";
 
 /* ================= voice ================= */
 const player = new Audio();
@@ -475,6 +519,25 @@ function build() {
   countTo($("heroScore"), score);
   requestAnimationFrame(() => { $("ringValue").style.strokeDashoffset = 326.7 * (1 - score / 100); });
 
+  document.body.classList.toggle("simple", MODE === "simple");
+  doneParts.clear();
+  const adults = (data.people || []).filter((p) => p.role !== "child");
+  person = adults.length > 1 ? store.get("uor-person-" + P.client_name) : null;
+  if (person && !adults.some((p) => p.first_name === person)) person = null;
+  const opts = $("opts");
+  opts.innerHTML = "";
+  const segment = (label, items, current, pick) => {
+    const box = el("div", "seg", `<span class="mono">${label}</span>`);
+    items.forEach(([value, text]) => {
+      const b = el("button", value === current ? "on" : ""); b.textContent = text;
+      b.addEventListener("click", () => { [...box.querySelectorAll("button")].forEach((x) => x.classList.toggle("on", x === b)); pick(value); });
+      box.append(b);
+    });
+    opts.append(box);
+  };
+  if (adults.length > 1) segment("I am", adults.map((p) => [p.first_name, p.first_name]), person, (name) => { person = name; store.set("uor-person-" + P.client_name, name); });
+  segment("Guide me", [["simple", "Simply"], ["complete", "In full"]], MODE, (mode) => { if (mode !== MODE) switchTo(api.family, mode); });
+
   chapters = [];
   const root = $("chapters");
   root.innerHTML = "";
@@ -491,6 +554,11 @@ function build() {
     <div class="chips">${people}${living}${cars}</div>
     <p>${esc(intro.narration)}</p>
     <ul class="rows">${PARTS.filter((p) => baseStates[p]).map((p) => `<li><span>The ${p} · ${PART_OF[p]}</span><b><span class="state" data-state="${baseStates[p]}"><i></i>${baseStates[p]}</span></b></li>`).join("")}</ul>
+    <div class="worry" id="worryBox" hidden><div class="eyebrow mono">Before we walk through it</div>
+      <b>What worries you most about money?</b>
+      <form id="worryForm"><input id="worryText" placeholder="In your own words" maxlength="300" autocomplete="off"><button class="pill dark">Tell us</button></form>
+      <div class="chips" id="worryChips">${["Retiring with enough", "An emergency", "Our debts", "The children's future"].map((w) => `<button type="button" class="chip">${w}</button>`).join("")}</div>
+      <p class="answer" id="worryAnswer" hidden></p></div>
     <p class="note">${weak.length ? "Keep scrolling: we walk through each part, then through the years, then through the repairs." : "Every part stands. Keep scrolling to see how it holds through the years."}</p>` });
 
   // 2. a walk through the five parts
@@ -513,7 +581,7 @@ function build() {
     if (d.life_shortfall) rows.push(["Short of the recommended minimum", usd.format(d.life_shortfall)]);
     add({ id: s.id, tag: "Today", title: s.title, scene: s, html: `
       <div class="eyebrow mono">In ${esc(d.person)}'s name</div><h2>${esc(s.title)}</h2>
-      <ul class="rows">${rows.map((r) => `<li><span>${esc(r[0])}</span><b>${esc(r[1])}</b></li>`).join("")}</ul>
+      <ul class="rows own">${rows.map((r) => `<li><span>${esc(r[0])}</span><b>${esc(r[1])}</b></li>`).join("")}</ul>
       <p>${esc(s.narration)}</p>` });
   });
 
@@ -556,7 +624,17 @@ function build() {
     ${left.length ? `<p class="note">No step in this plan touches the ${esc(left.join(" or the "))} yet. That is a good question for your advisor, or for the “?” button.</p>` : ""}
     <div class="eyebrow mono" style="margin-top:1.4rem">Which one do you start with?</div>
     <div class="steps">${moves.map((s) => `<button data-step="${esc(s.id)}"><span><b>${esc(s.title)}</b><small>${esc(s.visual.data.effort)} effort · ${esc(s.visual.data.score_before)} → ${esc(s.visual.data.score_after)}</small></span><span aria-hidden="true">→</span></button>`).join("")}</div>
-    <div class="chosen-note" id="chosenNote" aria-live="polite"></div>` });
+    <div class="chosen-note" id="chosenNote" aria-live="polite"></div>
+    <div class="back" id="backBox" hidden>
+      <div class="eyebrow mono">A few days later · try it now</div>
+      <button class="pill ghost" id="comeBack">Come back three days from now</button>
+      <div id="dueList" aria-live="polite"></div>
+      <button class="pill ghost" id="noteBtn">See what your advisor receives</button>
+    </div>` });
+  $("comeBack").addEventListener("click", comeBack);
+  $("noteBtn").addEventListener("click", showNote);
+  $("worryForm").addEventListener("submit", (e) => { e.preventDefault(); tellWorry($("worryText").value); });
+  $("worryChips").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => tellWorry(b.textContent)));
 
   root.querySelectorAll("[data-step]").forEach((b) => b.addEventListener("click", () => chooseStep(b)));
   root.querySelectorAll(".chapter").forEach((c, i) => {
@@ -658,6 +736,7 @@ function update() {
 }
 
 function stateOf(part) {
+  if (doneParts.has(part)) return "repaired";
   const chapter = chapters[active] || {};
   const upTo = chapter.final ? moves.length - 1 : chapter.move != null ? chapter.move : -1;
   for (let i = 0; i <= upTo; i++) if (moves[i].visual.data.house_part === part) return "repaired";
@@ -749,7 +828,11 @@ $("enter").addEventListener("click", () => {
 });
 
 /* ================= the backend: questions, the chosen step, other families ================= */
-const api = { base: null, family: null, session: null, ready: null };
+const api = { base: null, family: WHERE ? WHERE[2] : null, session: null, ready: null };
+function setSession(id) {
+  api.session = id || null;
+  if (api.family) store.set("uor-session-" + api.family, api.session);
+}
 async function findBackend() {
   const bases = location.protocol.startsWith("http") ? ["", "http://localhost:8000"] : ["http://localhost:8000"];
   for (const base of bases) {
@@ -759,7 +842,7 @@ async function findBackend() {
       const families = await response.json();
       api.base = base;
       const mine = families.find((f) => f.client_name === P.client_name);
-      api.family = mine ? mine.family : null;
+      if (!api.family) api.family = mine ? mine.family : null;
       const select = $("family");
       select.innerHTML = families.map((f) => `<option value="${esc(f.family)}">${esc(f.client_name)} · ${esc(f.score)}</option>`).join("");
       if (api.family) select.value = api.family;
@@ -769,19 +852,139 @@ async function findBackend() {
   }
   return false;
 }
-$("family").addEventListener("change", async (event) => {
-  const family = event.target.value;
+$("family").addEventListener("change", (event) => switchTo(event.target.value, MODE));
+
+// Another family or the other mode: the page made for it (with its voice) when it exists, else the same
+// page redrawn with what the backend sends (no narration voice).
+async function switchTo(family, mode) {
+  if (!family) return;
+  stopVoice();
+  const page = `${SITE}families/${family}/${mode}/index.html`;
+  if (!location.protocol.startsWith("http")) { location.href = page; return; }
   try {
-    const response = await fetch(`${api.base}/presentation/${family}`);
+    if ((await fetch(page, { method: "HEAD" })).ok) { location.href = page; return; }
+  } catch (e) { /* no such page: ask the backend */ }
+  try {
+    const response = await fetch(`${api.base}/presentation/${family}?mode=${mode}`);
     if (!response.ok) throw new Error();
-    stopVoice();
     P = await response.json();
-    api.family = family; api.session = null;
+    api.family = family; api.session = null; MODE = mode;
     $("log").innerHTML = "";
     build();
+    await afterBackend();
     scrollTo({ top: 0 });
-  } catch (e) { event.target.value = api.family; }
-});
+  } catch (e) { $("family").value = api.family; }
+}
+
+// Once the backend answers: show what needs it, and bring back the visit this browser already started.
+async function afterBackend() {
+  if (!(await api.ready) || !api.family) return;
+  $("worryBox").hidden = false;
+  $("backBox").hidden = false;
+  const saved = store.get("uor-session-" + api.family);
+  if (!saved || api.session) return;
+  try {
+    const response = await fetch(`${api.base}/history?session_id=${encodeURIComponent(saved)}`);
+    if (!response.ok) { store.set("uor-session-" + api.family, null); return; }
+    const history = await response.json();
+    api.session = saved;
+    if (history.turns.length) message("info", "Your earlier questions");
+    history.turns.forEach((turn) => { message("me", turn.question); botMessage(message("bot"), turn, false); });
+    if (history.decision) {
+      const button = document.querySelector(`[data-step="${history.decision.scene_id}"]`);
+      if (button) { button.classList.add("chosen"); $("chosenNote").textContent = `Chosen: ${history.decision.title}.`; }
+      const step = scene(history.decision.scene_id);
+      if (step && history.follow_up && history.follow_up.done && step.visual.data.house_part) { doneParts.add(step.visual.data.house_part); paint(); }
+    }
+  } catch (e) { /* the page works without the earlier visit */ }
+}
+
+async function tellWorry(text) {
+  text = text.trim();
+  if (!text || busy) return;
+  busy = true;
+  entered = true;
+  stopVoice();
+  const out = $("worryAnswer");
+  out.hidden = false;
+  out.innerHTML = '<span class="dots"><i></i><i></i><i></i></span>';
+  try {
+    const response = await fetch(api.base + "/worry", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ family: api.family, worry: text, session_id: api.session, person, mode: MODE }) });
+    const turn = await response.json();
+    if (!response.ok) throw new Error(typeof turn.detail === "string" ? turn.detail : "");
+    setSession(turn.session_id);
+    out.textContent = turn.text;
+    $("worryText").value = "";
+    message("me", text);
+    botMessage(message("bot"), turn, true);
+    turnHome(turn.house_part);
+  } catch (error) { out.textContent = error.message || "I could not answer that just now. Please try again."; }
+  busy = false;
+}
+
+async function comeBack() {
+  const list = $("dueList");
+  if (!api.session) { list.innerHTML = '<div class="due">Choose a first step above, or ask a question, and then come back.</div>'; return; }
+  try {
+    const day = new Date(Date.now() + 4 * 864e5).toISOString().slice(0, 10);
+    const response = await fetch(`${api.base}/reminders?session_id=${encodeURIComponent(api.session)}&today=${day}`);
+    const data = await response.json();
+    list.innerHTML = "";
+    if (!data.due.length) list.append(el("div", "due", "Nothing is waiting for you yet."));
+    data.due.forEach((due) => {
+      const box = el("div", "due");
+      box.textContent = due.text;
+      if (due.kind === "check_in") {
+        const row = el("div", "row");
+        [["Yes, I started", true, "pill dark"], ["Not yet", false, "pill ghost"]].forEach(([label, done, cls]) => {
+          const b = el("button", cls); b.textContent = label;
+          b.addEventListener("click", () => followUp(done, box));
+          row.append(b);
+        });
+        box.append(row);
+      }
+      list.append(box);
+    });
+  } catch (e) { list.innerHTML = '<div class="due">The server did not answer. Please try again.</div>'; }
+}
+
+async function followUp(done, box) {
+  try {
+    const response = await fetch(api.base + "/follow-up", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: api.session, done }) });
+    const data = await response.json();
+    if (!response.ok) throw new Error();
+    const part = data.repaired_house_part;
+    if (part) { doneParts.add(part); turnHome(part); }
+    box.textContent = done ? `Well done. ${part ? `Your ${part} ${part.endsWith("s") ? "are" : "is"} repaired, and your` : "Your"} advisor will see it.`
+                           : "No rush. Your advisor will see that this step needs a hand.";
+  } catch (e) { box.append(el("div", "", "That did not go through. Please try again.")); }
+}
+
+async function showNote() {
+  const sheet = $("sheet");
+  const close = '<button class="icon-btn" id="noteClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>';
+  const show = (html) => { sheet.innerHTML = close + html; $("noteClose").addEventListener("click", () => $("modal").classList.remove("open")); };
+  $("modal").classList.add("open");
+  const head = `<div class="mono" style="color:var(--ink-3)">For the advisor</div><h3>${esc(P.client_name)}'s visit</h3>`;
+  if (!api.session) return show(head + "<p>Nothing yet. Ask a question, say what worries you or choose a first step, and it appears here.</p>");
+  try {
+    const response = await fetch(`${api.base}/advisor-note?session_id=${encodeURIComponent(api.session)}`);
+    if (!response.ok) throw new Error();
+    const note = await response.json();
+    const list = (items) => (items && items.length ? `<ul>${items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>` : "<p>Nothing yet.</p>");
+    const follow = note.follow_up ? (note.follow_up.done ? "They said they started it." : "They said: not yet.") : "Not asked yet.";
+    show(head + `<p>${note.person ? esc(note.person) + " · " : ""}${esc(note.mode || MODE)} mode</p>
+      <h4>What worries them</h4>${list(note.worries)}
+      <h4>What they asked</h4>${list(note.questions)}
+      <h4>Asked most about</h4><p>${note.asked_most_about.length ? esc(note.asked_most_about.map((p) => "the " + p).join(", ")) : "Nothing yet."}</p>
+      <h4>The plan did not cover</h4>${list(note.not_covered_by_the_plan)}
+      <h4>First step chosen</h4><p>${note.decision ? esc(note.decision.title) : "None yet."}</p>
+      <h4>Three days later</h4><p>${follow}</p>`);
+  } catch (e) { show(head + "<p>The server did not answer. Please try again.</p>"); }
+}
+$("modal").addEventListener("click", (e) => { if (e.target === $("modal")) $("modal").classList.remove("open"); });
 
 async function chooseStep(button) {
   document.querySelectorAll("[data-step]").forEach((b) => b.classList.toggle("chosen", b === button));
@@ -792,7 +995,7 @@ async function chooseStep(button) {
     const response = await fetch(api.base + "/decision", { method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ family: api.family, scene_id: step.id, session_id: api.session }) });
     if (response.ok) {
-      api.session = (await response.json()).session_id;
+      setSession((await response.json()).session_id);
       $("chosenNote").textContent = `Chosen: ${step.title}. Your advisor will see it, and we check in with you in three days.`;
     }
   } catch (e) { /* the choice still shows on the page */ }
@@ -824,7 +1027,7 @@ function openChat(open) {
 }
 $("askFab").addEventListener("click", () => openChat(true));
 $("chatClose").addEventListener("click", () => openChat(false));
-addEventListener("keydown", (e) => { if (e.key === "Escape") openChat(false); });
+addEventListener("keydown", (e) => { if (e.key === "Escape") { openChat(false); $("modal").classList.remove("open"); } });
 $("askForm").addEventListener("submit", (e) => { e.preventDefault(); const q = $("question").value.trim(); if (q) { $("question").value = ""; ask(q); } });
 
 let busy = false;
@@ -844,6 +1047,8 @@ async function ask(question, recording) {
     form.append("family", api.family);
     if (api.session) form.append("session_id", api.session);
     if (recording) form.append("file", recording, recordingName(recording)); else form.append("question", question);
+    form.append("mode", MODE);
+    if (person) form.append("person", person);
     form.append("pace_ms", "45");
     const response = await fetch(api.base + "/ask/stream", { method: "POST", body: form });
     if (!response.ok) {
@@ -852,25 +1057,13 @@ async function ask(question, recording) {
     }
     let text = "", turn = null;
     await readEvents(response, (name, data) => {
-      if (name === "thinking") { api.session = data.session_id; mine.textContent = data.question; }
+      if (name === "thinking") { setSession(data.session_id); mine.textContent = data.question; }
       if (name === "turn") turnHome(data.house_part);
       if (name === "delta") { text += data.text; answer.textContent = text; log.scrollTop = log.scrollHeight; }
       if (name === "done") turn = data;
     });
     if (!turn) throw new Error("failed");
-    answer.textContent = turn.text;
-    const meta = el("div", "meta");
-    const src = api.base + turn.audio_url;
-    const listen = el("button"); listen.textContent = "▶ Listen";
-    listen.addEventListener("click", () => {
-      if (playingButton === listen) return stopVoice();
-      if (!soundOn) { soundOn = true; showSound(); }
-      play(src, listen);
-    });
-    meta.append(listen);
-    if (turn.house_part) meta.append(el("span", "", `the ${esc(turn.house_part)}`));
-    answer.append(meta);
-    play(src, listen);
+    botMessage(answer, turn, true);
   } catch (error) {
     answer.textContent = error.message === "offline"
       ? "Live questions need the Under One Roof server. Start it with scripts/serve.sh and open the page from there."
@@ -878,6 +1071,23 @@ async function ask(question, recording) {
   }
   log.scrollTop = log.scrollHeight;
   busy = false;
+}
+
+function botMessage(node, turn, speak) {
+  node.textContent = turn.text;
+  const meta = el("div", "meta");
+  const src = api.base + (turn.audio_url || `/answers/${api.session}/${turn.turn_id}.mp3`);
+  const listen = el("button"); listen.textContent = "▶ Listen";
+  listen.addEventListener("click", () => {
+    if (playingButton === listen) return stopVoice();
+    if (!soundOn) { soundOn = true; showSound(); }
+    play(src, listen);
+  });
+  meta.append(listen);
+  if (turn.house_part) meta.append(el("span", "", `the ${esc(turn.house_part)}`));
+  node.append(meta);
+  log.scrollTop = log.scrollHeight;
+  if (speak) play(src, listen);
 }
 
 // Server-sent events over fetch (EventSource cannot POST).
@@ -970,6 +1180,7 @@ mic.addEventListener("contextmenu", (event) => event.preventDefault());         
 showSound();
 build();
 api.ready = findBackend();
+afterBackend();
 </script>
 </body>
 </html>
