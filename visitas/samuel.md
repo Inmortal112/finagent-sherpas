@@ -1,5 +1,16 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/stage-integration — Claude Code — primera web comprobada
+- **Hecho:** unidas la casa interactiva (`feat/stage-house-journey`) y `main` (con el resumen del historial en
+  `/ask`). Comprobación de extremo a extremo en `02-DOCS/ftd/verificacion-primera-web.md`. Sin cambios de código.
+- **Estado:** `./check.sh` pasa (148 tests). Servidor real: página, chat, cuatro familias en dos modos, pregunta
+  y seguimiento por `/ask/stream`, decisión, ficha del asesor, aviso del día 3 y audio: todo responde.
+- **Decisiones:** la web se ve con `scripts/serve.sh` → http://localhost:8000 (la casa) y `/chat` (prueba).
+- **Bloqueos:** ninguno. A mirar a ojo: en mis capturas el anillo de la nota marcaba 36, no 82 (parece la
+  animación a medias). Sin probar: deslizar, chat dentro de la página, micrófono, iPhone.
+- **Para Raúl:** la escena real ya está en `main`: ábrela y di qué cambiar.
+- **Siguiente:** que Samuel la recorra en el navegador; después, modo sencillo y elegir persona en la página.
+
 ## 2026-11-15 — feat/brain-ask-summary — Claude Code
 - **Hecho:** `/ask` recuerda la conversación. `sessions.context_for` monta un resumen de la sesión (preocupaciones,
   partes más preguntadas, paso elegido, **sin cifras**) más el último turno literal; `ask.answer(context=…)` lo
