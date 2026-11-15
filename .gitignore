@@ -20,3 +20,6 @@ build/
 .DS_Store
 .idea/
 .vscode/
+
+# Conversation history written by the backend (finagent.server)
+data/

@@ -1,5 +1,21 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/brain-ask — Claude Code
+- **Hecho:** backend FastAPI (`server.py`): `/ask`, `/history`, `/decision`, `/advisor-note`, `/families`,
+  `/presentation/{family}`. `ask.py` (pregunta → escena + respuesta, con `guard`) y `sessions.py` (historial en
+  `data/sessions/`, fuera de git). Ficha con todas las rutas: `02-DOCS/ftd/brain-ask.md`.
+- **Estado:** `./check.sh` pasa (109 tests, sin llamar al modelo). Real: respuesta en 2,6-4,0 s.
+- **Decisiones:** `/ask` devuelve el texto ya y un `audio_url`; el mp3 se genera al pedirlo (con la voz dentro
+  tardaba 13-32 s). Modelos: `deepseek-flash`, respaldo `gemini-3.5-flash-lite`. Fuera del plan → frase fija.
+- **Bloqueos:** ninguno. Arrancar: `PYTHONPATH=src:. .venv/bin/uvicorn finagent.server:app --port 8000`.
+- **Para Raúl:** `POST /ask` como formulario (`family`, `question` o `file`, `session_id`). Devuelve `scene_id` y
+  `house_part` (a dónde gira la casa), `text` (subtítulo), `audio_url` (ponlo en un `<audio>`; si da 503, solo
+  texto) y `session_id` (guárdalo y mándalo siempre). `GET /history?session_id=` da la lista para «tus preguntas».
+  ¿Te vale esta forma? Es un contrato nuevo entre los dos; dime si quieres otro campo.
+- **Para David:** uso `voice.transcribe_async` en `/ask` y `voice.speak_async` en `/answers/…mp3`, tal cual. Hoy
+  edge-tts tarda 9-30 s por respuesta y falla a ratos; con tu ElevenLabs debería ir en menos de 1 s.
+- **Siguiente:** hechos por persona (pareja) y modo sencillo / completo.
+
 ## 2026-11-15 — feat/brain-llm-narration — Claude Code
 - **Hecho:** `narrator.py` (nuevo): `gpt-5-mini` por el proxy escribe la narración de cada familia, `guard` la revisa
   escena a escena y se guarda en `narrations/<familia>.json` (las cuatro, en el repo). `brain.build` la aplica;
