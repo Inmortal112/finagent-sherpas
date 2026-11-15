@@ -3,6 +3,21 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 21:00 — feat/stage-after-the-choice — Claude Code
+- **Hecho:** después de elegir un paso. (A) «Your first move, tomorrow»: una o dos acciones por paso, sin cifras ni
+  marcas (`house.FIRST_MOVES`, `visual.data.first_moves`). (B) «Not yet» pregunta qué lo frenó (no sé por dónde
+  empezar / cuesta más / no nos hemos puesto de acuerdo, o «no he tenido tiempo» si vive solo, o texto libre),
+  responde a ese freno y lo guarda en `/follow-up` (`note`). (C) Aviso del día 3 con el nombre sencillo
+  (`decision.plain_title`). (D) La ficha del asesor dice qué lo frenó y el título de Sherpas entre paréntesis.
+- **Estado:** `bash check.sh` pasa (164). Recorrido en el navegador con Michael y los Weah: elegir, volver, «Not yet»,
+  freno y ficha. Consola limpia. Móvil: sin desbordamiento; el bloque nuevo no lo he visto a ojo en móvil.
+- **Decisiones:** las acciones son consejo práctico escrito por nosotros: genéricas, sin productos y con el asesor.
+- **Bloqueos:** ninguno. Ojo: la página ya tenía `let chosenStep`; volver a declararla rompía todo el script y los
+  tests no lo ven (no ejecutan JS). Mirad la consola tras tocar `stage_page.html`.
+- **Para Samuel:** he tocado `sessions.decide` (guarda `plain_title`), `server.decision`, `brain` y `house`.
+- **Para Raúl:** he tocado el final de `stage_page.html` (elección, vuelta a los 3 días y ficha).
+- **Siguiente:** audio de ElevenLabs cuando los textos tengan el visto bueno.
+
 ## 2026-11-15 20:10 — feat/brain-ask-family-question — Claude Code
 - **Hecho:** `/ask` contesta la pregunta de cada familia. `brain`: hecho `plan_goals` en `timeline` (los objetivos
   tal como los escribe Sherpas; la proyección ya los incluye: la deuda salta el año de la compra). `ask.py`:

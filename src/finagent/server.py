@@ -237,7 +237,8 @@ def decision(body: Decision) -> dict:
         raise HTTPException(422, f"{body.scene_id} is not a step of this plan")
     session = sessions.start(body.family, body.session_id)
     session["follow_up"] = None  # a new choice gets its own check-in
-    return {"session_id": session["session_id"], "decision": sessions.decide(session, scene.id, scene.title),
+    return {"session_id": session["session_id"], "decision": sessions.decide(session, scene.id, scene.title,
+                                                                                 scene.visual.data.get("plain_title")),
             "house_part": scene.visual.data.get("house_part")}
 
 
