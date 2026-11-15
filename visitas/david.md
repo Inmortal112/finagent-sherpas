@@ -3,6 +3,17 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 22:30 — feat/stage-mobile-chat-sheet — Claude Code
+- **Hecho:** en el móvil (≤860 px) el chat es una hoja en la mitad de abajo, bajo la casa (que ya es fija arriba),
+  así se ve la casa girar al preguntar. Sugerencias en una fila que se desliza. `turnHome` salta a la casa sin
+  animación: el desplazamiento suave se cancelaba con el del chat y la página se quedaba en la portada.
+- **Estado:** `bash check.sh` pasa (164). Móvil (375×812): pregunta → la casa arriba con el jardín marcado y la
+  respuesta abajo. Escritorio (1280×800): el panel lateral no cambia. iPhone real sin probar.
+- **Decisiones:** solo CSS en el bloque `max-width: 860px` más una línea en `turnHome`.
+- **Bloqueos:** ninguno. El cuelgue de `check.sh` de antes era la red (edge-tts), confirmado por David.
+- **Para Raúl:** he tocado el CSS móvil del chat y `turnHome` en `stage_page.html`.
+- **Siguiente:** que David lo vea en su iPhone; audio de ElevenLabs cuando los textos tengan el visto bueno.
+
 ## 2026-11-15 21:00 — feat/stage-after-the-choice — Claude Code
 - **Hecho:** después de elegir un paso. (A) «Your first move, tomorrow»: una o dos acciones por paso, sin cifras ni
   marcas (`house.FIRST_MOVES`, `visual.data.first_moves`). (B) «Not yet» pregunta qué lo frenó (no sé por dónde
