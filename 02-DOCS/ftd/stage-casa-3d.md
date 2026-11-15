@@ -75,7 +75,9 @@ Abierta como archivo suelto (sin servidor), la página cae a 2D: el navegador no
    Falta la primera prueba en iPhone.
 2. **Hecho (15 nov, `feat/stage-house-3d-states`):** los cuatro estados, el brillo, el jardín y atenuar las partes sin foco.
    Además: una marca redonda por parte (✓ ! ✕, con los colores de la leyenda) y tocar una parte lleva a su capítulo.
-3. **17 nov, mañana:** la cámara (scroll y `turnHome`).
+3. **Hecho (15 nov, `feat/stage-house-3d-camera`):** la cámara. Se desliza (0,9 s) a la parte del capítulo o de la pregunta
+   (`turnHome`) y vuelve a la casa entera. Si dos deslizamientos van a tirones, deja de deslizarse y salta; si va
+   muy mal, vuelve la casa dibujada. Falta probarlo en iPhone: es lo que decide el 17 a las 14:00.
 4. **Solo si la decisión del 17 a las 14:00 es «sí»:** 3D por defecto en el modo completo.
 
 Cada PR: `bash check.sh` en verde, **consola del navegador revisada** (los tests no ejecutan el JavaScript de la
