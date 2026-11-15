@@ -1,5 +1,17 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/stage-full-integration — Claude Code — web completa comprobada
+- **Hecho:** unida `feat/stage-full-experience` con `main`. Visita entera recorrida con Playwright (13 pasos, móvil):
+  familia, persona, modo, preocupación, chat con seguimiento, recarga, paso, vuelta a los 3 días y ficha del
+  asesor. Ficha `verificacion-web-completa.md`.
+- **Estado:** `./check.sh` pasa (153 tests). `run --all`: 8 páginas y 92 mp3. Cero errores de consola.
+- **Decisiones:** narración sencilla de `pillar_debt` de los Weah reescrita a mano (era la plantilla). Regla nueva
+  en las instrucciones de `/ask`: un paso hace solo lo que dicen sus hechos.
+- **Bloqueos:** el puerto 8000 lo ocupa un servidor viejo (pid 398275) con el mock antiguo; la web buena está en
+  el 8001. Lo tiene que parar Samuel.
+- **Para David:** cambia un texto más del modo sencillo (`timothy-melanie-weah` `pillar_debt`).
+- **Siguiente:** que Samuel recorra la web. Pendiente: a veces `/ask` dice que pagar $6,800 «salda» la tarjeta.
+
 ## 2026-11-15 — fix/narration-part-score — Claude Code
 - **Hecho:** leídos los textos del pitch (Samantha y Michael, dos modos) y los pasos, personas y línea del tiempo
   de Weah y Johnson. Corregidas dos frases a mano. `guard.part_scored_out_of_100` (nuevo): rechaza «roof score …
