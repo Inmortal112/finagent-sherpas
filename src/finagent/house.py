@@ -162,6 +162,18 @@ def person_view(diagnostic: dict, first_name: str) -> dict:
     }
 
 
+def home(diagnostic: dict) -> dict:
+    """Where the family lives, for the drawing: a home they own, or one they rent, and their cars."""
+    profile = diagnostic["profile"]
+    owned = next((a for a in profile["other_assets"] if a["type"] == "PRIMARY_HOME"), None)
+    rents = any(e.get("type") == "RENT" for e in profile["expenses"])
+    return {
+        "kind": "owned" if owned else "rented" if rents else "unknown",
+        "value": owned["value"] if owned else None,
+        "cars": [a["name"] for a in profile["other_assets"] if a["type"] == "CAR"],
+    }
+
+
 def plan_dates(diagnostic: dict) -> list[dict]:
     """The dated goals of the plan (first payment of a repeating one), oldest first. No engine-only markers."""
     dates = []

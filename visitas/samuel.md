@@ -1,5 +1,16 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/stage-integration — Claude Code — primera web comprobada
+- **Hecho:** unidas la casa interactiva (`feat/stage-house-journey`) y `main` (con el resumen del historial en
+  `/ask`). Comprobación de extremo a extremo en `02-DOCS/ftd/verificacion-primera-web.md`. Sin cambios de código.
+- **Estado:** `./check.sh` pasa (148 tests). Servidor real: página, chat, cuatro familias en dos modos, pregunta
+  y seguimiento por `/ask/stream`, decisión, ficha del asesor, aviso del día 3 y audio: todo responde.
+- **Decisiones:** la web se ve con `scripts/serve.sh` → http://localhost:8000 (la casa) y `/chat` (prueba).
+- **Bloqueos:** ninguno. A mirar a ojo: en mis capturas el anillo de la nota marcaba 36, no 82 (parece la
+  animación a medias). Sin probar: deslizar, chat dentro de la página, micrófono, iPhone.
+- **Para Raúl:** la escena real ya está en `main`: ábrela y di qué cambiar.
+- **Siguiente:** que Samuel la recorra en el navegador; después, modo sencillo y elegir persona en la página.
+
 ## 2026-11-15 — feat/brain-ask-summary — Claude Code
 - **Hecho:** `/ask` recuerda la conversación. `sessions.context_for` monta un resumen de la sesión (preocupaciones,
   partes más preguntadas, paso elegido, **sin cifras**) más el último turno literal; `ask.answer(context=…)` lo
@@ -13,6 +24,20 @@
 - **Para Raúl y David:** la forma de `/ask`, `/ask/stream` y sus eventos no cambia. Mandad siempre el `session_id`.
 - **Siguiente:** comprobar la casa interactiva de extremo a extremo.
 
+
+## 2026-11-15 — feat/stage-house-journey — Claude Code — la escena real
+- **Hecho:** `stage.py` deja de ser un mock: genera `out/index.html` desde `stage_page.html` (nuevo). Nota primero,
+  luego la casa de la familia; al deslizar cambia (cinco partes, los años del plan, cada paso reparando su parte,
+  la casa con todo hecho y «¿por cuál empiezas?»). Botón «?» → chat lateral con `/ask/stream`, voz y micrófono;
+  el altavoz calla la voz. Estilo de sherpaswealth.com. `brain`: `home` en `intro` y `dates` en `timeline`.
+- **Estado:** `./check.sh` pasa (139 tests). Probado en Chromium (escritorio y móvil) con el servidor real.
+- **Decisiones:** los años enseñan el plan actual (no hay proyección «con los pasos hechos»); una parte tocada por
+  un paso se dibuja «reparada». Sin `combined_moves` no se enseña nota conjunta. El contrato no cambia.
+- **Bloqueos:** micrófono y iPhone real sin probar. Sin push todavía: falta el visto bueno de Samuel.
+- **Para Raúl:** he tocado tu etapa (`stage.py` entero y la plantilla nueva) porque Samuel me lo pidió. Es un punto
+  de partida: cámbialo o tíralo si tu versión va por otro lado. Ficha: `02-DOCS/ftd/stage-casa-interactiva.md`.
+- **Para David:** la página pone `audio_path` de cada escena al llegar a su tarjeta y `audio_url` de cada respuesta.
+- **Siguiente:** revisarla entre los tres en el punto de las 21:00.
 ## 2026-11-15 — feat/brain-narration-fast-model — Claude Code
 - **Hecho:** la narración pasa de `gpt-5-mini` a `deepseek-flash` (`narrator.py`, `.env.example`) y las cuatro
   `narrations/<familia>.json` están **regeneradas** con él, en modo completo y sencillo, con las escenas por

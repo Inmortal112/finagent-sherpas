@@ -6,12 +6,13 @@ through the years. `build_template` writes template sentences; `build` swaps in 
 text model wrote once per family (`narrations/`, see narrator.py), scene by scene, if `guard` accepts it.
 
 What the stage needs to draw the house travels in `visual.data` (the contract does not change):
-- intro:     `house` {part: state}, `people`, `band`, `colour`
+- intro:     `house` {part: state}, `people`, `band`, `colour`, `home` (owned or rented, and the cars)
 - pillar_*:  `house_part`, `state`, `state_fact_id`
 - move_*:    `house_part`, `action`, `effort`, `score_before`, `score_after`
 - all_moves: `moves`, `score_before`, `score_after` (only when the plan combines moves)
 - person_*:  one per adult when the plan belongs to a couple: `person`, `salary`, `accounts`, `debts`, life cover
-- timeline:  `points` (one per year) and `events` (retirement, debt_free, savings_run_out / savings_last)
+- timeline:  `points` (one per year), `events` (retirement, debt_free, savings_run_out / savings_last)
+             and `dates` (the plan's dated goals: college, a purchase, a vacation)
 """
 import re
 
@@ -61,6 +62,7 @@ def build_template(diagnostic: dict, language: str = "en") -> Presentation:
                 "house": {house.part_for_pillar(p["pillar"]): house.state(p["score"]) for p in score["pillars"]},
                 "people": [{"first_name": p["first_name"], "role": p["role"], "age": p["age"]}
                            for p in diagnostic["case"]["household"]],
+                "home": house.home(diagnostic),
             }),
             fact_ids=["score", "band"] + [f.id for f in facts if f.id == "context_summary"],
         )
@@ -199,7 +201,8 @@ def _timeline(diagnostic: dict) -> tuple[list[Fact], Scene]:
         id="timeline",
         title="Your house through the years",
         narration=" ".join(["Now look ahead."] + sentences),
-        visual=Visual(kind="line", data={"fact_id": main_fact, "house_part": "garden", **data}),
+        visual=Visual(kind="line", data={"fact_id": main_fact, "house_part": "garden", **data,
+                                         "dates": house.plan_dates(diagnostic)}),
         fact_ids=[f.id for f in facts],
     )
     return facts, scene
