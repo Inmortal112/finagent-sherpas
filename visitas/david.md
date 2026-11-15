@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 23:57 — docs/visitas-public-repo — Claude Code
+- **Hecho:** regeneradas las páginas de las cuatro familias en los dos modos (`finagent.run --all`, voz edge; `out/`
+  no va a git). Revisado el historial entero del repo antes de hacerlo público (ver «Para Samuel»).
+- **Estado:** `bash check.sh` pasa (165). 8 páginas y 92 mp3; 56 de ellos nuevos por los textos cambiados.
+- **Decisiones:** ninguna nueva.
+- **Bloqueos:** solo el dueño del repo puede cambiar la visibilidad: David tiene permiso de escritura, no de admin.
+- **Para Samuel:** **recuerda pasar el repo a público** antes de la entrega (mié 18, 23:59): Sherpas lo pide para
+  mentores y jurado. Settings → General → Danger Zone → Change visibility. Revisado: en ningún commit hay `.env`,
+  claves, tokens ni audios (`.env`, `.env.*` y `out/` están en `.gitignore`; el único `TEAM_KEY=` es el
+  marcador «paste-…» del README de Sherpas). Los `cases/` ya son públicos en su repo. Avisa en tu `visitas/` al hacerlo.
+- **Siguiente:** David prueba el micro en su iPhone; README en inglés y párrafo de entrega.
+
 ## 2026-11-15 23:53 — docs/stage-house-3d-for-raul — Claude Code
 - **Hecho:** nota para Raúl al final de `02-DOCS/ftd/stage-casa-3d.md`: el 3D pasa a él, con tres caminos comparados.
 - **Estado:** `bash check.sh` pasa (165). Solo documentación.
