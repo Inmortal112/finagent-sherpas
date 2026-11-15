@@ -1,5 +1,19 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/brain-llm-narration — Claude Code
+- **Hecho:** `narrator.py` (nuevo): `gpt-5-mini` por el proxy escribe la narración de cada familia, `guard` la revisa
+  escena a escena y se guarda en `narrations/<familia>.json` (las cuatro, en el repo). `brain.build` la aplica;
+  `brain.build_template` es la versión de plantilla. `openai` en `requirements.txt`. Ficha `brain-narracion-llm.md`.
+- **Estado:** `./check.sh` pasa (76 tests) sin llamar al modelo. Gasto total del equipo: $0,13 de $50.
+- **Decisiones:** se genera una vez y se guarda (la demo no gasta ni cambia de texto); escena rechazada por `guard` →
+  frase de plantilla. La explicación de Sherpas de cada área es un hecho de su escena (`context_*`), así que la
+  narración puede citar sus cifras. Regenerar: `python -m finagent.narrator <familia>` (2-3 min, unos céntimos).
+- **Bloqueos:** sin respuesta a la pregunta del backend `/ask` (FastAPI o el Node de `examples/voice/`).
+- **Para David:** las narraciones son ahora de 40-60 palabras por escena (mp3 de unos 20 s) y traen `$1M`, `%`,
+  `VTI` y fechas («January 2027»). Tras `git pull`: `pip install -r requirements.txt`.
+- **Para Raúl:** `facts` trae hechos `context_*` con texto largo: no son para pintar. Los subtítulos son `narration`.
+- **Siguiente:** Samuel revisa los textos de Samantha y Michael; después, backend `/ask`.
+
 ## 2026-11-15 — feat/brain-house-facts — Claude Code
 - **Hecho:** `house.py` (nuevo) y `brain.py`: cada pilar es una parte de la casa (`foundations`, `roof`, `walls`,
   `plumbing`, `garden`) con estado `solid` / `cracked` / `broken`; cada paso dice qué parte repara; escenas nuevas

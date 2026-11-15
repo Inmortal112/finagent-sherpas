@@ -1,0 +1,21 @@
+{
+  "model": "gpt-5-mini",
+  "scenes": {
+    "intro": "Hello Daniel and Emily. You're about to see your financial plan drawn as a house; your overall score is 52 out of 100, a band called vulnerable. You have about $15,032 a year left after expenses, and the plan shows those dollars must be shared among retirement, a larger cash reserve, protection and college funding.",
+    "pillar_savings_and_cash_flow": "This is the plumbing: cracked. Savings and cash flow score is 16 out of 30. You have about $19,000 in emergency cash and about $15,032 a year of free cash flow, so every goal draws on the same thin cushion. A surprise bill would have to be met from this cash or by reducing other goals you care about.",
+    "pillar_debt": "These are the walls: solid. Debt score is 15 out of 20. You carry an $18,000 credit card balance at 24.9% and about $190,000 of home equity against the mortgage, so the load is large but manageable. That means an unexpected cost could push you toward the high-rate card or compete with other plans you have.",
+    "pillar_investments": "This is the garden: cracked. Investments score is 8 out of 15. You hold $14,000 in cash and about $330,000 in invested savings while most of your wealth is in the home, so the cash cushion is thin relative to your invested base. In daily life the house is harder to use for emergencies or to fund retirement needs quickly.",
+    "pillar_liquidity_and_emergency_fund": "These are the foundations: solid. Liquidity and emergency fund score is 13 out of 15. Your accessible cash is $19,000 and, once the $4,500 vacation payment is set aside, you are about $92,360 short of the minimum reserve. With two incomes at stake, that cushion is what you would lean on first if a paycheck were interrupted.",
+    "pillar_insurance_and_protection": "This is the roof: broken. Insurance and protection score is 0 out of 20. Daniel has $250,000 of life insurance and Emily has $200,000, and you have no umbrella cover, leaving large protection gaps. That means a death or a big liability claim could put the mortgage, college costs and your savings at risk.",
+    "move_1": "This repair fixes the roof. The plan adds $1,166,000 of life cover and raises your overall score from 52 out of 100 to 57 out of 100. In daily life that would better protect the mortgage and your children's costs if one income stopped.",
+    "move_2": "This repair fixes the roof. The plan adds $1M of umbrella cover and raises your score from 52 out of 100 to 56 out of 100. That would shield your savings from a single large liability claim that could otherwise reach your assets.",
+    "move_3": "This repair fixes the plumbing. The plan redirects $15,032 a year of free cash flow into savings and moves your score from 52 out of 100 to 55 out of 100. That means more goes into retirement savings instead of being free for other goals like extra cash or college.",
+    "all_moves": "Done together these two steps raise your score from 52 out of 100 to 60 out of 100. They add meaningful life insurance and an umbrella policy, closing big protection gaps so a single loss is less likely to drain your savings.",
+    "timeline": "Looking ahead, Daniel plans to retire at 62 and Emily at 60. Your debts are projected to be paid off by 2047, and under the current plan your savings and investments last to the end of the plan."
+  },
+  "template_kept": [],
+  "usage": {
+    "prompt_tokens": 4600,
+    "completion_tokens": 7618
+  }
+}

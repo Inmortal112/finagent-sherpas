@@ -1,0 +1,21 @@
+{
+  "model": "gpt-5-mini",
+  "scenes": {
+    "intro": "Hello Timothy and Melanie, we're going to look at your financial house and what each part looks like. Your financial health score is 60 out of 100, called stable, and you have $150,000 sitting in cash while some protection gaps remain. This view shows where your spare cash and your cover meet in real life.",
+    "pillar_savings_and_cash_flow": "Timothy and Melanie, this shows your plumbing, savings and monthly cash flow, scoring 26 out of 30 and solid. You hold $150,800 in cash, so emergencies and near-term plans are covered, but the spare surplus is low confidence and college saving is unfunded; bills and a short shock would be handled today, while education will need funding later.",
+    "pillar_debt": "Your walls, debt, are cracked. You score 12 out of 20 and carry an $18,000 credit card balance at 18%, the costliest piece of $93,000 total debt. Practically, that high-rate balance is the part of your bills most likely to eat into your monthly spare cash.",
+    "pillar_investments": "Your garden, investments, is cracked. You score 8 out of 15 and have $210,000 in invested savings while much cash sits outside growth. That means much of your liquid wealth isn't set up to grow, and a large share sits in the house rather than in accounts that compound for college or retirement.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations, liquidity and emergency fund, are solid. You score 15 out of 15 and hold $150,801 in accessible cash, covering about 16 months of essentials. In practice this means you can cover layoffs, sudden medical bills, or major home repairs without selling investments.",
+    "pillar_insurance_and_protection": "Your roof, insurance and protection, is broken. You score 7 out of 20 and have no umbrella policy, leaving $1,000,000 of liability exposure uncovered. Concretely, that gap means a large liability claim could force you to use savings you were building for Liam and Josh.",
+    "move_1": "This step uses $6,800 of cash to pay down the high-rate card, repairing your walls. It raises your score from 60 out of 100 to 62 out of 100. That change reduces the interest drain on your monthly payments and cuts how long you carry the expensive balance.",
+    "move_2": "This step adds $235,000 of life cover to strengthen your roof. The overall score stays at 60 out of 100. In daily terms it increases what would be available to your family if one of you died, rather than leaving that gap to your cash or investments.",
+    "move_3": "This step adds $1M of umbrella cover to shore up your roof, and the score remains 60 out of 100. That means a large liability claim would be far less likely to tap into the savings you hold for Liam and Josh.",
+    "all_moves": "Doing all three moves together, using cash to pay down the high-rate card, adding life insurance, and buying umbrella liability cover, takes your score from 60 out of 100 to 78 out of 100. Together they move the main weaknesses in your roof and walls so large bills are much less likely to eat your savings.",
+    "timeline": "Timothy plans to retire at 62 and Melanie at 60. Your debts are projected paid off by 2059 and, on the current plan, your savings and investments are projected to remain at $2,371,901 at the end of the plan. That means you expect to stop working at those ages and still have a sizeable nest egg to draw on in retirement."
+  },
+  "template_kept": [],
+  "usage": {
+    "prompt_tokens": 5679,
+    "completion_tokens": 7890
+  }
+}

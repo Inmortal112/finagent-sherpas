@@ -1,0 +1,20 @@
+{
+  "model": "gpt-5-mini",
+  "scenes": {
+    "intro": "Hello Michael. You're about to see your financial health as Sherpas mapped it to your home. Your financial health score is 26 out of 100 and Sherpas call that critical. You hold $30,000 of cash, so near-term needs like the planned home purchase could leave you short.",
+    "pillar_savings_and_cash_flow": "Your plumbing is broken. Savings and cash flow score is 0 out of 25. You have $30,000 in cash, so the January 2027 home purchase would leave you with no cushion for bills.",
+    "pillar_debt": "Your walls are solid. Debt score is 8 out of 10. The $3,500 credit card at 20% is the most expensive piece, but overall your debts are manageable and monthly payments are not the main strain on your budget.",
+    "pillar_investments": "Your garden is cracked. Investments score is 11 out of 25. You have $145,000 in invested savings, so how that money is placed toward growth will affect your ability to reach retirement targets.",
+    "pillar_liquidity_and_emergency_fund": "Your foundations are broken. Liquidity and emergency fund score is 4 out of 20. You have $30,000 of cash, so a loss of income or the January 2027 home purchase could leave you unable to cover monthly bills.",
+    "pillar_insurance_and_protection": "Your roof is broken. Insurance and protection score is 4 out of 20. You have $180,000 of life insurance, well below recommended levels, and with no umbrella policy a large liability could force you to use your savings to cover debts.",
+    "move_1": "This step strengthens your roof and raises your score from 26 out of 100 to 31 out of 100. It means buying $1M of umbrella protection so a big liability would not sweep away your savings.",
+    "move_2": "This step repairs your plumbing and raises your score from 26 out of 100 to 62 out of 100. It cuts withdrawals to $10,300 a year, which slows how fast savings are used and stretches your money in retirement.",
+    "move_3": "This step improves your garden and lifts your score from 26 out of 100 to 31 out of 100. It moves about $19,900 of your invested savings toward more stocks so that your invested pool can do more work for retirement.",
+    "timeline": "You plan to retire at 58. Debts are paid off by 2057 and savings and investments run out at 85, which means about $32,439 of planned spending would go unpaid by then."
+  },
+  "template_kept": [],
+  "usage": {
+    "prompt_tokens": 4158,
+    "completion_tokens": 7535
+  }
+}

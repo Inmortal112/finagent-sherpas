@@ -9,6 +9,16 @@ from contracts.schemas import Presentation
 # English number format (the product is in English): the point is the decimal separator and
 # commas only group thousands, so "6,800" is 6800 and "2.5" is two and a half.
 NUMBER = re.compile(r"\d+(?:,\d{3})*(?:\.\d+)?")
+# Numbers written in words that NUMBER cannot see. Small ones ("one step", "the two of you") are
+# everyday English and stay allowed; "million" too, because the plan itself writes "$1M".
+SPELLED = re.compile(
+    r"\b(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand)\b", re.IGNORECASE
+)
+
+
+def spelled_numbers(text: str) -> list[str]:
+    """Numbers written in words ('seventy-three'), which `unsupported_numbers` cannot check."""
+    return SPELLED.findall(text)
 
 
 def _normalise(text: str) -> float:
