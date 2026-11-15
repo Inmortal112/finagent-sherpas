@@ -1,5 +1,17 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — fix/narration-part-score — Claude Code
+- **Hecho:** leídos los textos del pitch (Samantha y Michael, dos modos) y los pasos, personas y línea del tiempo
+  de Weah y Johnson. Corregidas dos frases a mano. `guard.part_scored_out_of_100` (nuevo): rechaza «roof score …
+  out of 100». Ficha `narracion-revision-pitch.md`.
+- **Estado:** `./check.sh` pasa (151 tests).
+- **Decisiones:** solo la nota global es sobre 100; una parte de la casa con nota sobre 100 es siempre un error
+  (Michael, modo sencillo: «lifts your roof score to 31 out of 100»). La regla vale también para `/ask`.
+- **Bloqueos:** ninguno. Dos frases dudosas de los Johnson sin tocar (ver la ficha): decide Samuel.
+- **Para David:** cambian dos textos del modo sencillo (`michael-carter` `move_1`, `samantha-lewis`
+  `pillar_investments`): su audio guardado ya no vale.
+- **Siguiente:** comprobar la página completa cuando la otra sesión termine `feat/stage-full-experience`.
+
 ## 2026-11-15 — feat/stage-integration — Claude Code — primera web comprobada
 - **Hecho:** unidas la casa interactiva (`feat/stage-house-journey`) y `main` (con el resumen del historial en
   `/ask`). Comprobación de extremo a extremo en `02-DOCS/ftd/verificacion-primera-web.md`. Sin cambios de código.

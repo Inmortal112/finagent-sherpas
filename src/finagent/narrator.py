@@ -117,6 +117,9 @@ def check(presentation: Presentation, texts: dict[str, str]) -> tuple[dict[str, 
     for scene_id, text in texts.items():
         for word in guard.spelled_numbers(text):
             problems.setdefault(scene_id, []).append(f"number written in words: {word}")
+        for phrase in guard.part_scored_out_of_100(text):
+            problems.setdefault(scene_id, []).append(
+                f"only the overall score is out of 100, not a part of the home: {phrase}")
     accepted = {scene_id: text for scene_id, text in texts.items() if scene_id not in problems}
     return accepted, {scene_id: "; ".join(reasons) for scene_id, reasons in problems.items()}
 

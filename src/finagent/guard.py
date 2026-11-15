@@ -16,6 +16,18 @@ SPELLED = re.compile(
 )
 
 
+# "It lifts your roof score to 31 out of 100": 31 is the family's overall score, not the roof's. Only the
+# overall score is out of 100 (a part scores out of 10 to 30), so a part "scoring" out of 100 is always wrong.
+PART_OUT_OF_100 = re.compile(
+    r"\b(?:roof|walls?|plumbing|foundations?|garden)(?:'s)? scores?\b[^.!?]*?\bout of 100\b", re.IGNORECASE
+)
+
+
+def part_scored_out_of_100(text: str) -> list[str]:
+    """Phrases that give a part of the home a score out of 100: a real number used with the wrong meaning."""
+    return [match.group(0) for match in PART_OUT_OF_100.finditer(text)]
+
+
 def spelled_numbers(text: str) -> list[str]:
     """Numbers written in words ('seventy-three'), which `unsupported_numbers` cannot check."""
     return SPELLED.findall(text)

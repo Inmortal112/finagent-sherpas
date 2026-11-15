@@ -40,6 +40,12 @@ el resumen del historial en `/ask`) y lo comprueba junto.
   «Step inside your home» y el botón «?» del chat. Sin solapes en móvil.
 - **A mirar a ojo:** en las capturas el anillo marcaba 36 y 34, no 82. Parece la animación de la nota cogida a
   medias (el selector sí dice 82 y la otra sesión la vio llegar a 82 con Playwright), pero no lo he confirmado.
+- **Anillo confirmado (después, con Playwright en tiempo real sobre `7a28f5e`):** la nota llega a **82** en
+  escritorio y en móvil; el 36 de la captura era la animación a medias por el tiempo virtual. Al entrar se ve la
+  casa con Samantha 47, Ethan 18, Ava 16 y las cinco partes con su estado; a mitad del recorrido en móvil, el año
+  2044 con su gráfico. Único error de consola: `/favicon.ico` → 404.
+- **Aviso:** en el puerto 8000 había un servidor antiguo (arrancado a las 12:08 desde otra copia del repo) que
+  servía el mock viejo, no la casa. Para ver la casa: parar ese y arrancar `scripts/serve.sh` desde `main`.
 - Sin comprobar: el recorrido al deslizar y el chat dentro de la página (solo las rutas que usa); micrófono real;
   Safari / iPhone; cómo suena la narración.
 
