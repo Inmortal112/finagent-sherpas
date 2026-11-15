@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 23:25 — feat/stage-house-3d-states — Claude Code
+- **Hecho:** paso 2 de la casa 3D (sigue solo con `?house=3d`). `web/house3d.js` hace ya lo mismo que `paint()`:
+  estados (grietas; roto = agujero en el tejado, ladrillo visto, fuga y charco, ramas secas), brillo de lo reparado,
+  jardín que se seca con `lush` y partes sin foco en pálido. Una marca redonda por parte (✓ ! ✕) y tocar una parte
+  lleva a su capítulo (`goToPart`).
+- **Estado:** `bash check.sh` pasa (165). Navegador a 375×812: los cuatro estados, el foco y el toque, forzados a mano
+  y con los datos de Samantha. Consola sin errores de la página. **iPhone real sin probar.**
+- **Decisiones:** marcas en 3D aunque el plan decía «solo leyenda»: en el móvil la leyenda está oculta. Gotas quietas.
+- **Bloqueos:** ninguno. `out/families/` sigue con páginas viejas: el 3D solo se ve en la portada hasta `run --all`.
+- **Para Raúl:** en `stage_page.html` solo cambia una línea (`mount` recibe `onFail` y `onPick`).
+- **Siguiente:** iPhone; PR 3: la cámara (scroll y `turnHome`).
+
 ## 2026-11-15 23:17 — feat/stage-house-3d-switch — Claude Code
 - **Hecho:** primer paso de la casa 3D, solo con `?house=3d` (la página por defecto no cambia). `web/house3d.js`: casa
   quieta con las 5 partes, hecha con formas simples. `web/vendor/three.module.min.js`: three.js 0.170.0 dentro del repo

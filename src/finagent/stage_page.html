@@ -777,7 +777,7 @@ async function tryHouse3d() {
   try {
     const { mount } = await import(SITE + "web/house3d.js");   // served by the backend; opened as a file this fails
     $("house3d").hidden = false;
-    house3d = mount($("house3d"), drawnHome);
+    house3d = mount($("house3d"), { onFail: drawnHome, onPick: goToPart });
     $("house").style.display = "none";
     paint();
   } catch (e) {
