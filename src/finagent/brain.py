@@ -8,7 +8,7 @@ text model wrote once per family (`narrations/`, see narrator.py), scene by scen
 What the stage needs to draw the house travels in `visual.data` (the contract does not change):
 - intro:     `house` {part: state}, `people`, `band`, `colour`, `home` (owned or rented, and the cars)
 - pillar_*:  `house_part`, `state`, `state_fact_id`
-- move_*:    `house_part`, `action`, `effort`, `score_before`, `score_after`
+- move_*:    `house_part`, `action`, `effort`, `score_before`, `score_after`, `pays_part_of_debt`
 - all_moves: `moves`, `score_before`, `score_after` (only when the plan combines moves)
 - person_*:  one per adult when the plan belongs to a couple: `person`, `salary`, `accounts`, `debts`, life cover
 - timeline:  `points` (one per year), `events` (retirement, debt_free, savings_run_out / savings_last)
@@ -114,6 +114,13 @@ def build_template(diagnostic: dict, language: str = "en") -> Presentation:
             effect = f"It takes your score from {move['score_before']} to {move['score_after']}."
         else:
             effect = f"On its own, your score stays at {move['score_before']}."
+        fact_ids = [before_id, after_id, action_id]
+        card_balance = house.part_paid_card_balance(diagnostic, move)
+        if card_balance:  # the step pays part of the card: say what is owed today, so nobody hears it is cleared
+            facts.append(Fact(id=f"move_{i + 1}_card_balance", value=round(card_balance), unit="USD",
+                              label="The card's balance today. This step pays part of it; the rest is still owed",
+                              source=f"{SOURCE}:key_metrics.debtManagement.creditCardDebt.creditCardBalance"))
+            fact_ids.append(f"move_{i + 1}_card_balance")
         part = house.part_for_move(move["title"])
         repair = f" This repair is for your {part}." if part else ""
         scenes.append(
@@ -126,8 +133,9 @@ def build_template(diagnostic: dict, language: str = "en") -> Presentation:
                     "plain_title": house.plain_title(move["title"]),
                     "first_moves": house.first_moves(move["title"]),
                     "score_before": move["score_before"], "score_after": move["score_after"],
+                    "pays_part_of_debt": bool(card_balance),
                 }),
-                fact_ids=[before_id, after_id, action_id],
+                fact_ids=fact_ids,
             )
         )
 

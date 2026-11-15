@@ -87,3 +87,28 @@ def test_a_part_of_the_home_cannot_score_out_of_100():
     accepted, rejected = narrator.check(template, {"move_1": wrong})
     assert not accepted and "only the overall score is out of 100" in rejected["move_1"]
     assert narrator.check(template, {"move_1": right})[0] == {"move_1": right}
+
+
+def test_a_step_that_pays_part_of_a_debt_is_never_said_to_clear_it():
+    weah = json.loads((ROOT / "cases" / "timothy-melanie-weah" / "financial-health.json").read_text(encoding="utf-8"))
+    template = brain.build_template(weah)
+    step = next(scene for scene in template.scenes if scene.id == "move_1")
+    assert step.visual.data["pays_part_of_debt"] and "move_1_card_balance" in step.fact_ids
+    for wrong in ("Pay $6,800 on the card. That clears your costliest debt.",
+                  "Paying $6,800 pays off the card and lifts your score to 62.",
+                  "With $6,800 you wipe out the 18% card."):
+        accepted, rejected = narrator.check(template, {"move_1": wrong})
+        assert not accepted and "pays only part of the debt" in rejected["move_1"], wrong
+    for right in ("Pay $6,800 off the 18% card, using cash you already have. It lifts your score from 60 to 62.",
+                  "It pays $6,800 of the $18,000 card, so the debt isn't cleared yet.",
+                  "Pay $6,800 on the 18% card. The rest is still owed, and it will take longer to clear.",
+                  "It pays $6,800 on the card to clear the gate that holds your score down."):
+        assert narrator.check(template, {"move_1": right})[0] == {"move_1": right}, right
+    # the same words are fine where no step pays part of a debt
+    assert narrator.check(template, {"pillar_debt": "At today's payment it takes years to clear."})[0]
+    for case in sorted((ROOT / "cases").glob("*/financial-health.json")):  # every saved text still passes
+        diagnostic = json.loads(case.read_text(encoding="utf-8"))
+        for mode in brain.MODES:
+            built = brain.build(diagnostic, mode=mode)
+            texts = {scene.id: scene.narration for scene in built.scenes}
+            assert narrator.check(built, texts)[1] == {}, (case.parent.name, mode)

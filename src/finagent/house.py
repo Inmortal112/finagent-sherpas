@@ -257,3 +257,15 @@ def plan_dates(diagnostic: dict) -> list[dict]:
                       "repeats": bool(goal.get("termDate")) and goal["termDate"][:10] != goal["date"][:10]
                       and goal["goalType"] == "VACATION"})
     return sorted(dates, key=lambda d: d["date"])
+
+
+def part_paid_card_balance(diagnostic: dict, move: dict) -> float | None:
+    """The card's balance today when `move` pays only part of it, else None. Both figures are Sherpas' own."""
+    if move["title"].lower() != "pay down revolving card":
+        return None
+    paid = re.search(r"\$(\d[\d,]*)", move["action"])
+    balance = (diagnostic.get("key_metrics", {}).get("debtManagement", {})
+               .get("creditCardDebt", {}).get("creditCardBalance"))
+    if not paid or not balance or float(paid.group(1).replace(",", "")) >= balance:
+        return None
+    return balance
