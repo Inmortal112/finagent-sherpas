@@ -3,6 +3,17 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 — feat/voice-elevenlabs — Claude Code
+- **Hecho:** `voice_eleven.py` + `VOICE_ENGINE=eleven` en `voice.py` (respaldo eleven → edge → mock). Caché en
+  `out/voice_cache/` (mismo texto y voz = no se paga dos veces) y tope `ELEVEN_MAX_CHARS`. Voz: **Matilda**. Ficha `voz-elevenlabs.md`.
+- **Estado:** `bash check.sh` pasa (75 tests). Probado de verdad: Samantha entera, 10 escenas, 70 s.
+- **Decisiones:** ElevenLabs va con mi cuenta de estudiante (`ELEVENLABS_API_KEY`, gratis, 130 k caracteres/mes), no
+  con los $1,40 del equipo (quedan de reserva por el proxy). Sin dependencias: `urllib`. Edge sigue por defecto.
+- **Bloqueos:** ninguno.
+- **Para Samuel:** ya no necesito `openai` para la voz; añádelo tú con el primer LLM. Backend: me encaja FastAPI con `/ask`.
+- **Para Samuel y Raúl:** la clave es personal: el audio ElevenLabs de la demo lo genero yo; vosotros seguid con edge.
+- **Siguiente:** las cuatro familias con ElevenLabs para la demo; voz de las respuestas de `/ask`.
+
 ## 2026-11-14 — feat/voice-normalization — Claude Code
 - **Hecho:** `speech_text.py` (`to_speech`): reescribe el texto como se dice en voz alta (markdown fuera, `/yr` → «a
   year», `-$8,336` → «minus», `$1M`, rangos, `22/30`, fechas ISO, `401(k)`, `529`, siglas y tickers). `voice.py` lo
