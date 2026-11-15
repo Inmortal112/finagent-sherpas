@@ -38,6 +38,8 @@ You get the question and the scenes of the tour, each with its facts. Do two thi
    plan, or asks for a prediction, a product, or advice the plan does not contain, choose "off_plan".
    Questions about the future, retirement, how long the money lasts or the garden drying up belong to
    the "timeline" scene. Questions about what to do first belong to a step scene ("move_...").
+   When "asked_by" names a person and the question is about what is theirs (my insurance, my accounts,
+   my debts, my salary), choose that person's scene ("person_...") and speak to them by first name.
 2. Answer the question using only that scene's facts.
 
 Rules for numbers (a checker rejects the answer if you break them):
@@ -71,22 +73,36 @@ class Answer:
         return asdict(self)
 
 
+SIMPLE_MODE = """
+Simple mode. This person rarely uses apps or reads financial papers, and may be elderly. Override the length
+rule above: 1 or 2 short sentences, 28 words at most, with one figure at most. Everyday words only.
+"""
+
+
 def answer(presentation: Presentation, diagnostic: dict, question: str,
-           complete: Callable[[str, str], str] | None = None) -> Answer:
-    """Answer one question about `presentation`. `complete(system, user) -> str` is the model call."""
+           complete: Callable[[str, str], str] | None = None, mode: str = "complete",
+           person: str | None = None) -> Answer:
+    """Answer one question about `presentation`. `complete(system, user) -> str` is the model call.
+
+    `mode` is "complete" or "simple" (shorter, one figure at most). `person` is the adult who is asking,
+    when the plan belongs to a couple: the answer speaks to them and can use their own part of the home.
+    """
     question = " ".join(question.split())
     if not question:
         return Answer(question, UNAVAILABLE_ANSWER, source="unavailable")
     complete = complete or _complete
     scenes = {scene.id: scene for scene in presentation.scenes}
     brief = dict(narrator._brief(presentation, diagnostic), question=question)
+    if person:
+        brief["asked_by"] = person
+    system = SYSTEM_PROMPT + (SIMPLE_MODE if mode == "simple" else "")
 
     scene_id, rejected_because = None, None
     for _ in range(2):
         if rejected_because:
             brief["rejected_because"] = f"your answer for scene {scene_id} was rejected: {rejected_because}"
         try:
-            reply = json.loads(complete(SYSTEM_PROMPT, json.dumps(brief, ensure_ascii=False)))
+            reply = json.loads(complete(system, json.dumps(brief, ensure_ascii=False)))
             scene_id, text = reply.get("scene"), reply.get("answer") or ""
         except Exception:  # no key, no network, bad JSON: the family still gets a sentence
             return Answer(question, UNAVAILABLE_ANSWER, source="unavailable")

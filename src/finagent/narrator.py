@@ -5,6 +5,8 @@ demo never call the model, cost nothing and always say the same thing:
 
     python -m finagent.narrator samantha-lewis      # one family
     python -m finagent.narrator --all               # the four of them
+    python -m finagent.narrator --all --simple      # the simple mode (shorter, one figure at most)
+    python -m finagent.narrator --all --missing     # only the scenes that have no accepted text yet
 
 `brain.build` applies the saved text. A scene whose text quotes a number that is not in its
 facts falls back to the template sentence, so narration can never break the pipeline.
@@ -61,6 +63,8 @@ Rules for the words:
   words too, without their titles.
 - Steps are things the plan already worked out, not new ideas. Never present anything as your own advice.
 - The timeline scene looks ahead through the years of the current plan.
+- A scene with a "person" is that one adult's own part of the home: speak to them by first name, about what
+  is in their name (their cover, their accounts, their debts), and what it means for the other people at home.
 - After the figures, close each part's scene with what it means in daily life for this family, concretely
   (what it protects them from, or what it leaves them open to). No abstract closing sentences.
 - If a part's state is solid but the observations show a weak spot in it, say both, honestly.
@@ -73,12 +77,28 @@ Answer with JSON only: {"scenes": {"<scene id>": "<text>", ...}} with every scen
 """
 
 
-def apply_saved(presentation: Presentation, slug: str, directory: Path | None = None) -> Presentation:
-    """Replace template sentences with the saved narration of `slug`, scene by scene, where `guard` accepts it."""
+SIMPLE_MODE = """
+Simple mode. This person rarely uses apps or reads financial papers, and may be elderly. Override the length
+rule above: 1 or 2 short sentences per scene, 28 words at most, with one figure at most (the most important one;
+a part's score counts as that figure). Everyday words only, one idea per sentence, nothing to work out.
+"""
+
+MODE_KEY = {"complete": "scenes", "simple": "simple"}  # where each mode lives in narrations/<family>.json
+
+
+def saved_texts(slug: str, mode: str = "complete", directory: Path | None = None) -> dict[str, str]:
     path = (directory or NARRATIONS_DIR) / f"{slug}.json"
     if not path.exists():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8")).get(MODE_KEY[mode]) or {}
+
+
+def apply_saved(presentation: Presentation, slug: str, directory: Path | None = None,
+                mode: str = "complete") -> Presentation:
+    """Replace template sentences with the saved narration of `slug`, scene by scene, where `guard` accepts it."""
+    saved = saved_texts(slug, mode, directory)
+    if not saved:
         return presentation
-    saved = json.loads(path.read_text(encoding="utf-8"))["scenes"]
     accepted, rejected = check(presentation, saved)
     for scene_id, reason in rejected.items():
         log.warning("Saved narration for %s/%s rejected (%s); using the template", slug, scene_id, reason)
@@ -101,28 +121,32 @@ def check(presentation: Presentation, texts: dict[str, str]) -> tuple[dict[str, 
     return accepted, {scene_id: "; ".join(reasons) for scene_id, reasons in problems.items()}
 
 
-def generate(presentation: Presentation, diagnostic: dict, model: str | None = None) -> dict:
-    """Ask the model for every scene, retry the rejected ones once, and return what `guard` accepted."""
+def generate(presentation: Presentation, diagnostic: dict, model: str | None = None, mode: str = "complete",
+             only: set[str] | None = None) -> dict:
+    """Ask the model for every scene (or just `only`), retry the rejected ones once, and return what `guard` accepted."""
     model = model or os.getenv("BRAIN_MODEL") or DEFAULT_MODEL
     client = _client()
     brief = _brief(presentation, diagnostic)
+    if only is not None:
+        brief["scenes"] = [scene for scene in brief["scenes"] if scene["id"] in only]
+    system = SYSTEM_PROMPT + (SIMPLE_MODE if mode == "simple" else "")
     usage = {"prompt_tokens": 0, "completion_tokens": 0}
 
-    accepted, rejected = check(presentation, _ask(client, model, brief, usage))
+    accepted, rejected = check(presentation, _ask(client, model, brief, usage, system))
     missing = [scene["id"] for scene in brief["scenes"] if scene["id"] not in accepted]
     if missing:
         retry = dict(brief, scenes=[
             dict(scene, rejected_because=rejected.get(scene["id"], "no text was returned"))
             for scene in brief["scenes"] if scene["id"] in missing
         ])
-        again, rejected = check(presentation, _ask(client, model, retry, usage))
+        again, rejected = check(presentation, _ask(client, model, retry, usage, system))
         accepted.update(again)
 
     order = [scene.id for scene in presentation.scenes]
     return {
         "model": model,
         "scenes": {scene_id: accepted[scene_id] for scene_id in order if scene_id in accepted},
-        "template_kept": [scene_id for scene_id in order if scene_id not in accepted],
+        "template_kept": [scene["id"] for scene in brief["scenes"] if scene["id"] not in accepted],
         "usage": usage,
     }
 
@@ -153,7 +177,7 @@ def _brief(presentation: Presentation, diagnostic: dict) -> dict:
             "outline": scene.narration,
             "facts": [{"label": facts[i].label, "say_as": _say_as(facts[i])} for i in scene.fact_ids],
         }
-        for key in ("house_part", "state", "effort", "house"):
+        for key in ("house_part", "state", "effort", "house", "person"):
             if data.get(key):
                 entry[key] = data[key]
         if scene.id == "timeline":
@@ -190,11 +214,11 @@ def _client():
     return OpenAI(base_url=f"{os.environ['LLM_PROXY_URL'].rstrip('/')}/v1", api_key=os.environ["TEAM_KEY"])
 
 
-def _ask(client, model: str, brief: dict, usage: dict) -> dict[str, str]:
+def _ask(client, model: str, brief: dict, usage: dict, system: str = SYSTEM_PROMPT) -> dict[str, str]:
     reply = client.chat.completions.create(
         model=model,
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system},
             {"role": "user", "content": json.dumps(brief, ensure_ascii=False)},
         ],
         response_format={"type": "json_object"},
@@ -209,25 +233,40 @@ def _ask(client, model: str, brief: dict, usage: dict) -> dict[str, str]:
     return scenes if isinstance(scenes, dict) else {}
 
 
-def main(families: list[str]) -> int:
+def main(args: list[str]) -> int:
+    """`<family>... | --all`, plus `--simple` (the simple mode) and `--missing` (only scenes with no accepted text)."""
     from finagent import brain  # here, not at the top: brain imports this module
 
-    if families == ["--all"]:
+    mode = "simple" if "--simple" in args else "complete"
+    missing_only = "--missing" in args
+    families = [a for a in args if not a.startswith("--")]
+    if "--all" in args:
         families = sorted(p.parent.name for p in (ROOT / "cases").glob("*/financial-health.json"))
     NARRATIONS_DIR.mkdir(exist_ok=True)
     kept = 0
     for family in families:
         diagnostic = json.loads((ROOT / "cases" / family / "financial-health.json").read_text(encoding="utf-8"))
-        result = generate(brain.build_template(diagnostic), diagnostic)
+        template = brain.build_template(diagnostic)
         path = NARRATIONS_DIR / f"{family}.json"
-        path.write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        saved = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+        already, _ = check(template, saved.get(MODE_KEY[mode]) or {}) if missing_only else ({}, {})
+        only = {scene.id for scene in template.scenes} - set(already)
+        if not only:
+            print(f"{family} ({mode}): nothing missing")
+            continue
+        result = generate(template, diagnostic, mode=mode, only=only)
+        texts = {**already, **result["scenes"]}
+        saved[MODE_KEY[mode]] = {scene.id: texts[scene.id] for scene in template.scenes if scene.id in texts}
+        saved.setdefault("model", result["model"])
+        saved.pop("template_kept", None), saved.pop("usage", None)
+        path.write_text(json.dumps(saved, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         kept += len(result["template_kept"])
-        print(f"{family}: {len(result['scenes'])} scenes written, template kept for {result['template_kept']}, "
-              f"tokens {result['usage']} -> {path.relative_to(ROOT)}")
+        print(f"{family} ({mode}): {len(result['scenes'])} scenes written, template kept for "
+              f"{result['template_kept']}, tokens {result['usage']} -> {path.relative_to(ROOT)}")
     return 1 if kept else 0
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        raise SystemExit("usage: python -m finagent.narrator <family> [<family> ...] | --all")
+        raise SystemExit("usage: python -m finagent.narrator <family>... | --all  [--simple] [--missing]")
     raise SystemExit(main(sys.argv[1:]))

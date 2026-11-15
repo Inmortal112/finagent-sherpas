@@ -125,3 +125,50 @@ def timeline(diagnostic: dict) -> dict:
 
 def _year_at(yearly: list[dict], age_key: str, age: int) -> int | None:
     return next((row["year"] for row in yearly if row[age_key] == age), None)
+
+
+def adults(diagnostic: dict) -> list[dict]:
+    """The people the plan belongs to (client and co-client), in that order."""
+    return [p for p in diagnostic["case"]["household"] if p["role"] in ("client", "co-client")]
+
+
+def person_view(diagnostic: dict, first_name: str) -> dict:
+    """What the plan holds in one adult's own name: income, accounts, debts and life cover.
+
+    Shared items (two owners) are left out: they belong to the home, not to one person.
+    """
+    profile = diagnostic["profile"]
+    role = next(p["role"] for p in adults(diagnostic) if p["first_name"] == first_name)
+    side = "client" if role == "client" else "coClient"
+
+    def own(items: list[dict]) -> list[dict]:
+        return [item for item in items if item.get("owner") == [first_name]]
+
+    life = (diagnostic["key_metrics"].get("protection") or {}).get("lifeInsurance") or {}
+    basics = life.get("lifeInsuranceCoverageBasics") or {}
+    gaps = life.get("lifeInsuranceCoverageGapsAndExcess") or {}
+    recommended = life.get("lifeInsuranceCoverageRecommendations") or {}
+    return {
+        "first_name": first_name,
+        "role": role,
+        "salary": sum(i["yearly"] for i in own(profile["incomes"]) if i["type"] == "SALARY_AND_WAGES"),
+        "accounts": [{"name": a["name"], "balance": a["balance"]} for a in own(profile["accounts"])],
+        "debts": [{"name": d["name"], "balance": d["balance"], "rate_percent": round(d["interest_rate"] * 100, 2)}
+                  for d in own(profile["liabilities"]) if d["balance"] > 0],
+        "life_cover": basics.get(f"lifeInsuranceAmount{side[0].upper()}{side[1:]}"),
+        "life_shortfall": gaps.get(f"{side}Shortfall"),
+        "life_recommended_min": recommended.get(f"{side}MinRecommendedCoverage"),
+        "life_recommended_max": recommended.get(f"{side}MaxRecommendedCoverage"),
+    }
+
+
+def plan_dates(diagnostic: dict) -> list[dict]:
+    """The dated goals of the plan (first payment of a repeating one), oldest first. No engine-only markers."""
+    dates = []
+    for goal in diagnostic["goals"]["chartGoals"]:
+        if not goal.get("name"):
+            continue  # markers such as BANKRUPTCY_ZEROCASH: never shown to a family
+        dates.append({"kind": goal["goalType"].lower(), "name": goal["name"], "date": goal["date"][:10],
+                      "repeats": bool(goal.get("termDate")) and goal["termDate"][:10] != goal["date"][:10]
+                      and goal["goalType"] == "VACATION"})
+    return sorted(dates, key=lambda d: d["date"])

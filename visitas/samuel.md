@@ -23,6 +23,32 @@
 - **Para David y Raúl:** leedlo y decid si lo veis útil para la demo. No cambia la forma de `/ask` para la página.
 - **Siguiente:** si se aprueba, issue y rama `feat/brain-ask-summary`.
 
+## 2026-11-15 — feat/voice-stt-fallback — Claude Code
+- **Hecho:** `voice_stt_model.py` (nuevo) y `voice.transcribe_async`: si Scribe falla, la grabación la transcribe
+  `gemini-3.5-flash-lite` por el proxy. Tests en `tests/test_voice_stt.py`.
+- **Estado:** `./check.sh` pasa (132 tests). Real: pregunta hablada en webm → respuesta en 4,9 s; silencio → 422.
+- **Decisiones:** Scribe sigue siendo el primero; el respaldo solo entra si Scribe da error y hay `TEAM_KEY`.
+- **Bloqueos:** el proxy sigue dando 401 en ElevenLabs (hablar y transcribir). Enlace público sin abrir.
+- **Para David:** he tocado tu etapa (`voice.py`, 12 líneas, y `Transcript.engine` puede valer `"model"`). El motivo:
+  sin tu clave personal nadie más podía preguntar por voz. Si prefieres otra forma, cámbialo.
+- **Siguiente:** probar `/chat` con micrófono real en el móvil (necesita el enlace https de `scripts/share.sh`).
+
+## 2026-11-15 — feat/brain-family-experience — Claude Code
+- **Hecho:** por persona (escena `person_<nombre>` en Weah y Johnson; `/ask` con `person`), modo `simple` /
+  `complete` (narración y respuestas), `POST /worry`, `GET /reminders` + `POST /follow-up`, `POST /ask/stream`
+  (la respuesta llega palabra a palabra), topes de uso, página `/chat`, `scripts/serve.sh`, `scripts/share.sh`,
+  `Dockerfile`. Guía en inglés: `BACKEND.md`. Ficha: `brain-experiencia-familia.md`.
+- **Estado:** `./check.sh` pasa (126 tests). Probado con el servidor real; `/chat` sin probar en navegador.
+- **Decisiones:** lo que se escribe poco a poco es el texto ya aprobado por `guard`, nunca el del modelo según sale.
+  `brain.build` acepta `mode` (opcional; el contrato no cambia). Los avisos son frases fijas, sin modelo.
+- **Bloqueos:** el proxy de Sherpas da 401 «Invalid API key» en ElevenLabs (hablar y transcribir): sin la clave
+  personal de David no hay pregunta por voz ni voz ElevenLabs. Enlace público sin abrir (hay que lanzar `share.sh`).
+- **Para David:** ¿puedes probar `/ask` con un webm real y tu clave? Y avisar a un mentor de lo del proxy. Hay
+  escenas nuevas (`person_*`) y narración `simple`: `brain.build(diagnostic, mode="simple")`.
+- **Para Raúl:** todas las rutas y la forma de los eventos de `/ask/stream` están en `BACKEND.md`; `/chat` es un
+  ejemplo que ya las usa todas (preocupación, chat, pasos, aviso del día 3). Manda `mode` y `person` en cada pregunta.
+- **Siguiente:** abrir el enlace público y probar en el móvil; resumen del historial como contexto (`escalabilidad.md`).
+
 ## 2026-11-15 — feat/brain-ask — Claude Code
 - **Hecho:** backend FastAPI (`server.py`): `/ask`, `/history`, `/decision`, `/advisor-note`, `/families`,
   `/presentation/{family}`. `ask.py` (pregunta → escena + respuesta, con `guard`) y `sessions.py` (historial en

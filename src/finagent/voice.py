@@ -121,24 +121,33 @@ def speak(text: str, language: str = "en") -> SpokenAudio:
 class Transcript:
     """What the family said. `text` is None when it could not be transcribed (ask them to type it)."""
     text: str | None
-    engine: str  # "eleven" or "none"
+    engine: str  # "eleven", "model" (the proxy's listening model, when Scribe fails) or "none"
 
 
 async def transcribe_async(audio: bytes, filename: str = "question.webm", language: str = "en") -> Transcript:
     """The family's spoken question (any browser recording: webm, ogg, mp3, wav, m4a...) -> text.
 
     Uses ElevenLabs Scribe with the same keys as the voice (ELEVENLABS_API_KEY, else TEAM_KEY via the
-    proxy). Never raises: on any failure, or if nothing was said, `text` is None. Inside FastAPI:
+    proxy). If Scribe fails, a model that listens (voice_stt_model, through the proxy) tries. Never raises: on any failure, or if nothing was said, `text` is None. Inside FastAPI:
         heard = await voice.transcribe_async(await file.read(), file.filename)
     """
     _load_env()
-    from finagent import voice_eleven
+    from finagent import voice_eleven, voice_stt_model
     try:
         text = await asyncio.to_thread(voice_eleven.transcribe, audio, filename, language)
         return Transcript(text or None, "eleven")
-    except Exception as exc:
-        log.warning("speech to text failed (%s: %s); ask the family to type", type(exc).__name__, exc)
+    except ValueError as exc:  # empty or huge recording: nothing to send anywhere
+        log.warning("speech to text refused the recording (%s); ask the family to type", exc)
         return Transcript(None, "none")
+    except Exception as exc:
+        log.warning("Scribe failed (%s: %s); trying the proxy's listening model", type(exc).__name__, exc)
+    if voice_stt_model.available():  # fallback: a model that listens, through the Sherpas proxy
+        try:
+            text = await asyncio.to_thread(voice_stt_model.transcribe, audio, filename, language)
+            return Transcript(text or None, "model")
+        except Exception as exc:
+            log.warning("speech to text failed (%s: %s); ask the family to type", type(exc).__name__, exc)
+    return Transcript(None, "none")
 
 
 def transcribe(audio: bytes, filename: str = "question.webm", language: str = "en") -> Transcript:
