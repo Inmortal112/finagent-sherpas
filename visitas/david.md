@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-15 16:20 — fix/stage-tap-to-talk — Claude Code
+- **Hecho:** el micrófono pasa de «mantener pulsado» a «tocar para hablar» en `stage_page.html` y `chat_page.html`: un
+  toque empieza, otro envía; mantener pulsado (≥0,6 s) y soltar sigue valiendo. Se envía solo a los 30 s. El archivo
+  lleva la extensión real de la grabación (`.webm`, `.mp4` en iPhone, `.ogg`).
+- **Estado:** `bash check.sh` pasa (150 tests). En Chromium con un micrófono simulado: toque/toque y mantener/soltar
+  envían la grabación. **Sin probar en un móvil real.**
+- **Decisiones:** David lo probó: en el móvil no funcionaba de ninguna forma y en el ordenador solo manteniendo. Las
+  grabaciones llegaban al servidor sin voz (422): se cortaban al soltar, al salirse el dedo o al salir el permiso.
+- **Bloqueos:** ninguno.
+- **Para Raúl y Samuel:** he tocado la escena (solo el bloque del micrófono y su etiqueta). Si preferís otro gesto, cambiadlo.
+- **Siguiente:** que David lo pruebe en el móvil por el enlace público.
+
 ## 2026-11-15 15:50 — feat/voice-daily-cap — Claude Code
 - **Hecho:** tope diario de caracteres enviados a ElevenLabs: `ELEVEN_MAX_CHARS_PER_DAY` (por defecto 20000) en
   `voice_eleven.py`. Suma pipeline y respuestas en directo; la cuenta va en `out/voice_cache/usage.json` y empieza de

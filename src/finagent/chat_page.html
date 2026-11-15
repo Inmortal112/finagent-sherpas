@@ -55,7 +55,7 @@
 
   <form id="ask">
     <input id="question" placeholder="Ask about your plan…" autocomplete="off" required>
-    <button type="button" id="mic" title="Hold to talk">Hold to talk</button>
+    <button type="button" id="mic" title="Tap to talk">Tap to talk</button>
     <button class="main" id="send">Ask</button>
   </form>
 </main>
@@ -124,7 +124,7 @@ function form(extra) {
   if ($("person").value) body.append("person", $("person").value);
   if (sessionId()) body.append("session_id", sessionId());
   for (const [name, value] of Object.entries(extra)) {
-    if (value instanceof Blob) body.append(name, value, "question.webm"); else body.append(name, value);
+    if (value instanceof Blob) body.append(name, value, recordingName(value)); else body.append(name, value);
   }
   return body;
 }
@@ -185,30 +185,55 @@ $("ask").addEventListener("submit", event => {
   if (awaitingWorry) { awaitingWorry = false; sendWorry(text); } else ask({ question: text }, text);
 });
 
-// Hold to talk, like sending a voice note.
-let recorder = null, chunks = [];
+// Tap to talk: one tap starts, the next tap sends. Holding the button while you speak works too.
+const HOLD_MS = 600;              // a press at least this long is "hold to talk": letting go sends
+const MAX_RECORDING_MS = 30000;   // a forgotten recording sends itself
+let recorder = null, chunks = [], starting = false, pressedAt = 0, recordingTimer = 0;
+// Browsers record in different formats (Chrome: webm, iPhone: mp4, Firefox: ogg); the name tells the server which.
+function recordingName(blob) {
+  const type = blob.type || "";
+  return "question." + (type.includes("mp4") ? "mp4" : type.includes("ogg") ? "ogg" : "webm");
+}
+function showMic(listening) {
+  $("mic").classList.toggle("on", listening);
+  $("mic").textContent = listening ? "Listening… tap to send" : "Tap to talk";
+}
 async function startTalking() {
-  if (busy || recorder) return;
+  starting = true;
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     chunks = [];
     recorder = new MediaRecorder(stream);
     recorder.ondataavailable = event => chunks.push(event.data);
     recorder.onstop = () => {
+      clearTimeout(recordingTimer);
       stream.getTracks().forEach(track => track.stop());
       const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
-      recorder = null; $("mic").classList.remove("on"); $("mic").textContent = "Hold to talk";
+      recorder = null; showMic(false);
       awaitingWorry = false;
       if (blob.size > 800) ask({ file: blob }, "🎤 …");
     };
     recorder.start();
-    $("mic").classList.add("on"); $("mic").textContent = "Listening…";
+    recordingTimer = setTimeout(stopTalking, MAX_RECORDING_MS);
+    showMic(true);
   } catch (error) { bubble("I cannot use the microphone here. You can type your question instead.", false); }
+  finally { starting = false; }
 }
 const stopTalking = () => { if (recorder && recorder.state === "recording") recorder.stop(); };
-$("mic").addEventListener("pointerdown", startTalking);
-$("mic").addEventListener("pointerup", stopTalking);
-$("mic").addEventListener("pointerleave", stopTalking);
+function micPressed() {
+  if (busy || starting) return;
+  if (recorder) { pressedAt = 0; return stopTalking(); }   // second tap: send
+  pressedAt = Date.now();
+  startTalking();
+}
+$("mic").addEventListener("pointerdown", event => { event.preventDefault(); micPressed(); });
+$("mic").addEventListener("pointerup", () => {
+  // Let go after a long press: that was hold to talk. After a quick tap it keeps listening until the next tap.
+  if (recorder && pressedAt && Date.now() - pressedAt >= HOLD_MS) stopTalking();
+  pressedAt = 0;
+});
+$("mic").addEventListener("click", event => { if (event.detail === 0) micPressed(); });   // keyboard: Enter or Space
+$("mic").addEventListener("contextmenu", event => event.preventDefault());                // long press on a phone
 
 $("steps").addEventListener("click", async () => {
   const plan = await api("/presentation/" + $("family").value + "?mode=" + $("mode").value);

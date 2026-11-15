@@ -401,7 +401,7 @@ button:disabled { opacity: .45; cursor: default; }
   <div class="log" id="log" aria-live="polite"></div>
   <div class="suggest" id="suggest"></div>
   <form id="askForm">
-    <button type="button" class="mic" id="mic" aria-label="Hold to talk" title="Hold to talk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button>
+    <button type="button" class="mic" id="mic" aria-label="Tap to talk" title="Tap to talk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button>
     <input id="question" placeholder="Why does my garden dry up?" autocomplete="off" maxlength="400">
     <button class="send" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   </form>
@@ -843,7 +843,7 @@ async function ask(question, recording) {
     const form = new FormData();
     form.append("family", api.family);
     if (api.session) form.append("session_id", api.session);
-    if (recording) form.append("file", recording, "question.webm"); else form.append("question", question);
+    if (recording) form.append("file", recording, recordingName(recording)); else form.append("question", question);
     form.append("pace_ms", "45");
     const response = await fetch(api.base + "/ask/stream", { method: "POST", body: form });
     if (!response.ok) {
@@ -906,34 +906,64 @@ function turnHome(part) {
   paint();
 }
 
-/* ---- hold to talk ---- */
-let recorder = null, chunks = [];
+/* ---- tap to talk: one tap starts, the next tap sends. Holding the button while you speak works too. ---- */
+const HOLD_MS = 600;              // a press at least this long is "hold to talk": letting go sends
+const MAX_RECORDING_MS = 30000;   // a forgotten recording sends itself
+const ASK_HINT = $("question").placeholder;
+let recorder = null, chunks = [], starting = false, pressedAt = 0, recordingTimer = 0;
 const mic = $("mic");
-async function startTalking(event) {
-  event.preventDefault();
-  if (busy || recorder) return;
+// Browsers record in different formats (Chrome: webm, iPhone: mp4, Firefox: ogg); the name tells the server which.
+function recordingName(blob) {
+  const type = blob.type || "";
+  return "question." + (type.includes("mp4") ? "mp4" : type.includes("ogg") ? "ogg" : "webm");
+}
+function showMic(listening) {
+  mic.classList.toggle("rec", listening);
+  const label = listening ? "Tap to send" : "Tap to talk";
+  mic.title = label;
+  mic.setAttribute("aria-label", label);
+  $("question").placeholder = listening ? "Listening… tap the microphone to send" : ASK_HINT;
+}
+async function startTalking() {
+  starting = true;
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     chunks = [];
     recorder = new MediaRecorder(stream);
     recorder.ondataavailable = (e) => chunks.push(e.data);
     recorder.onstop = () => {
+      clearTimeout(recordingTimer);
       stream.getTracks().forEach((t) => t.stop());
       const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
       recorder = null;
-      mic.classList.remove("rec");
+      showMic(false);
       if (blob.size > 1500) ask("", blob);
     };
     recorder.start();
-    mic.classList.add("rec");
+    recordingTimer = setTimeout(stopTalking, MAX_RECORDING_MS);
+    showMic(true);
     stopVoice();
   } catch (e) {
     message("info", "The microphone is not available here. You can type your question.");
+  } finally {
+    starting = false;
   }
 }
 function stopTalking() { if (recorder && recorder.state === "recording") recorder.stop(); }
-mic.addEventListener("pointerdown", startTalking);
-["pointerup", "pointerleave", "pointercancel"].forEach((name) => mic.addEventListener(name, stopTalking));
+function micPressed() {
+  if (busy || starting) return;
+  if (recorder) { pressedAt = 0; return stopTalking(); }   // second tap: send
+  pressedAt = Date.now();
+  startTalking();
+}
+mic.addEventListener("pointerdown", (event) => { event.preventDefault(); micPressed(); });
+mic.addEventListener("pointerup", () => {
+  // Let go after a long press: that was hold to talk. After a quick tap it keeps listening until the next tap.
+  if (recorder && pressedAt && Date.now() - pressedAt >= HOLD_MS) stopTalking();
+  pressedAt = 0;
+});
+mic.addEventListener("click", (event) => { if (event.detail === 0) micPressed(); });   // keyboard: Enter or Space
+mic.addEventListener("contextmenu", (event) => event.preventDefault());                // long press on a phone
 
 showSound();
 build();
