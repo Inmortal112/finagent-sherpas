@@ -67,6 +67,15 @@ turn the home now), one `delta` per word, and `done` (the whole answer). Keep th
   cover cannot be said to the other.
 - **Outside the plan** (crypto, predictions, new advice): a fixed sentence without figures.
 
+## It remembers the conversation
+
+The model has no memory, so from the second question on the server sends a short summary of the session with
+each question (`sessions.context_for`): what worries them, the parts of the home they asked about most, the
+step they chose (all without figures), and the previous question and answer word for word. So "and what can I
+do about it?" stays on the part of the home they were asking about. The summary is the same size however long
+the conversation is, so a long session does not cost more per question. It is background, never a source:
+`guard` still rejects a figure that is not in the chosen scene's facts. `ASK_HISTORY=off` turns it off.
+
 ## Per person and per mode
 
 - In a couple, each adult has their own scene (`person_<name>`): salary, the accounts and debts in their name and
@@ -97,4 +106,4 @@ within 90 days, said as month and year. `today` lets a demo jump ahead.
 | `src/finagent/ask.py` | question → scene and answer, checked by `guard` |
 | `src/finagent/sessions.py` | history, worries, decision, follow-up, reminders, advisor's note |
 | `src/finagent/chat_page.html` | the `/chat` page |
-| `tests/test_ask.py`, `tests/test_family_experience.py` | all of the above, with a fake model: no network, no cost |
+| `tests/test_ask.py`, `tests/test_family_experience.py`, `tests/test_ask_context.py` | all of the above, with a fake model: no network, no cost |

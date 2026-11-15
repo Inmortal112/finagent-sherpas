@@ -132,7 +132,7 @@ async def _answer(diagnostic: dict, plan: Presentation, session: dict, question:
                   kind: str = "question") -> dict:
     """Ask the model, keep the turn in the history and return it. The audio is made later, on request."""
     answer = await asyncio.to_thread(ask.answer, plan, diagnostic, question, None,
-                                     _mode(session["mode"]), session["person"])
+                                     _mode(session["mode"]), session["person"], sessions.context_for(session))
     turn = sessions.add_turn(session, {**answer.as_dict(), "kind": kind, "heard_from": heard_from,
                                        "language": plan.language})
     turn["audio_url"] = f"/answers/{session['session_id']}/{turn['turn_id']}.mp3"

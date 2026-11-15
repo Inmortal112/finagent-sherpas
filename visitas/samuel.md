@@ -1,5 +1,18 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-15 — feat/brain-ask-summary — Claude Code
+- **Hecho:** `/ask` recuerda la conversación. `sessions.context_for` monta un resumen de la sesión (preocupaciones,
+  partes más preguntadas, paso elegido, **sin cifras**) más el último turno literal; `ask.answer(context=…)` lo
+  envía al modelo. `tests/test_ask_context.py`. `escalabilidad.md` y `BACKEND.md` al día. Ficha
+  `brain-ask-resumen-historial.md`.
+- **Estado:** `./check.sh` pasa (141 tests). Real: «Why does my garden dry up?» → «and what can I do about it?»
+  se queda en el jardín (`move_3`); antes iba al seguro de hogar. Respuestas en 1,0-6,2 s.
+- **Decisiones:** el resumen se calcula al preguntar, no se guarda; tamaño fijo; `guard` sigue decidiendo.
+  `ASK_HISTORY=off` lo desactiva. La primera pregunta de una sesión no cambia.
+- **Bloqueos:** ninguno.
+- **Para Raúl y David:** la forma de `/ask`, `/ask/stream` y sus eventos no cambia. Mandad siempre el `session_id`.
+- **Siguiente:** comprobar la casa interactiva de extremo a extremo.
+
 ## 2026-11-15 — feat/brain-narration-fast-model — Claude Code
 - **Hecho:** la narración pasa de `gpt-5-mini` a `deepseek-flash` (`narrator.py`, `.env.example`) y las cuatro
   `narrations/<familia>.json` están **regeneradas** con él, en modo completo y sencillo, con las escenas por
