@@ -15,7 +15,7 @@
 - **Para Samuel:** una línea en `server.py`: `app.mount("/web", …)` para servir `src/finagent/web/`.
 - **Siguiente:** que David la vea en su iPhone; PR 2: estados, brillo, jardín y foco en 3D.
 
-## 2026-11-15 23:40 — docs/stage-house-3d-plan — Claude Code
+## 2026-11-15 23:00 — docs/stage-house-3d-plan — Claude Code
 - **Hecho:** solo un plan, sin código: `02-DOCS/ftd/stage-casa-3d.md`. La casa pasa a 3D con la opción intermedia:
   casa 3D (three.js) + cámara que se desliza de parte en parte con el scroll y con `turnHome`. El resto de la
   página no cambia.
