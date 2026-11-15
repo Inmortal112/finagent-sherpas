@@ -70,6 +70,10 @@ Two routes reach ElevenLabs, chosen from `.env`:
   sentence with the same voice is never paid for twice; a repeated answer comes back in milliseconds.
 - **Cap.** `ELEVEN_MAX_CHARS` (default 6000) limits the characters sent in one run, counting only text not cached.
   Over the cap nothing is sent and the run uses edge. One family is about 1,000 characters.
+- **Daily cap.** `ELEVEN_MAX_CHARS_PER_DAY` (default 20000, about 80 live answers) limits the characters sent in one
+  day, adding up every run and every live answer. This is what protects the account while a public link is open:
+  over the cap, new answers are spoken by edge, and audio already cached still plays. The count is kept in
+  `out/voice_cache/usage.json` and starts again each day.
 - **Default is free.** `./check.sh` uses edge unless you set `VOICE_ENGINE=eleven`; the tests never call any service.
 
 ## Settings (`.env`)
@@ -84,6 +88,7 @@ Two routes reach ElevenLabs, chosen from `.env`:
 | `ELEVEN_VOICE_ID` | `XrExE9yKIg1WjnnlVkGX` (Matilda) | any ElevenLabs `voice_id` |
 | `ELEVEN_MODEL` | `eleven_flash_v2_5` | also `eleven_multilingual_v2`, `eleven_v3` (either spelling: `eleven-flash-v2.5`) |
 | `ELEVEN_MAX_CHARS` | `6000` | characters sent per run |
+| `ELEVEN_MAX_CHARS_PER_DAY` | `20000` | characters sent per day, all runs and live answers together |
 | `ELEVEN_STT_MODEL` | `scribe_v2` | speech-to-text model |
 | `VOICE_CACHE_DIR` | `out/voice_cache` | where ElevenLabs audio is cached |
 
