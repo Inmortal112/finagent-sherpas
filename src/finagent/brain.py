@@ -1,8 +1,9 @@
 """Stage 1 (owner: A). Sherpas diagnostic -> Presentation with facts and narration.
 
 Input: the `financial-health.json` of one family in `cases/`.
-Still template sentences (no LLM yet): the score, its five pillars as parts of a house, the plan's
-top moves as repairs, and the plan through the years.
+The score, its five pillars as parts of a house, the plan's top moves as repairs, and the plan
+through the years. `build_template` writes template sentences; `build` swaps in the narration a
+text model wrote once per family (`narrations/`, see narrator.py), scene by scene, if `guard` accepts it.
 
 What the stage needs to draw the house travels in `visual.data` (the contract does not change):
 - intro:     `house` {part: state}, `people`, `band`, `colour`
@@ -14,12 +15,18 @@ What the stage needs to draw the house travels in `visual.data` (the contract do
 import re
 
 from contracts.schemas import Fact, Presentation, Scene, Visual
-from finagent import house
+from finagent import house, narrator
 
 SOURCE = "financial-health.json"
 
 
 def build(diagnostic: dict, language: str = "en") -> Presentation:
+    """The family's presentation, with the saved narration of `narrations/` where `guard` accepts it."""
+    return narrator.apply_saved(build_template(diagnostic, language), diagnostic["case"]["slug"])
+
+
+def build_template(diagnostic: dict, language: str = "en") -> Presentation:
+    """Facts and scenes with template sentences: what the narrator starts from, and its fallback."""
     score = diagnostic["score"]
     name = _client_name(diagnostic["case"]["household"])
 
@@ -28,6 +35,7 @@ def build(diagnostic: dict, language: str = "en") -> Presentation:
              source=f"{SOURCE}:score.published_score"),
         Fact(id="band", label="Score band", value=score["band"], source=f"{SOURCE}:score.band"),
     ]
+    facts += _context("summary", "Sherpas' summary of the plan", diagnostic, ("summary_main",))
     scenes = [
         Scene(
             id="intro",
@@ -44,7 +52,7 @@ def build(diagnostic: dict, language: str = "en") -> Presentation:
                 "people": [{"first_name": p["first_name"], "role": p["role"], "age": p["age"]}
                            for p in diagnostic["case"]["household"]],
             }),
-            fact_ids=["score", "band"],
+            fact_ids=["score", "band"] + [f.id for f in facts if f.id == "context_summary"],
         )
     ]
 
@@ -57,6 +65,9 @@ def build(diagnostic: dict, language: str = "en") -> Presentation:
         state_id = f"house_{part}_state"
         facts.append(Fact(id=state_id, label=f"State of the {part}", value=state,
                           source=f"derived from {SOURCE}:score.pillars[{i}].score (thresholds in house.py)"))
+        context = _context(part, f"Sherpas' observations on the {part} ({pillar['pillar'].lower()})", diagnostic,
+                           house.PART_NARRATIVE[part])
+        facts += context
         scenes.append(
             Scene(
                 id=fact_id,
@@ -67,7 +78,7 @@ def build(diagnostic: dict, language: str = "en") -> Presentation:
                 ),
                 visual=Visual(kind="kpi", data={"fact_id": fact_id, "house_part": part, "state": state,
                                                 "state_fact_id": state_id}),
-                fact_ids=[fact_id, state_id],
+                fact_ids=[fact_id, state_id] + [f.id for f in context],
             )
         )
 
@@ -77,6 +88,9 @@ def build(diagnostic: dict, language: str = "en") -> Presentation:
                           unit="/100", source=f"{SOURCE}:score.top_moves[{i}].score_before"))
         facts.append(Fact(id=after_id, label=f"{move['title']}: score after", value=move["score_after"],
                           unit="/100", source=f"{SOURCE}:score.top_moves[{i}].score_after"))
+        action_id = f"move_{i + 1}_action"
+        facts.append(Fact(id=action_id, label=f"{move['title']}: what to do", value=move["action"],
+                          source=f"{SOURCE}:score.top_moves[{i}].action"))
         if move["score_after"] > move["score_before"]:
             effect = f"It takes your score from {move['score_before']} to {move['score_after']}."
         else:
@@ -92,7 +106,7 @@ def build(diagnostic: dict, language: str = "en") -> Presentation:
                     "fact_id": after_id, "house_part": part, "action": move["action"], "effort": move["effort"],
                     "score_before": move["score_before"], "score_after": move["score_after"],
                 }),
-                fact_ids=[before_id, after_id],
+                fact_ids=[before_id, after_id, action_id],
             )
         )
 
@@ -118,6 +132,10 @@ def build(diagnostic: dict, language: str = "en") -> Presentation:
         )
 
     timeline_facts, timeline_scene = _timeline(diagnostic)
+    timeline_context = _context("retirement", "Sherpas' observations on retirement", diagnostic,
+                                ("retirement_short_observations",))
+    timeline_facts += timeline_context
+    timeline_scene.fact_ids += [f.id for f in timeline_context]
     facts.extend(timeline_facts)
     scenes.append(timeline_scene)
 
@@ -142,14 +160,14 @@ def _timeline(diagnostic: dict) -> tuple[list[Fact], Scene]:
             facts.append(Fact(id="savings_run_out_age", label="Age when savings and investments run out",
                               value=event["age"], source=f"{SOURCE}:key_metrics.facts.retirement.savingsRunOut.label"))
             facts.append(Fact(id="unpaid_spending", label="Planned spending left unpaid by the end of the plan",
-                              value=event["unpaid_spending"], unit="USD",
-                              source=f"{SOURCE}:key_metrics.facts.retirement.savingsRunOut.value"))
+                              value=round(event["unpaid_spending"]), unit="USD",
+                              source=f"{SOURCE}:key_metrics.facts.retirement.savingsRunOut.value (whole dollars)"))
             sentences.append(f"On the current plan, your savings and investments run out at age {event['age']}.")
         elif event["kind"] == "savings_last":
             facts.append(Fact(id="savings_left_at_plan_end",
                               label="Savings and investments left at the end of the plan",
-                              value=event["savings_left"], unit="USD",
-                              source=f"{SOURCE}:key_metrics.facts.retirement.savingsLeftAtPlanEnd.value"))
+                              value=round(event["savings_left"]), unit="USD",
+                              source=f"{SOURCE}:key_metrics.facts.retirement.savingsLeftAtPlanEnd.value (whole dollars)"))
             sentences.append("On the current plan, your savings and investments last to the end of the plan.")
 
     if len(retiring) == 1:
@@ -168,6 +186,16 @@ def _timeline(diagnostic: dict) -> tuple[list[Fact], Scene]:
         fact_ids=[f.id for f in facts],
     )
     return facts, scene
+
+
+def _context(name: str, label: str, diagnostic: dict, sections: tuple[str, ...]) -> list[Fact]:
+    """Sherpas' own plain-words text about one area, as a fact: the narration may quote its figures."""
+    narrative = diagnostic.get("narrative") or {}
+    found = [key for key in sections if narrative.get(key)]
+    if not found:
+        return []
+    return [Fact(id=f"context_{name}", label=label, value="\n".join(str(narrative[key]) for key in found),
+                 source=f"{SOURCE}:narrative.{' + '.join(found)}")]
 
 
 def _verb(part: str) -> str:

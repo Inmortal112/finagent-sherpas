@@ -1,0 +1,79 @@
+"""Narration written by the model: only what `guard` accepts is ever said. No test calls the model."""
+import json
+from pathlib import Path
+
+import pytest
+
+from finagent import brain, guard, narrator
+
+ROOT = Path(__file__).resolve().parents[1]
+CASES = sorted((ROOT / "cases").glob("*/financial-health.json"))
+
+
+def _load(family: str = "samantha-lewis") -> dict:
+    return json.loads((ROOT / "cases" / family / "financial-health.json").read_text(encoding="utf-8"))
+
+
+def _save(tmp_path: Path, scenes: dict) -> Path:
+    (tmp_path / "samantha-lewis.json").write_text(json.dumps({"scenes": scenes}), encoding="utf-8")
+    return tmp_path
+
+
+def test_saved_narration_replaces_the_template(tmp_path):
+    template = brain.build_template(_load())
+    text = "Samantha, your home scores 82 out of 100. Sherpas calls that strong."
+    result = narrator.apply_saved(template, "samantha-lewis", _save(tmp_path, {"intro": text}))
+    assert result.scenes[0].narration == text
+    assert [s.narration for s in result.scenes[1:]] == [s.narration for s in template.scenes[1:]]
+    assert template.scenes[0].narration != text, "the template presentation is not modified"
+
+
+def test_a_saved_number_that_is_not_in_the_facts_falls_back_to_the_template(tmp_path):
+    template = brain.build_template(_load())
+    saved = {"intro": "Your score is 82 out of 100, and you save 9,999 dollars a month.",
+             "pillar_debt": "Your walls are solid: 20 out of 20 points."}
+    result = narrator.apply_saved(template, "samantha-lewis", _save(tmp_path, saved))
+    scenes = {s.id: s.narration for s in result.scenes}
+    assert scenes["intro"] == template.scenes[0].narration
+    assert scenes["pillar_debt"] == saved["pillar_debt"]
+    assert guard.unsupported_numbers(result) == []
+
+
+def test_numbers_written_in_words_are_rejected():
+    template = brain.build_template(_load())
+    accepted, rejected = narrator.check(template, {
+        "timeline": "You plan to retire at 65, and your savings run out at seventy-three.",
+        "pillar_debt": "Your walls are solid, with 20 out of 20 points. The two of you owe nothing.",
+        "not_a_scene": "ignored",
+    })
+    assert list(accepted) == ["pillar_debt"]
+    assert "seventy" in rejected["timeline"]
+
+
+def test_without_saved_narration_the_template_is_used(tmp_path):
+    template = brain.build_template(_load())
+    assert narrator.apply_saved(template, "samantha-lewis", tmp_path) == template
+
+
+def test_the_narration_may_quote_sherpas_own_observations():
+    template = brain.build_template(_load())
+    accepted, rejected = narrator.check(template, {
+        "pillar_liquidity_and_emergency_fund": "Your foundations are solid. Your $80,000 in cash covers 7.9 months.",
+        "pillar_debt": "Your walls are solid, and your $80,000 in cash covers 7.9 months.",
+    })
+    assert list(accepted) == ["pillar_liquidity_and_emergency_fund"], "a figure belongs to its own part of the home"
+    assert "pillar_debt" in rejected
+
+
+@pytest.mark.parametrize("path", CASES, ids=lambda p: p.parent.name)
+def test_every_saved_scene_in_the_repo_is_accepted(path):
+    diagnostic = json.loads(path.read_text(encoding="utf-8"))
+    saved_path = narrator.NARRATIONS_DIR / f"{path.parent.name}.json"
+    assert saved_path.exists(), "run: python -m finagent.narrator --all"
+    saved = json.loads(saved_path.read_text(encoding="utf-8"))["scenes"]
+    template = brain.build_template(diagnostic)
+    accepted, rejected = narrator.check(template, saved)
+    assert rejected == {}
+    assert set(accepted) == {s.id for s in template.scenes}, "every scene has its own narration"
+    built = brain.build(diagnostic)
+    assert {s.id: s.narration for s in built.scenes} == accepted

@@ -16,6 +16,15 @@ PILLAR_PARTS = {
 }
 PARTS = tuple(PILLAR_PARTS.values())
 
+# House part -> sections of the diagnostic's `narrative` where Sherpas explains that area in plain words.
+PART_NARRATIVE = {
+    "foundations": ("protection_emergency_fund_short_observations",),
+    "roof": ("protection_life_insurance_short_observations", "protection_umbrella_short_observations"),
+    "walls": ("debt_short_observations",),
+    "plumbing": ("savings_short_observations",),
+    "garden": ("assets_short_observations",),
+}
+
 # Our thresholds on `score.pillars[].score` (0-100). Change them here, nowhere else.
 SOLID_FROM = 70
 CRACKED_FROM = 40
