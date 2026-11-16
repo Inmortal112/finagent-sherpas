@@ -15,6 +15,7 @@
 // What it shows: each part's state, the part in focus, the garden drying up and a subtle glow for selected
 // improvements. The team's rain, clear day and sunset follow the displayed scenario's score.
 // Plans: 02-DOCS/ftd/stage-casa-3d.md and 02-DOCS/ftd/stage-casa-que-mejora.md.
+import { loadCoast, coastalHome } from "./coastal-home.js";
 import * as THREE from "./vendor/three.module.min.js";
 
 const INK = 0x23232e, WALL = 0xf7f1e5, PIPE = 0x3c8fa9, JOINT = 0x3663d9, CRACK = 0x5d5142;
@@ -47,8 +48,8 @@ const VIEWS = {
   roof: { at: [-.5, 3.1, -.5], from: [-.48, .86, .58], halfWidth: 4.5, halfHeight: 3.0, depth: .7 },
   walls: { at: [.2, 1.9, .8], from: [.85, .19, .7], halfWidth: 4.7, halfHeight: 3.0, depth: .8 },
   plumbing: { at: [1.9, .8, 2.3], from: [.55, .85, .7], halfWidth: 3.6, halfHeight: 2.6, depth: .7 },
-  foundations: { at: [0, .4, .8], from: [-.65, .16, .85], halfWidth: 5.8, halfHeight: 2.9, depth: .8 },
-  garden: { at: [-2.2, 1.1, .3], from: [-.85, .48, .6], halfWidth: 4.6, halfHeight: 3.1, depth: .8 },
+  foundations: { at: [-.8, .6, 4.4], from: [-.28, .36, .89], halfWidth: 3.4, halfHeight: 1.8, depth: .5 },
+  garden: { at: [-2.2, .8, 3.6], from: [-.85, .48, .6], halfWidth: 4.6, halfHeight: 3.1, depth: .8 },
 };
 // High above the clouds, looking at the sun: where the visit starts (setIntro(0)).
 const INTRO = { position: new THREE.Vector3(12, 46, 52), at: new THREE.Vector3(-26, 30, -120) };
@@ -340,7 +341,8 @@ function skyDome() {
   return { dome, uniforms };
 }
 
-export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
+export async function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
+  const assets = await loadCoast();
   seed = 7;
   glassPanes.length = 0;
   // Small locally painted textures; no external images, services, or model downloads.
@@ -466,39 +468,16 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     ridge.material.vertexColors=true;ridge.castShadow=false;
     ridge.userData.tone='hills';ridge.userData.layer=layer;scenery.push(ridge);
   }
-  // A whole forest costs four draw calls. Leave a clearing around the house and its silhouettes.
-  const forestCount=70,forestPose=new THREE.Object3D();
-  const trunks=new THREE.InstancedMesh(new THREE.CylinderGeometry(.045,.07,1,6),new THREE.MeshStandardMaterial({color:WOOD,roughness:1}),forestCount);
-  scenery.push(trunks);
-  for(let tier=0;tier<6;tier++) {
-    const broadleaf=tier>=3,level=tier%3;
-    const forest=new THREE.InstancedMesh(broadleaf?new THREE.IcosahedronGeometry(1,2):new THREE.ConeGeometry(1,1,9),new THREE.MeshStandardMaterial({color:broadleaf?0x477b51:0x326b59,roughness:1}),forestCount/2);
-    let forestSeed=29;
-    const forestRand=()=>((forestSeed=forestSeed*16807%2147483647)-1)/2147483646;
-    for(let i=0;i<forestCount;i++) {
-      const x=(forestRand()-.5)*100,z=-15-forestRand()*34,h=1.1+forestRand()*3.5;
-      const rotation=forestRand()*6,tone=new THREE.Color().setHSL(.38+forestRand()*.045,.25+forestRand()*.15,.55+forestRand()*.25);
-      if((i%2===0)!==broadleaf) continue;
-      forestPose.rotation.set(0,rotation,0);
-      if(tier===0||tier===3) { forestPose.position.set(x,h*.3,z);forestPose.scale.set(1,h*.6,1);forestPose.updateMatrix();trunks.setMatrixAt(i,forestPose.matrix); }
-      forestPose.position.set(x+(broadleaf?(level-1)*h*.16:0),h*(broadleaf?.74+(level%2)*.13:.46+level*.2),z+(broadleaf?Math.sin(level*2)*h*.13:0));
-      forestPose.scale.set(h*(broadleaf?.28:.31-level*.065),h*(broadleaf?.31:.65),h*(broadleaf?.29:.31-level*.065));
-      forestPose.updateMatrix();forest.setMatrixAt(Math.floor(i/2),forestPose.matrix);
-      forest.setColorAt(Math.floor(i/2),tone);
-    }
-    forest.userData.color=forest.material.color.clone();forest.userData.tone='trees';scenery.push(forest);
+  // Distant headlands continue around the west and south sides of the bay.
+  for(const angle of [Math.PI*.58,Math.PI,Math.PI*1.51]) {
+    const ridge=scenery[0].clone();ridge.rotation.y=angle;
+    ridge.position.set(-84*Math.sin(angle),-2,-84*Math.cos(angle));
+    scenery.push(ridge);
   }
-  // Near-camera planting frames the clearing without covering the house or its status marks.
-  const grasses=new THREE.InstancedMesh(new THREE.ConeGeometry(.07,.65,4),new THREE.MeshStandardMaterial({color:0x688659,roughness:1}),100);
-  for(let i=0;i<100;i++) {
-    const side=i%2?-1:1;
-    forestPose.position.set(side*between(6.7,10.8),between(.15,.32),between(-3,8));
-    forestPose.scale.set(between(.6,1.4),between(.5,1.5),between(.6,1.4));
-    forestPose.rotation.set(0,between(0,6),between(-.15,.15));forestPose.updateMatrix();grasses.setMatrixAt(i,forestPose.matrix);
-  }
-  grasses.userData.color=new THREE.Color(0x688659);grasses.userData.tone='trees';scenery.push(grasses);
-  scene.add(...scenery);
-  scene.fog.near = 30; scene.fog.far = 155;
+  field.visible=false;contactPlane.visible=false;scene.add(...scenery);
+  const coast = coastalHome(assets, environment.texture);
+  scene.add(coast.root);
+  scene.fog.near = 23; scene.fog.far = 122;
   // The clouds: a deck the camera comes down through at the start, and a bank along the horizon.
   const puff = cloudTexture();
   const clouds = [];
@@ -590,7 +569,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     tail.rotation.x = -Math.PI / 2; tail.position.z = -.25;
     bird.add(body, head, tail, leftHinge, rightHinge);
     bird.userData = { leftHinge, rightHinge, speed: .15, height: 4.8 + i * .22, phase: i * 1.3, flap: 5.3 + i * .2 };
-    birds.push(bird); scene.add(bird);
+    bird.scale.setScalar(.40); birds.push(bird); scene.add(bird);
   }
   // The page's own state colours, so the marks match the legend.
   const css = getComputedStyle(host);
@@ -601,8 +580,12 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   const parts = {};
   const windows = glassPanes;
   for (const [name, make] of Object.entries({ foundations, walls, roof, plumbing, garden })) {
-    const made = make();
-    const crk = group("crk", made.crk), dmg = group("dmg", made.dmg);
+    const anchor = {
+      foundations:[.65,.87,4.35], walls:[-.6,2.85,1.24], roof:[-.8,3.82,-.4],
+      plumbing:[3.0,.85,2.85],garden:[-3.4,1.1,4.2]
+    }[name];
+    const made = {body:[],pin:anchor,halo:[...anchor,2.6,1.7]};
+    const crk = new THREE.Group(), dmg = new THREE.Group();
     const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending, opacity: .45 }));
     halo.position.set(made.halo[0], made.halo[1], made.halo[2]);
     halo.scale.set(made.halo[3], made.halo[4], 1);
@@ -645,7 +628,39 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
       distance: Math.max((v.halfHeight * height) / (slope * r.h), (v.halfWidth * height) / (slope * r.w)) + v.depth,
     };
   }
+  let yawOffset = 0, pitchOffset = 0, manualOrbit = false, drag = null;
   let now = pose(view);
+  canvas.tabIndex = 0;
+  canvas.setAttribute("aria-label","Explore the coastal home. Drag or use arrow keys to rotate. Home resets the view.");
+  const tools = document.createElement("div");
+  tools.className = "orbit-tools";
+  for (const [label,glyph,turn] of [["Rotate left","↶",-.5],["Reset view","⌂",0],["Rotate right","↷",.5]]) {
+    const b=document.createElement("button"); b.type="button"; b.textContent=glyph;b.title=label;b.setAttribute("aria-label",label);
+    b.addEventListener("click",()=>turn ? rotate(turn,0) : resetOrbit()); tools.appendChild(b);
+  }
+  host.appendChild(tools);
+  function rotate(dx,dy) {
+    manualOrbit=true;yawOffset=THREE.MathUtils.euclideanModulo(yawOffset+dx+Math.PI,2*Math.PI)-Math.PI;
+    pitchOffset=THREE.MathUtils.clamp(pitchOffset+dy,-1,1);draw();
+  }
+  function resetOrbit(){manualOrbit=false;yawOffset=0;pitchOffset=0;draw();}
+  canvas.addEventListener("keydown",e=>{
+    const keys={ArrowLeft:[-.19,0],ArrowRight:[.19,0],ArrowUp:[0,.09],ArrowDown:[0,-.09]};
+    if(keys[e.key]){e.preventDefault();rotate(...keys[e.key]);}
+    else if(e.key==="Home"){e.preventDefault();resetOrbit();}
+  });
+  canvas.addEventListener("pointerdown",e=>{
+    if(!e.isPrimary||e.button!==0)return;
+    if(e.pointerType==="mouse") { e.preventDefault(); canvas.focus({preventScroll:true}); } drag={id:e.pointerId,x:e.clientX,y:e.clientY,active:false};canvas.setPointerCapture(e.pointerId);
+  });
+  canvas.addEventListener("pointermove",e=>{
+    if(!drag||drag.id!==e.pointerId)return;
+    const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+    if(!drag.active && Math.hypot(dx,dy)<5)return;
+    drag.active=true;canvas.classList.add("orbit-dragging");rotate(-dx*.009,dy*.006);drag.x=e.clientX;drag.y=e.clientY;
+  });
+  function release(e){if(drag?.id===e.pointerId){drag=null;canvas.classList.remove("orbit-dragging");}}
+  canvas.addEventListener("pointerup",e=>{const tap=drag && drag.id===e.pointerId && !drag.active && Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<5;release(e);if(tap)pickPart(e);});canvas.addEventListener("lostpointercapture",release);canvas.addEventListener("pointercancel",release);
 
   // The lens is shifted so the middle of the picture is the middle of the scene's box, not of the canvas.
   function project() {
@@ -664,15 +679,18 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     pointer.nowX += (pointer.x - pointer.nowX) * 0.05; pointer.nowY += (pointer.y - pointer.nowY) * 0.05;
     const orbit = (view === "home" ? 0.035 : 0.01) * Math.sin(clock * 0.13);
     const arrivalEase = arrival * arrival * (3 - 2 * arrival);
-    const from = now.from.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), orbit - pointer.nowX * .025 + route * .24 - arrivalEase * .48);
+    const from = now.from.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), yawOffset + orbit - pointer.nowX * .025 + route * .24 - arrivalEase * .48);
     from.y += pointer.nowY * .015 + arrivalEase * .1;
     from.normalize();
-    position.copy(now.at).addScaledVector(from, now.distance * (1 + .26 * arrivalEase));
+    const azimuth = Math.atan2(from.x, from.z);
+    const elevation = THREE.MathUtils.clamp(Math.asin(from.y) + pitchOffset, .16, 1.13);
+    from.set(Math.sin(azimuth)*Math.cos(elevation),Math.sin(elevation),Math.cos(azimuth)*Math.cos(elevation));
+    position.copy(now.at).addScaledVector(from, now.distance * (1 + .10*(1-intro) + .15*arrivalEase));
     lookAt.copy(now.at);
-    if (intro < 1) {
-      const t = intro * intro * (3 - 2 * intro);
-      position.lerpVectors(INTRO.position, position, t);
-      lookAt.lerpVectors(INTRO.at, lookAt, Math.pow(t, 0.7));
+    position.y = Math.max(1.45, position.y);
+    if (manualOrbit) {
+      const radius = Math.hypot(position.x,position.z);
+      if (radius < 7.6) { position.x *= 7.6/Math.max(.001,radius); position.z *= 7.6/Math.max(.001,radius); }
     }
     camera.position.copy(position);
     camera.lookAt(lookAt);
@@ -684,16 +702,17 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   function weather(h) {
     const [a, b, t] = h < 0.5 ? [WEATHER[0], WEATHER[1], h / 0.5] : [WEATHER[1], WEATHER[2], (h - 0.5) / 0.5];
     for (const key in a) mixed[key] = typeof a[key] === "number" ? a[key] + (b[key] - a[key]) * t : (mixed[key] || new THREE.Color()).copy(a[key]).lerp(b[key], t);
+    coast.weather(h);
     sky.uniforms.top.value.copy(mixed.top);
     sky.uniforms.mid.value.copy(mixed.mid);
     sky.uniforms.horizon.value.copy(mixed.horizon);
     sky.uniforms.sunColor.value.copy(mixed.sun);
     sky.uniforms.sunPower.value = mixed.sunPower;
     scene.fog.color.copy(mixed.horizon);
-    sun.color.copy(mixed.light); sun.intensity = 2.2 + mixed.lightPower;
-    rim.color.copy(mixed.sun); rim.intensity = .8 + 1.3 * h;
-    hemi.color.copy(mixed.sky); hemi.groundColor.copy(mixed.ground); hemi.intensity = .62;
-    renderer.toneMappingExposure = mixed.exposure;
+    sun.color.copy(mixed.light); sun.intensity = .55 + 2.55 * h;
+    rim.color.copy(mixed.sun); rim.intensity = .18 + .72 * h;
+    hemi.color.copy(mixed.sky); hemi.groundColor.copy(mixed.ground); hemi.intensity = 1.25 + .45*h;
+    renderer.toneMappingExposure = .66 + .32*h;
     field.material.color.copy(mixed.grass).lerp(new THREE.Color(0x528561), .35);
     for (const node of scenery) {
       if (node.userData.tone === "hills") node.material.color.copy(mixed.hills).lerp(mixed.mid, .55-node.userData.layer*.2);
@@ -738,6 +757,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
       now.distance = glide.from.distance + (glide.to.distance - glide.from.distance) * eased + 1.3 * arc;
       if (t >= 1) { const done = glide; glide = null; if (judge(done)) return; }
     }
+    coast.animate(clock);
     place();
 
     // The weather drifts towards the score's, over about a second and a half.
@@ -865,7 +885,9 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   function aim(name) {
     if (!VIEWS[name]) name = "home";
     if (name === view && placed) return;
+    yawOffset=0;pitchOffset=0;manualOrbit=false;
     view = name;
+    coast.focus(name);
     if (!placed || still) { glide = null; now = pose(name); placed = true; return; }
     const to=pose(name),yaw=Math.atan2(now.from.x,now.from.z);
     const turn=THREE.MathUtils.euclideanModulo(Math.atan2(to.from.x,to.from.z)-yaw+Math.PI,Math.PI*2)-Math.PI;
@@ -942,6 +964,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
         if (faded) color.lerp(FADED, FADE);
       });
     }
+    coast.update(states); coast.weather(health < 0 ? healthWanted : health);
     first = false;
     aim(focus && states[focus] ? focus : "home");
     draw();
@@ -949,17 +972,14 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
 
   // A tap on a part of the home goes to that part, like on the drawn one.
   const ray = new THREE.Raycaster(), point = new THREE.Vector2();
-  canvas.addEventListener("click", (event) => {
+  function pickPart(event) {
+
     const box = canvas.getBoundingClientRect();
     point.set(((event.clientX - box.left) / box.width) * 2 - 1, -((event.clientY - box.top) / box.height) * 2 + 1);
     ray.setFromCamera(point, camera);
-    const shown = Object.values(parts).filter((part) => part.whole.visible).map((part) => part.whole);
-    for (const hit of ray.intersectObjects(shown, true)) {
-      let node = hit.object;
-      while (node && !parts[node.name]) node = node.parent;
-      if (node) { onPick(node.name); return; }
-    }
-  });
+    const hit = ray.intersectObjects(coast.surfaces.filter(m=>m.visible && m.userData.part!=="land"),false)[0];
+    if(hit && parts[hit.object.userData.part])onPick(hit.object.userData.part);
+  }
 
   function dispose() {
     if (!alive) return;
@@ -972,7 +992,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     [glow, puff, sparkTexture, stone, wood, glass, roofTexture, grass, lawnTexture, waterSurface, contact].forEach((texture) => texture.dispose());
     environment.dispose();
     renderer.dispose();
-    canvas.remove();
+    coast.dispose();tools.remove();canvas.remove();
   }
   // The phone took the graphics memory back (another app, a locked screen): the drawn home takes over.
   canvas.addEventListener("webglcontextlost", (event) => { event.preventDefault(); if (alive) onFail(); });

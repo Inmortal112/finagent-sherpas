@@ -362,3 +362,11 @@ button:focus-visible, summary:focus-visible, input:focus-visible, select:focus-v
   body.h3d .hero-in > * { animation: none; }
   .journey-nav::after, .steps button, .worry .chips button { transition: none; }
 }
+
+body.h3d #house3d { pointer-events:auto; }
+#house3d canvas { touch-action:pan-y; cursor:grab !important; }
+#house3d canvas.orbit-dragging {cursor:grabbing !important;}
+.orbit-tools { position:absolute;z-index:2;right:.7rem;bottom:.7rem;display:flex;gap:2px;background:#152428df;border:1px solid #ffffff50;border-radius:2rem;padding:3px; }
+.orbit-tools button { width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:#fff;font:22px/1 system-ui;cursor:pointer; }
+.orbit-tools button:hover,.orbit-tools button:focus-visible {background:#ffffff30;}
+@media(max-width:860px){.orbit-tools button{width:44px;height:44px;}}
