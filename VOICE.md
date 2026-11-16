@@ -140,6 +140,26 @@ FastAPI; `voice.speak` / `voice.transcribe` are for scripts.
 Measured on the real cases (2026-11-15): a new 196-character answer with ElevenLabs is ready in 0.78 s
 (12.8 s of audio); a cached one in 0.005 s; a question is transcribed in 0.6–0.8 s.
 
+## A voice note for the partner
+
+In a couple, often only one adult goes through the plan. When they choose a first step, the page can offer
+*"Send to Emily"*: a note of about fifteen seconds, sent like a voice message, that tells the other one what worried
+the visitor and which step they chose.
+
+> *"Daniel, Emily just went through your family plan. The first step Emily chose: add more life insurance. It takes
+> your score from 52 to 57. Have a look at your part of the home when you have a moment. It's a plan for the two of
+> you."* (the Johnsons' case, heard back word for word with Whisper on 2026-11-16)
+
+- `GET /partner-note?session_id=…&person=…` → `{available, from, to, text, audio_url}`, or `available: false` with
+  a `reason` (a plan for one person, no step chosen yet, or no way to tell who is sending it). `person` is only
+  needed when the session does not know who is using it yet.
+- `GET /partner-note/{session}.mp3?person=…` → the note spoken with the same voice as the tour. Made once per text
+  and kept, so a new step or a "yes, I started it" makes a new one.
+- Fixed sentences (`src/finagent/partner_note.py`), no model: free and instant. Its only figures are the step's
+  score before and after. The worry is the family's own words, so it goes in without numbers.
+- On an iPhone, the page can pass the MP3 to the share sheet (`navigator.share({files: [...]})`), which sends it to
+  WhatsApp or Messages as audio.
+
 ## Files and tests
 
 | File | What |
@@ -147,6 +167,7 @@ Measured on the real cases (2026-11-15): a new 196-character answer with ElevenL
 | `src/finagent/voice.py` | the stage: engines, fallbacks, `synthesize`, `speak_async`, `transcribe_async` |
 | `src/finagent/voice_eleven.py` | ElevenLabs: speech, Scribe, cache, cap, MP3 duration (standard library only) |
 | `src/finagent/speech_text.py` | `to_speech`: written text → spoken text |
-| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py` | all HTTP faked, nothing spent |
+| `src/finagent/partner_note.py` | the voice note for the other half of a couple |
+| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py`, `test_partner_note.py` | all HTTP faked, nothing spent |
 
 Design notes (Spanish, for the team): `02-DOCS/ftd/voz-*.md`.

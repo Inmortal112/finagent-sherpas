@@ -13,12 +13,15 @@
     POST /follow-up                     their answer to the check-in: did they take the step?
     GET  /advisor-note?session_id=...   what worries them, what they asked, what they chose
     GET  /answers/{session}/{turn}.mp3  that answer spoken (made on the first request, then kept)
+    GET  /partner-note?session_id=&person=  a short note for the other half of a couple: worry and chosen step
+    GET  /partner-note/{session}.mp3?person=  that note spoken, to send like a voice message
     GET  /chat                          a plain chat page for the team (also /try)
     /                                   the page in out/, when it exists
 
 `mode` is "complete" or "simple"; `person` is the adult using it when the plan belongs to a couple.
 """
 import asyncio
+import hashlib
 import json
 import os
 import re
@@ -34,7 +37,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from contracts.schemas import Presentation
-from finagent import ask, brain, house, sessions, voice
+from finagent import ask, brain, house, partner_note, sessions, voice
 
 ROOT = Path(__file__).resolve().parents[2]
 CASES = ROOT / "cases"
@@ -268,6 +271,36 @@ def follow_up(body: FollowUp) -> dict:
 @app.get("/advisor-note")
 def advisor_note(session_id: str) -> dict:
     return sessions.advisor_note(_session(session_id))
+
+
+@app.get("/partner-note")
+def partner_note_text(session_id: str, person: str | None = None) -> dict:
+    """The note from the visitor to their partner. `available` is False, with a `reason`, when there is none:
+    a plan for one person, no step chosen yet, or no way to tell who is sending it."""
+    session = _session(session_id)
+    note = partner_note.build(session, brain.build(_diagnostic(session["family"])), person)
+    if note["available"]:
+        query = f"?person={note['from']}"
+        note["audio_url"] = f"/partner-note/{session['session_id']}.mp3{query}"
+    return {"session_id": session["session_id"], **note}
+
+
+@app.get("/partner-note/{session_id}.mp3")
+async def partner_note_audio(session_id: str, person: str | None = None) -> FileResponse:
+    """The partner note spoken. Kept per text, so a new step or a new answer to the check-in makes a new one."""
+    session = _session(session_id)
+    note = partner_note.build(session, brain.build(_diagnostic(session["family"])), person)
+    if not note["available"]:
+        raise HTTPException(404, note["reason"])
+    digest = hashlib.sha256(note["text"].encode("utf-8")).hexdigest()[:12]
+    path = sessions.directory() / "audio" / f"{session['session_id']}-partner-{digest}.mp3"
+    if not path.exists():
+        spoken = await voice.speak_async(note["text"])
+        if not spoken.audio:
+            raise HTTPException(503, "The voice is not available right now; send the text instead")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(spoken.audio)
+    return FileResponse(path, media_type="audio/mpeg", filename=f"note-for-{note['to'].lower()}.mp3")
 
 
 @app.get("/answers/{session_id}/{turn_id}.mp3")
