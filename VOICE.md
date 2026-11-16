@@ -163,7 +163,8 @@ the visitor and which step they chose.
 ## The sound of the home
 
 Under the voice, the home has its own quiet sound (`src/finagent/web/house_sound.js`): soft rain while the score is
-low, fading out as it climbs, a bird now and then once the plan is healthy, and a short chime when the family marks
+low, fading out as it climbs (made of drops, not hiss: hundreds of tiny ticks a second, a clearer "plink" now and
+then, different drops in each ear), a bird now and then once the plan is healthy, and a short chime when the family marks
 a step as done. It follows the same scale as the 3D sky, so the picture and the sound change together.
 
 - **Always far below the voice.** Measured in the browser against a real narration (2026-11-16): the loudest rain

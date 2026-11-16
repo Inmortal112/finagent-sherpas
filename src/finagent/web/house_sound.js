@@ -11,9 +11,10 @@
 // tab is hidden. Plan: 02-DOCS/ftd/voz-casa-suena.md.
 
 // Levels, as the gain of each sound (1 = full scale; the narration plays at full scale). Measured in the browser on
-// 2026-11-16 against a real narration: the loudest rain is about 30 dB below the voice, and about 39 dB below
-// while the voice speaks; the chime peaks about 20 dB under the voice's peaks.
-const RAIN_MAX = 0.018;     // rain at the lowest score
+// 2026-11-16 against a real narration: the loudest rain is about 30 dB below the voice (its loudest drops 21 to
+// 25 dB under the voice's peaks), and about 39 dB below while the voice speaks; the chime peaks about 20 dB under
+// the voice's peaks.
+const RAIN_MAX = 0.022;     // rain at the lowest score
 const BIRD_LEVEL = 0.012;   // one chirp
 const CHIME_LEVEL = 0.035;  // the "done" chime
 const DUCKED = 0.35;        // background level while the voice speaks
@@ -33,9 +34,9 @@ export function create({ voice = null, enabled = true } = {}) {
     ctx = new Context();
     master = ctx.createGain(); master.gain.value = on ? 1 : 0; master.connect(ctx.destination);
     bed = ctx.createGain(); bed.gain.value = voice && !voice.paused ? DUCKED : 1; bed.connect(master);
-    rain = makeRain(ctx, bed);
-    applyWeather(0);
     scheduleBirds();
+    // Drawing the rain takes a moment: do it just after the tap, so the tap itself never waits for it.
+    setTimeout(() => { rain = makeRain(ctx, bed); applyWeather(0); }, 0);
   }
 
   // The first tap anywhere unlocks the sound (iPhone needs it inside the tap itself).
@@ -65,7 +66,7 @@ export function create({ voice = null, enabled = true } = {}) {
   }
 
   function applyWeather(seconds = 2) {
-    if (!ctx) return;
+    if (!rain) return;
     const amount = Math.max(0, (RAIN_UNTIL - health) / RAIN_UNTIL);   // 1 at the lowest score, 0 from RAIN_UNTIL
     const now = ctx.currentTime;
     rain.gain.cancelScheduledValues(now);
@@ -106,24 +107,54 @@ export function create({ voice = null, enabled = true } = {}) {
   };
 }
 
-// Rain: a loop of soft noise, filtered so it sounds like rain on a roof rather than hiss, with a slow swell.
-function makeRain(ctx, out) {
-  const seconds = 4, buffer = ctx.createBuffer(1, ctx.sampleRate * seconds, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  let b0 = 0, b1 = 0, b2 = 0;
-  for (let i = 0; i < data.length; i++) {   // pink-ish noise: deeper than white noise, easier on the ear
-    const white = Math.random() * 2 - 1;
-    b0 = 0.99765 * b0 + white * 0.099046;
-    b1 = 0.963 * b1 + white * 0.2965164;
-    b2 = 0.57 * b2 + white * 1.0526913;
-    data[i] = (b0 + b1 + b2 + white * 0.1848) * 0.2;
-  }
-  const fade = Math.floor(ctx.sampleRate * 0.05);   // join the loop without a click
-  for (let i = 0; i < fade; i++) data[data.length - fade + i] = data[data.length - fade + i] * (1 - i / fade) + data[i] * (i / fade);
+// Rain. What makes the ear say "rain" is not a hiss but the drops: hundreds of tiny ticks a second at random,
+// a clearer "plink" now and then, and different drops in each ear. All of it is drawn once into an 8-second stereo
+// loop (cheap to play), over a light wash of noise, then filtered like rain heard from inside a house.
+const RAIN_SECONDS = 8;
+const PATTER_PER_S = 320;   // tiny ticks per second, per ear
+const PLINKS_PER_S = 5;     // clearer drops per second, per ear
 
-  const source = ctx.createBufferSource(); source.buffer = buffer; source.loop = true;
-  const low = ctx.createBiquadFilter(); low.type = "lowpass"; low.frequency.value = 2400;
-  const high = ctx.createBiquadFilter(); high.type = "highpass"; high.frequency.value = 350;
+export function makeRainBuffer(ctx) {
+  const rate = ctx.sampleRate, length = Math.floor(rate * RAIN_SECONDS);
+  const buffer = ctx.createBuffer(2, length, rate);
+  for (let channel = 0; channel < 2; channel++) {
+    const data = buffer.getChannelData(channel);
+    let prev = 0;
+    for (let i = 0; i < length; i++) {   // the wash: white noise, made brighter (a simple high-pass)
+      const white = Math.random() * 2 - 1;
+      data[i] = (white - prev) * 0.05; prev = white;
+    }
+    const drop = (at, size, tick) => {   // add one drop, wrapping round the end so the loop has no seam
+      for (let k = 0; k < tick.length; k++) data[(at + k) % length] += size * tick[k];
+    };
+    for (let n = 0; n < PATTER_PER_S * RAIN_SECONDS; n++) {   // patter: a short burst of noise that dies away
+      const size = 0.05 + 0.5 * Math.random() ** 3, decay = rate * (0.0008 + Math.random() * 0.002);
+      const tick = new Float32Array(Math.floor(decay * 5)), fall = Math.exp(-1 / decay);
+      for (let k = 0, env = 1; k < tick.length; k++, env *= fall) tick[k] = (Math.random() * 2 - 1) * env;
+      drop(Math.floor(Math.random() * length), size, tick);
+    }
+    for (let n = 0; n < PLINKS_PER_S * RAIN_SECONDS; n++) {   // plink: a tiny tone that rises, like a drop in water
+      const size = 0.15 + 0.35 * Math.random(), f0 = 1400 + Math.random() * 2600, decay = rate * (0.006 + Math.random() * 0.008);
+      const tick = new Float32Array(Math.floor(decay * 5)), fall = Math.exp(-1 / decay);
+      let phase = 0;
+      for (let k = 0, env = 1; k < tick.length; k++, env *= fall) {
+        phase += (2 * Math.PI * f0 * (1 + 0.8 * (k / tick.length))) / rate;
+        tick[k] = Math.sin(phase) * env * Math.min(1, k / (rate * 0.0005));
+      }
+      drop(Math.floor(Math.random() * length), size, tick);
+    }
+    let power = 0;   // the same average loudness (RMS 0.25) whatever the random draw
+    for (let i = 0; i < length; i++) power += data[i] * data[i];
+    const scale = 0.25 / Math.sqrt(power / length);
+    for (let i = 0; i < length; i++) data[i] *= scale;
+  }
+  return buffer;
+}
+
+function makeRain(ctx, out) {
+  const source = ctx.createBufferSource(); source.buffer = makeRainBuffer(ctx); source.loop = true;
+  const low = ctx.createBiquadFilter(); low.type = "lowpass"; low.frequency.value = 7000;
+  const high = ctx.createBiquadFilter(); high.type = "highpass"; high.frequency.value = 500;
   const swell = ctx.createGain(); swell.gain.value = 0.85;
   const lfo = ctx.createOscillator(); lfo.frequency.value = 0.07;
   const depth = ctx.createGain(); depth.gain.value = 0.15;
