@@ -157,8 +157,9 @@ the visitor and which step they chose.
   and kept, so a new step or a "yes, I started it" makes a new one.
 - Fixed sentences (`src/finagent/partner_note.py`), no model: free and instant. Its only figures are the step's
   score before and after. The worry is the family's own words, so it goes in without numbers.
-- On an iPhone, the page can pass the MP3 to the share sheet (`navigator.share({files: [...]})`), which sends it to
-  WhatsApp or Messages as audio.
+- On the page (`web/partner_share.js`): once a first step is chosen, a couple sees the note's text with *Send to
+  Daniel* and *Hear it first*. On a phone the MP3 goes to the share sheet (`navigator.share({files: [...]})`), which
+  sends it to WhatsApp or Messages as audio; on a computer it is saved as a file. A plan for one person shows nothing.
 
 ## The sound of the home
 
