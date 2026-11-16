@@ -1,46 +1,71 @@
 // The family's home in 3D. The page loads this file only with ?house=3d (see stage_page.html); the drawn
-// home (the SVG) stays as the fallback. Built from plain shapes and flat colours: no models, no image files.
+// home (the SVG) stays as the fallback. Built from plain shapes, a painted sky and drifting clouds: no models,
+// no image files.
 //
 //   const home = mount(host, { onFail, onPick })   -> throws when the browser has no WebGL
-//   home.update({ states, focus, lush })
+//   home.update({ states, focus, lush, health })
 //        states: { roof: "solid" | "cracked" | "broken" | "repaired" | null (the family has no such part), ... }
 //        focus:  the part being talked about (the others fade), or null
 //        lush:   1 = a green garden, 0 = a dry one
+//        health: 0 = a grey, rainy day (a low score) ... 1 = a golden evening (a high score)
+//   home.setFrame({ x, y, w, h })   the box of the canvas the home must sit in (the page's scene), in pixels
+//   home.setIntro(p)                 0 = high above the clouds, 1 = at the home: the hero's scroll drives it
 //   home.dispose()
 //
-// It shows the same four things as paint() in the page: each part's state, the part in focus, the garden
-// drying up and the glow of what was repaired. And the camera tells the story: it glides to the part in
-// focus and back to the whole home. Plan and what is left out: 02-DOCS/ftd/stage-casa-3d.md.
+// What it shows: each part's state, the part in focus, the garden drying up, the glow of what was repaired, and
+// the weather of the plan. A part that becomes repaired heals in front of the family: its cracks close up and
+// sparks rise. The sky follows the score, so doing the steps turns rain into a golden evening.
+// Plans: 02-DOCS/ftd/stage-casa-3d.md and 02-DOCS/ftd/stage-casa-que-mejora.md.
 import * as THREE from "./vendor/three.module.min.js";
 
 const INK = 0x23232e, WALL = 0xffffff, STONE = 0xbfc1d0, PIPE = 0x6586fc, JOINT = 0x4565d6, CRACK = 0x44445d;
-const WOOD = 0x8a6f57, GLASS = 0xcfe0ff, GROUND = 0xe9ebf3, DRY = 0xb9a58a;
+const WOOD = 0x8a6f57, GLASS = 0xcfe0ff, YARD = 0xe9ebf3, DRY = 0xb9a58a;
 const LEAF = [new THREE.Color(0x2f9e77), new THREE.Color(0xc4b59d)];         // green, dry
 const LEAF_LIGHT = [new THREE.Color(0x57bf93), new THREE.Color(0xd6cab6)];
-const FADED = new THREE.Color(0xeceef5), FADE = 0.78;                        // a part out of focus goes pale
+const FADED = new THREE.Color(0xeceef5), FADE = 0.6;                         // a part out of focus goes pale
 const REPAIRED_TINT = new THREE.Color(0x5a4fd0);
+const LAMP = new THREE.Color(0xffc977), WHITE = new THREE.Color(0xffffff);                                      // the windows at night
 const GLYPH = { solid: "✓", cracked: "!", broken: "✕", repaired: "✓" };
 const STATE_COLOR = { solid: "#4565d6", cracked: "#c9871f", broken: "#d6455d", repaired: "#774be5" };  // if the page has no --solid…
 
+// The weather of the plan: a grey, rainy day; a clear day; a golden evening. health 0 → 0.5 → 1.
+const WEATHER = [
+  { top: 0x353b4b, mid: 0x5d6373, horizon: 0x8d919c, sun: 0xd7dbe4, sunPower: 0.05, cloud: 0x868a96, shade: 0x5a5e6a,
+    light: 0xc4ccdc, lightPower: 0.9, sky: 0x9aa3b6, ground: 0x5d6168, grass: 0x7d866f, hills: 0x5f6a62, exposure: 0.92 },
+  { top: 0x2d5fc0, mid: 0x7aa2de, horizon: 0xd8e6f6, sun: 0xfff3dc, sunPower: 0.55, cloud: 0xffffff, shade: 0xc6d2e6,
+    light: 0xfff2de, lightPower: 1.7, sky: 0xd6e4ff, ground: 0x93a07f, grass: 0x78ab62, hills: 0x6b9a6f, exposure: 1.0 },
+  { top: 0x1f2e66, mid: 0x8a6fb0, horizon: 0xffae73, sun: 0xffdca0, sunPower: 1.0, cloud: 0xffdcc8, shade: 0xc98694,
+    light: 0xffcf9a, lightPower: 1.9, sky: 0xffd6c0, ground: 0x8b7a6c, grass: 0x84a85c, hills: 0x6d7a68, exposure: 1.05 },
+].map((w) => Object.fromEntries(Object.entries(w).map(([k, v]) => [k, typeof v === "number" && k !== "sunPower" && k !== "lightPower" && k !== "exposure" ? new THREE.Color(v) : v])));
+const SUN_DIR = new THREE.Vector3(-0.32, 0.075, -1).normalize();   // low, behind the home: the camera looks into it
+
 // Where the camera stands for the whole home and for each part: the point it looks at ("at"), the side it
 // looks from ("from": right, up, front) and the room that must fit on the screen around that point.
-// A part is seen closer and from its own side, but never so close that the rest of the home is lost.
 const VIEWS = {
-  home: { at: [0, 1.6, 0], from: [0.55, 0.32, 0.77], halfWidth: 5.4, halfHeight: 3.1, depth: 2.5 },
+  home: { at: [0, 1.6, 0], from: [0.55, 0.3, 0.78], halfWidth: 5.6, halfHeight: 3.3, depth: 2.5 },
   roof: { at: [0.2, 3.1, 0], from: [0.6, 0.5, 0.72], halfWidth: 3.8, halfHeight: 2.5, depth: 2.2 },
   walls: { at: [0, 1.6, 0.6], from: [0.3, 0.16, 0.94], halfWidth: 3.2, halfHeight: 2.1, depth: 2.2 },
   plumbing: { at: [1.9, 1.5, 0.7], from: [0.86, 0.2, 0.47], halfWidth: 2.3, halfHeight: 1.9, depth: 1.8 },
   foundations: { at: [0, 0.7, 1.0], from: [0.36, 0.14, 0.92], halfWidth: 3.3, halfHeight: 1.7, depth: 2.2 },
   garden: { at: [-2.5, 1.5, 0.8], from: [-0.12, 0.26, 0.96], halfWidth: 3.0, halfHeight: 2.2, depth: 2.0 },
 };
+// High above the clouds, looking at the sun: where the visit starts (setIntro(0)).
+const INTRO = { position: new THREE.Vector3(10, 34, 46), at: new THREE.Vector3(-26, 22, -120) };
 const FOV = 32;
 const GLIDE_MS = 900;        // short and slow: nobody should feel the room move
+const HEAL_MS = 1400;
 const SLOW_FRAME_MS = 45;    // a glide that averages worse than this (about 22 frames a second) is a jerky one
 const HOPELESS_FRAME_MS = 150;
+
+// A small seeded random, so the clouds and trees are the same on every visit.
+let seed = 7;
+const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+const between = (a, b) => a + (b - a) * rand();
 
 function mesh(geometry, color, x = 0, y = 0, z = 0) {
   const m = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color, flatShading: true }));
   m.position.set(x, y, z);
+  m.castShadow = m.receiveShadow = true;
   m.userData.color = new THREE.Color(color);   // its own colour, before fading or drying
   return m;
 }
@@ -80,7 +105,8 @@ function foundations() {
 
 function walls() {
   const z = 1.52;
-  const win = (x) => [box(0.92, 0.82, 0.04, INK, x, 1.8, 1.5), box(0.8, 0.7, 0.06, GLASS, x, 1.8, 1.51)];
+  const glass = [];
+  const win = (x) => { const pane = box(0.8, 0.7, 0.06, GLASS, x, 1.8, 1.51); glass.push(pane); return [box(0.92, 0.82, 0.04, INK, x, 1.8, 1.5), pane]; };
   return {
     body: [box(4, 2.4, 3, WALL, 0, 1.6, 0), box(0.7, 1.25, 0.06, INK, 0, 1.025, 1.51), ball(0.04, 0xafbff8, 0.22, 1.0, 1.56),
       ...win(-1.2), ...win(1.2)],
@@ -88,7 +114,7 @@ function walls() {
     dmg: [...crack([[-1.85, 1.35, z], [-1.62, 1.15, z], [-1.74, 0.9, z], [-1.55, 0.5, z]], CRACK, 0.034),
       box(0.62, 0.2, 0.04, 0xe9c9bd, -0.62, 2.62, z - 0.01), box(0.32, 0.2, 0.04, 0xe9c9bd, -0.77, 2.42, z - 0.01),
       ...crack([[2.02, 2.6, -0.4], [2.02, 2.2, -0.55], [2.02, 1.9, -0.4], [2.02, 1.5, -0.6]], CRACK, 0.034)],
-    pin: [0, 2.38, 1.6], halo: [0, 1.6, 0, 7, 4.6],
+    pin: [0, 2.38, 1.6], halo: [0, 1.6, 0, 7, 4.6], glass,
   };
 }
 
@@ -144,7 +170,7 @@ function garden() {
   };
 }
 
-// A soft round glow and the round marks, drawn here on a small canvas: no image is downloaded.
+// Soft round shapes drawn here on a small canvas: no image is downloaded.
 function drawn(size, paint) {
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = size;
@@ -153,9 +179,9 @@ function drawn(size, paint) {
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
 }
-const glowTexture = () => drawn(128, (g, s) => {
+const glowTexture = (inner = "rgba(120,110,247,.85)", middle = "rgba(105,125,250,.4)") => drawn(128, (g, s) => {
   const fill = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-  fill.addColorStop(0, "rgba(120,110,247,.85)"); fill.addColorStop(0.55, "rgba(105,125,250,.4)"); fill.addColorStop(1, "rgba(105,125,250,0)");
+  fill.addColorStop(0, inner); fill.addColorStop(0.55, middle); fill.addColorStop(1, "rgba(105,125,250,0)");
   g.fillStyle = fill; g.fillRect(0, 0, s, s);
 });
 const pinTexture = (color, glyph) => drawn(96, (g, s) => {
@@ -164,10 +190,52 @@ const pinTexture = (color, glyph) => drawn(96, (g, s) => {
   g.fillStyle = "#fff"; g.font = `600 ${s * 0.5}px system-ui, sans-serif`; g.textAlign = "center"; g.textBaseline = "middle";
   g.fillText(glyph, s / 2, s / 2 + 2);
 });
+// A cloud: a dozen soft white puffs, flatter at the bottom.
+const cloudTexture = () => drawn(256, (g, s) => {
+  for (let i = 0; i < 14; i++) {
+    const x = s * between(0.22, 0.78), y = s * between(0.4, 0.62) - (i % 3) * s * 0.05, r = s * between(0.12, 0.24);
+    const puff = g.createRadialGradient(x, y, 0, x, y, r);
+    puff.addColorStop(0, "rgba(255,255,255,.55)"); puff.addColorStop(0.6, "rgba(255,255,255,.22)"); puff.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = puff; g.fillRect(0, 0, s, s);
+  }
+});
+
+// The sky: a dome painted from the horizon up, with the sun's glow. It always stands around the camera.
+function skyDome() {
+  const uniforms = {
+    top: { value: new THREE.Color() }, mid: { value: new THREE.Color() }, horizon: { value: new THREE.Color() },
+    sunColor: { value: new THREE.Color() }, sunPower: { value: 1 }, sunDir: { value: SUN_DIR.clone() },
+  };
+  const material = new THREE.ShaderMaterial({
+    uniforms, side: THREE.BackSide, depthWrite: false, fog: false,
+    vertexShader: "varying vec3 vDir; void main() { vDir = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: `uniform vec3 top; uniform vec3 mid; uniform vec3 horizon; uniform vec3 sunColor; uniform float sunPower; uniform vec3 sunDir;
+      varying vec3 vDir;
+      void main() {
+        vec3 d = normalize(vDir);
+        float y = max(d.y, 0.0);
+        vec3 c = mix(horizon, mid, smoothstep(0.0, 0.22, y));
+        c = mix(c, top, smoothstep(0.22, 0.85, y));
+        float s = max(dot(d, sunDir), 0.0);
+        c += sunColor * sunPower * (pow(s, 900.0) * 2.2 + pow(s, 40.0) * 0.45 + pow(s, 6.0) * 0.22);
+        gl_FragColor = vec4(c, 1.0);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`,
+  });
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(400, 40, 20), material);
+  dome.renderOrder = -1;
+  return { dome, uniforms };
+}
 
 export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });   // throws without WebGL
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));           // sharper than 2x only costs battery
+  seed = 7;
+  const renderer = new THREE.WebGLRenderer({ antialias: true });   // throws without WebGL
+  let ratio = Math.min(window.devicePixelRatio || 1, 1.75);       // sharper only costs battery on a full screen
+  renderer.setPixelRatio(ratio);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
   const canvas = renderer.domElement;
   canvas.setAttribute("role", "img");
   canvas.setAttribute("aria-label", "Your plan drawn as a home");
@@ -175,13 +243,104 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   host.appendChild(canvas);
 
   const scene = new THREE.Scene();
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xc9cbd8, 1.9));
-  const sun = new THREE.DirectionalLight(0xffffff, 1.6);
-  sun.position.set(4, 8, 6);
+  scene.fog = new THREE.Fog(0xffffff, 40, 190);
+  const sky = skyDome();
+  scene.add(sky.dome);
+  const hemi = new THREE.HemisphereLight(0xffffff, 0xc9cbd8, 1.6);
+  scene.add(hemi);
+  const sun = new THREE.DirectionalLight(0xffffff, 1.6);   // the key light, from the camera's side so the front reads
+  sun.position.set(6, 11, 8);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: 1, far: 40 });
+  sun.shadow.bias = -0.0006;
+  sun.shadow.normalBias = 0.02;
   scene.add(sun);
-  const ground = mesh(new THREE.CircleGeometry(5, 48), GROUND);
-  ground.rotation.x = -Math.PI / 2;
-  scene.add(ground);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.5);   // the evening light from behind, along the edges
+  rim.position.copy(SUN_DIR).multiplyScalar(30);
+  scene.add(rim);
+
+  // The land: a wide field, the yard the home stands on, a path to the door, hills and trees far off.
+  const field = mesh(new THREE.CircleGeometry(220, 64), 0x78ab62);
+  field.rotation.x = -Math.PI / 2; field.position.y = -0.02; field.castShadow = false;
+  const yard = mesh(new THREE.CircleGeometry(5.6, 48), YARD);
+  yard.rotation.x = -Math.PI / 2; yard.position.y = 0.0; yard.castShadow = false;
+  const path = box(0.9, 0.02, 3.2, 0xd9dbe5, 0, 0.005, 3.3);
+  path.castShadow = false;
+  scene.add(field, yard, path);
+  const scenery = [];   // hills and far trees: they take the weather's colours
+  for (let i = 0; i < 12; i++) {
+    const angle = Math.PI * (0.7 + 1.6 * (i / 11)) + between(-0.1, 0.1), far = between(60, 120);
+    const hill = mesh(new THREE.IcosahedronGeometry(1, 2), 0x6b9a6f, Math.cos(angle) * far, -2, Math.sin(angle) * far - 30);
+    hill.scale.set(between(18, 34), between(5, 12), between(14, 24));
+    hill.castShadow = false;
+    hill.userData.tone = "hills";
+    scenery.push(hill);
+  }
+  for (let i = 0; i < 26; i++) {
+    const angle = between(0, Math.PI * 2), far = between(9, 26);
+    const x = Math.cos(angle) * far, z = Math.sin(angle) * far - 4;
+    if (z > 2) continue;                                           // the cameras stand in front: keep that side open
+    const h = between(1.4, 2.6);
+    const top = mesh(new THREE.ConeGeometry(h * 0.42, h, 7), 0x3f7f5d, x, h * 0.5 + 0.5, z);
+    top.userData.tone = "trees";
+    scenery.push(top, mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.6, 6), WOOD, x, 0.3, z));
+  }
+  scene.add(...scenery);
+
+  // The clouds: a deck the camera comes down through at the start, and a bank along the horizon.
+  const puff = cloudTexture();
+  const clouds = [];
+  const addCloud = (x, y, z, size, drift) => {
+    const material = new THREE.SpriteMaterial({ map: puff, transparent: true, depthWrite: false, fog: false });
+    const sprite = new THREE.Sprite(material);
+    sprite.position.set(x, y, z);
+    sprite.scale.set(size, size * 0.55, 1);
+    sprite.userData = { drift, shade: rand(), base: between(0.75, 1) };
+    clouds.push(sprite);
+    scene.add(sprite);
+  };
+  for (let i = 0; i < 26; i++) addCloud(between(-50, 50), between(13, 24), between(-60, 40), between(14, 26), between(0.25, 0.6));
+  for (let i = 0; i < 16; i++) { const a = between(-2.6, -0.5); addCloud(Math.cos(a) * 150, between(6, 24), Math.sin(a) * 150, between(45, 80), between(0.4, 0.9)); }
+
+  // Rain: short streaks falling around the home. It only shows on a low score.
+  const DROPS = 700;
+  const rainPositions = new Float32Array(DROPS * 6);
+  for (let i = 0; i < DROPS; i++) {
+    const x = between(-14, 14), y = between(0, 16), z = between(-10, 14);
+    rainPositions.set([x, y, z, x - 0.04, y - 0.38, z], i * 6);
+  }
+  const rainGeometry = new THREE.BufferGeometry();
+  rainGeometry.setAttribute("position", new THREE.BufferAttribute(rainPositions, 3));
+  const rain = new THREE.LineSegments(rainGeometry, new THREE.LineBasicMaterial({ color: 0xc3cbdb, transparent: true, opacity: 0 }));
+  rain.frustumCulled = false;
+  scene.add(rain);
+
+  // Sparks that rise from a part as it heals.
+  const SPARKS = 160;
+  const sparkPositions = new Float32Array(SPARKS * 3), sparkColors = new Float32Array(SPARKS * 3);
+  const sparkLife = new Float32Array(SPARKS), sparkSpeed = new Float32Array(SPARKS * 3);
+  const sparkGeometry = new THREE.BufferGeometry();
+  sparkGeometry.setAttribute("position", new THREE.BufferAttribute(sparkPositions, 3));
+  sparkGeometry.setAttribute("color", new THREE.BufferAttribute(sparkColors, 3));
+  const sparkTexture = glowTexture("rgba(255,255,255,1)", "rgba(255,240,210,.5)");
+  const sparks = new THREE.Points(sparkGeometry, new THREE.PointsMaterial({ size: 0.32, map: sparkTexture, vertexColors: true, transparent: true,
+    depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true }));
+  sparks.frustumCulled = false;
+  scene.add(sparks);
+  let nextSpark = 0, sparking = 0;
+  const SPARK_TONES = [new THREE.Color(0xffd27a), new THREE.Color(0xc9b8ff), new THREE.Color(0xffffff), new THREE.Color(0xdf7afe)];
+  function burst(at, size) {
+    for (let n = 0; n < 70; n++) {
+      const i = nextSpark; nextSpark = (nextSpark + 1) % SPARKS;
+      sparkPositions.set([at.x + between(-size, size) * 0.5, at.y + between(-0.6, 0.6), at.z + between(-0.4, 0.9)], i * 3);
+      sparkSpeed.set([between(-0.6, 0.6), between(1.2, 3.2), between(-0.3, 0.8)], i * 3);
+      const tone = SPARK_TONES[n % SPARK_TONES.length];
+      sparkColors.set([tone.r, tone.g, tone.b], i * 3);
+      sparkLife[i] = between(0.9, 1.6);
+    }
+    sparking = 1.8;
+  }
 
   // The page's own state colours, so the marks match the legend.
   const css = getComputedStyle(host);
@@ -190,6 +349,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   const glow = glowTexture();
 
   const parts = {};
+  const windows = [];
   for (const [name, make] of Object.entries({ foundations, walls, roof, plumbing, garden })) {
     const made = make();
     const crk = group("crk", made.crk), dmg = group("dmg", made.dmg);
@@ -201,30 +361,90 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     pin.renderOrder = 10;   // on top of the home, like a label
     const whole = group(name, made.body, crk, dmg, halo, pin);
     scene.add(whole);
-    parts[name] = { whole, crk, dmg, halo, pin, canopies: made.canopies || [], bloom: made.bloom || null };
+    windows.push(...(made.glass || []));
+    parts[name] = { whole, crk, dmg, halo, pin, canopies: made.canopies || [], bloom: made.bloom || null,
+      size: made.halo[3], state: null, heal: null };
   }
 
-  const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 100);
-  let alive = true, queued = 0;
+  const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 900);
+  let alive = true, queued = 0, last = 0, clock = 0;
   let view = "home", glide = null, slowGlides = 0, still = false, placed = false;
+  let intro = 1;
+  let frameBox = null;   // the scene's box on the canvas; null = the whole canvas
+  let width = 1, height = 1;
+  let health = -1, healthWanted = 0.5, rainAmount = 0;
+  let perf = { spent: 0, frames: 0, lowered: false };
 
-  // Where the camera must be to show that view on this screen.
+  // The box the home sits in, in canvas pixels.
+  const room = () => frameBox && frameBox.w > 10 && frameBox.h > 10 ? frameBox : { x: 0, y: 0, w: width, h: height };
+
+  // Where the camera must be to show that view inside the scene's box.
   function pose(name) {
-    const v = VIEWS[name] || VIEWS.home;
-    // As close as the view allows: its height decides on a wide screen, its width on a phone held upright.
+    const v = VIEWS[name] || VIEWS.home, r = room();
     const slope = Math.tan(THREE.MathUtils.degToRad(FOV) / 2);
+    // As close as the view allows: its height decides on a wide box, its width on a narrow one.
     return {
       at: new THREE.Vector3(...v.at), from: new THREE.Vector3(...v.from).normalize(),
-      distance: Math.max(v.halfHeight / slope, v.halfWidth / (slope * camera.aspect)) + v.depth,
+      distance: Math.max((v.halfHeight * height) / (slope * r.h), (v.halfWidth * height) / (slope * r.w)) + v.depth,
     };
   }
   let now = pose(view);
-  function place() {
-    camera.position.copy(now.at).addScaledVector(now.from, now.distance);
-    camera.lookAt(now.at);
+
+  // The lens is shifted so the middle of the picture is the middle of the scene's box, not of the canvas.
+  function project() {
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    const r = room(), e = camera.projectionMatrix.elements;
+    const shift = 1 - intro * intro * (3 - 2 * intro);   // high in the sky the picture is centred on the whole screen
+    e[8] = -(((r.x + r.w / 2) / width) * 2 - 1) * (1 - shift);
+    e[9] = -(1 - ((r.y + r.h / 2) / height) * 2) * (1 - shift);
+    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
   }
 
-  // Drawn only when something changes, or while the camera glides: a home that stands still costs no battery.
+  const lookAt = new THREE.Vector3(), position = new THREE.Vector3();
+  function place() {
+    // A slow sway, so the picture breathes like a film. Small enough not to be felt.
+    const sway = Math.sin(clock * 0.21) * 0.025, from = now.from.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), sway);
+    position.copy(now.at).addScaledVector(from, now.distance);
+    lookAt.copy(now.at);
+    if (intro < 1) {
+      const t = intro * intro * (3 - 2 * intro);
+      position.lerpVectors(INTRO.position, position, t);
+      lookAt.lerpVectors(INTRO.at, lookAt, Math.pow(t, 0.7));
+    }
+    camera.position.copy(position);
+    camera.lookAt(lookAt);
+    sky.dome.position.copy(position);
+  }
+
+  // The weather for this health: the sky, the light, the land, the clouds and the rain.
+  const mixed = {};
+  function weather(h) {
+    const [a, b, t] = h < 0.5 ? [WEATHER[0], WEATHER[1], h / 0.5] : [WEATHER[1], WEATHER[2], (h - 0.5) / 0.5];
+    for (const key in a) mixed[key] = typeof a[key] === "number" ? a[key] + (b[key] - a[key]) * t : (mixed[key] || new THREE.Color()).copy(a[key]).lerp(b[key], t);
+    sky.uniforms.top.value.copy(mixed.top);
+    sky.uniforms.mid.value.copy(mixed.mid);
+    sky.uniforms.horizon.value.copy(mixed.horizon);
+    sky.uniforms.sunColor.value.copy(mixed.sun);
+    sky.uniforms.sunPower.value = mixed.sunPower;
+    scene.fog.color.copy(mixed.horizon);
+    sun.color.copy(mixed.light); sun.intensity = mixed.lightPower;
+    rim.color.copy(mixed.sun); rim.intensity = 0.25 + 0.9 * Math.max(0, h - 0.4);
+    hemi.color.copy(mixed.sky); hemi.groundColor.copy(mixed.ground);
+    renderer.toneMappingExposure = mixed.exposure;
+    field.material.color.copy(mixed.grass);
+    yard.material.color.copy(mixed.grass).lerp(WHITE, 0.18);
+    for (const node of scenery) {
+      if (node.userData.tone === "hills") node.material.color.copy(mixed.hills);
+      else if (node.userData.tone === "trees") node.material.color.copy(node.userData.color).lerp(mixed.hills, 0.35);
+    }
+    for (const cloud of clouds) cloud.material.color.copy(mixed.shade).lerp(mixed.cloud, 0.45 + 0.55 * cloud.userData.shade);
+    rainAmount = Math.min(1, Math.max(0, (0.38 - h) / 0.3));
+    // Lights on inside: a home that is looked after, at golden hour.
+    for (const pane of windows) pane.material.emissive.copy(LAMP).multiplyScalar(Math.max(0, h - 0.45) * 1.4);
+  }
+
+  // Always drawing now (the clouds drift), but only while the tab is visible: the browser pauses it otherwise.
   function draw() {
     if (!alive || queued) return;
     queued = requestAnimationFrame(frame);
@@ -232,21 +452,105 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   function frame(time) {
     queued = 0;
     if (!alive) return;
+    const gap = last ? time - last : 16;
+    last = time;
+    const dt = Math.min(gap, 100) / 1000;
+    clock += dt;
+    if (gap > 0 && gap < 500) watch(gap);
+
     if (glide) {
       if (glide.start == null) glide.start = glide.last = time;
-      const gap = time - glide.last;
-      if (gap > 0 && gap < 500) { glide.spent += gap; glide.frames += 1; }   // a longer gap is a hidden tab, not a slow phone
+      const g = time - glide.last;
+      if (g > 0 && g < 500) { glide.spent += g; glide.frames += 1; }   // a longer gap is a hidden tab, not a slow phone
       glide.last = time;
       const t = Math.min(1, (time - glide.start) / GLIDE_MS);
       const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;   // starts and stops gently
       now.at.lerpVectors(glide.from.at, glide.to.at, eased);
       now.from.lerpVectors(glide.from.from, glide.to.from, eased).normalize();
       now.distance = glide.from.distance + (glide.to.distance - glide.from.distance) * eased;
-      place();
       if (t >= 1) { const done = glide; glide = null; if (judge(done)) return; }
     }
+    place();
+
+    // The weather drifts towards the score's, over about a second and a half.
+    if (health < 0) health = healthWanted;
+    if (Math.abs(health - healthWanted) > 0.001) { health += (healthWanted - health) * Math.min(1, dt * 1.8); weather(health); }
+
+    for (const cloud of clouds) {
+      cloud.position.x += cloud.userData.drift * dt;
+      if (cloud.position.x > 160) cloud.position.x = -160;
+      // A cloud close to the camera thins out, so coming down through the deck feels like mist, not a wall.
+      const near = cloud.position.distanceTo(camera.position);
+      cloud.material.opacity = cloud.userData.base * Math.min(1, Math.max(0, (near - 4) / 14)) * (0.85 + 0.15 * (1 - rainAmount));
+    }
+
+    rain.visible = rainAmount > 0.01;
+    if (rain.visible) {
+      rain.material.opacity = 0.5 * rainAmount;
+      for (let i = 0; i < DROPS; i++) {
+        const k = i * 6;
+        let y = rainPositions[k + 1] - 16 * dt;
+        if (y < 0) y += 16;
+        rainPositions[k + 1] = y; rainPositions[k + 4] = y - 0.38;
+      }
+      rainGeometry.attributes.position.needsUpdate = true;
+    }
+
+    if (sparking > 0) {
+      sparking -= dt;
+      for (let i = 0; i < SPARKS; i++) {
+        if (sparkLife[i] <= 0) { sparkPositions[i * 3 + 1] = -50; continue; }
+        sparkLife[i] -= dt;
+        sparkSpeed[i * 3 + 1] -= 1.1 * dt;   // they float up and slow down
+        for (let a = 0; a < 3; a++) sparkPositions[i * 3 + a] += sparkSpeed[i * 3 + a] * dt;
+        const fade = Math.max(0, Math.min(1, sparkLife[i]));
+        for (let a = 0; a < 3; a++) sparkColors[i * 3 + a] *= 0.985 + 0.015 * fade;
+      }
+      sparkGeometry.attributes.position.needsUpdate = true;
+      sparkGeometry.attributes.color.needsUpdate = true;
+    }
+    sparks.visible = sparking > 0;
+
+    for (const name in parts) heal(parts[name], time);
+
     renderer.render(scene, camera);
-    if (glide) draw();
+    draw();
+  }
+
+  // A part that has just been repaired: its cracks close up, its glow swells and settles.
+  function heal(part, time) {
+    if (!part.heal) return;
+    if (part.heal.start == null) part.heal.start = time;
+    const t = Math.min(1, (time - part.heal.start) / HEAL_MS), close = 1 - Math.min(1, t * 1.6);
+    for (const marks of [part.crk, part.dmg]) {
+      if (!marks.visible) continue;
+      marks.children.forEach((node) => node.scale.setScalar(Math.max(0.001, close)));
+    }
+    const swell = 1 + 0.45 * Math.sin(Math.PI * t);
+    part.halo.scale.set(part.halo.userData.w * swell, part.halo.userData.h * swell, 1);
+    if (t >= 1) {
+      for (const marks of [part.crk, part.dmg]) { marks.visible = false; marks.children.forEach((node) => node.scale.setScalar(1)); }
+      part.halo.scale.set(part.halo.userData.w, part.halo.userData.h, 1);
+      part.heal = null;
+    }
+  }
+
+  // Is the phone keeping up? Too slow and the home gets simpler (no shadows, fewer pixels); hopeless and the
+  // drawn home takes over.
+  function watch(gap) {
+    perf.spent += gap; perf.frames += 1;
+    if (perf.frames < 90) return;
+    const average = perf.spent / perf.frames;
+    perf.spent = 0; perf.frames = 0;
+    if (average > HOPELESS_FRAME_MS && perf.lowered) { onFail(); return; }
+    if (average > SLOW_FRAME_MS && !perf.lowered) {
+      perf.lowered = true;
+      renderer.shadowMap.enabled = false;
+      scene.traverse((node) => { if (node.material) node.material.needsUpdate = true; });
+      ratio = 1;
+      renderer.setPixelRatio(ratio);
+      resize();
+    }
   }
   // After each glide: was it smooth? Twice jerky and the camera stops gliding (it jumps instead); hopeless and
   // the drawn home takes over. True when the 3D home has been given up.
@@ -261,31 +565,60 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     if (!VIEWS[name]) name = "home";
     if (name === view && placed) return;
     view = name;
-    if (!placed || still) { glide = null; now = pose(name); place(); placed = true; return; }
+    if (!placed || still) { glide = null; now = pose(name); placed = true; return; }
     glide = { from: { at: now.at.clone(), from: now.from.clone(), distance: now.distance }, to: pose(name), start: null, last: 0, spent: 0, frames: 0 };
   }
   function resize() {
     const w = host.clientWidth, h = host.clientHeight;
     if (!w || !h) return;
+    width = w; height = h;
     renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-    if (glide) glide.to = pose(view); else { now = pose(view); place(); }
-    draw();
+    project();
+    if (glide) glide.to = pose(view); else now = pose(view);
   }
   const watcher = new ResizeObserver(resize);
   watcher.observe(host);
   resize();
 
-  function update({ states = {}, focus = null, lush = 1 } = {}) {
+  function setFrame(box) {
+    const next = box ? { x: Math.round(box.x), y: Math.round(box.y), w: Math.round(box.w), h: Math.round(box.h) } : null;
+    if (JSON.stringify(next) === JSON.stringify(frameBox)) return;
+    frameBox = next;
+    project();
+    if (glide) glide.to = pose(view); else now = pose(view);
+  }
+  function setIntro(p) {
+    const next = Math.min(1, Math.max(0, p));
+    if (Math.abs(next - intro) < 0.0005) return;
+    intro = next;
+    project();
+  }
+
+  let first = true;
+  function update({ states = {}, focus = null, lush = 1, health: wanted = 0.5 } = {}) {
+    healthWanted = Math.min(1, Math.max(0, wanted));
+    if (first) weather(health = healthWanted);
     const green = Math.min(1, Math.max(0, lush));
     for (const name in parts) {
       const part = parts[name], state = states[name];
       part.whole.visible = Boolean(state);
-      if (!state) continue;
+      if (!state) { part.state = null; continue; }
       const faded = Boolean(focus) && focus !== name;
-      part.crk.visible = state === "cracked" || state === "broken";
-      part.dmg.visible = state === "broken";
+      const healing = !first && state === "repaired" && (part.state === "cracked" || part.state === "broken");
+      if (healing) {
+        // Keep the old cracks on screen for the heal to close them.
+        part.crk.visible = true;
+        part.dmg.visible = part.state === "broken";
+        part.halo.userData.w ??= part.halo.scale.x; part.halo.userData.h ??= part.halo.scale.y;
+        part.heal = { start: null };
+        burst(part.halo.position, part.size);
+      } else if (!part.heal || state !== "repaired") {
+        if (part.heal) { part.heal = null; [part.crk, part.dmg].forEach((g) => g.children.forEach((node) => node.scale.setScalar(1))); }
+        part.crk.visible = state === "cracked" || state === "broken";
+        part.dmg.visible = state === "broken";
+      }
+      part.state = state;
+      part.halo.userData.w ??= part.halo.scale.x; part.halo.userData.h ??= part.halo.scale.y;
       part.halo.visible = state === "repaired" && !faded;
       part.pin.material.map = pins[state] || pins.solid;
       part.pin.material.opacity = faded ? 0.35 : 1;
@@ -302,6 +635,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
         if (faded) color.lerp(FADED, FADE);
       });
     }
+    first = false;
     aim(focus && states[focus] ? focus : "home");
     draw();
   }
@@ -325,14 +659,14 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     alive = false;
     cancelAnimationFrame(queued);
     watcher.disconnect();
-    scene.traverse((node) => { if (node.isMesh || node.isSprite) { node.geometry.dispose(); node.material.dispose(); } });
+    scene.traverse((node) => { if (node.geometry) node.geometry.dispose(); if (node.material) node.material.dispose(); });
     Object.values(pins).forEach((texture) => texture.dispose());
-    glow.dispose();
+    [glow, puff, sparkTexture].forEach((texture) => texture.dispose());
     renderer.dispose();
     canvas.remove();
   }
   // The phone took the graphics memory back (another app, a locked screen): the drawn home takes over.
   canvas.addEventListener("webglcontextlost", (event) => { event.preventDefault(); if (alive) onFail(); });
 
-  return { update, dispose };
+  return { update, setFrame, setIntro, dispose };
 }
