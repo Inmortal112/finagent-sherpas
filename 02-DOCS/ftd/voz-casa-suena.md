@@ -33,7 +33,12 @@ marcar un paso hecho. Pedido por David: **fondo bajito, que la voz se oiga siemp
   ~5 «plics» por segundo (tono corto que sube, como una gota en agua) y un lavado de ruido brillante; filtrada
   500–7000 Hz. Mismo volumen medio que antes (−30 dB bajo la voz); se genera justo después del primer toque (~0,2 s
   en el portátil) para no congelarlo.
-- [ ] Volver a escucharla en el iPhone.
+- [x] Volver a escucharla en el iPhone (fusionada, PR #67).
+- [x] David no oía el «ding» (16 nov): solo sonaba con «I've completed this step», no con «Preview this change»
+  (Raúl los separó en el PR #66), y mientras habla la voz quedaba tapado. Ahora (rama `feat/voice-preview-sound`):
+  la vista previa tiene su propio brillo (4 notas rápidas y agudas, −23 dB bajo los picos de la voz) y ni el «ding»
+  ni el brillo bajan con el ducking. 1 línea en `stage_page.html` (`houseSound.previewed()`).
+- [ ] Oír el brillo y el «ding» en el iPhone.
 - [x] `bash check.sh` pasa.
 
 ## Para Raúl
