@@ -178,6 +178,20 @@ the same). It follows the same scale as the 3D sky, so the picture and the sound
 - Made with the Web Audio API: no sound files, nothing to download or license. Levels are constants at the top of
   the file.
 
+## Captions that follow the voice
+
+Each word of the narration lights up on the page as it is said, so the family can read along: for people who hear
+badly, a noisy room, or anyone who follows better with both.
+
+- Both engines tell when each word is said: edge-tts with its word boundaries, ElevenLabs with its
+  `with-timestamps` route (same price, the timings come with the audio and are cached with it). With neither (the
+  Sherpas proxy), the audio's length is shared between the words by their length.
+- The voice reads a spoken copy of the text, the page shows the text as written. `captions.align` maps one onto the
+  other: while the voice says "fifteen thousand and thirty-two dollars a year", the written `$15,032/yr` is lit.
+  The text on the page is never changed.
+- One small file per scene next to its MP3, `audio/<scene>.words.json`; the page side is `web/captions.js`.
+  No file, no captions, and everything else works the same.
+
 ## Files and tests
 
 | File | What |
@@ -186,6 +200,7 @@ the same). It follows the same scale as the 3D sky, so the picture and the sound
 | `src/finagent/voice_eleven.py` | ElevenLabs: speech, Scribe, cache, cap, MP3 duration (standard library only) |
 | `src/finagent/speech_text.py` | `to_speech`: written text → spoken text |
 | `src/finagent/partner_note.py` | the voice note for the other half of a couple |
-| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py`, `test_partner_note.py` | all HTTP faked, nothing spent |
+| `src/finagent/captions.py`, `web/captions.js` | when each word is said, and lighting it on the page |
+| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py`, `test_partner_note.py`, `test_captions.py` | all HTTP faked, nothing spent |
 
 Design notes (Spanish, for the team): `02-DOCS/ftd/voz-*.md`.

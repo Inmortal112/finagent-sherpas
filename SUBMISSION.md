@@ -27,7 +27,8 @@ The family opens it from a link on their phone, with nothing to install. They pi
 be guided, and say what worries them most; the home turns to the part of the plan that answers it. A calm voice
 walks them through the five parts and then through the years ahead. **They can stop it at any moment and ask**,
 typing or tapping to talk, and the answer uses only the figures of their own plan. Each step Sherpas recommends is a
-repair: when they mark it done, that part of the home heals and the score climbs. It ends with one first step, a
+repair: when they mark it done, that part of the home heals and the score climbs. The home can be heard too: soft
+rain while the score is low, birds once it is healthy, a chime when a step is done. It ends with one first step, a
 check-in a few days later that asks what got in the way, and a short note for their advisor with what worried them,
 what they asked and what they decided.
 
@@ -36,8 +37,8 @@ what they asked and what they decided.
 - **It grabs you in seconds.** A cracked wall needs no explanation. Samantha scores 82, "strong", and her home looks
   fine, until the years move forward to age 73 and her garden dries up. That is the problem a good score can hide.
 - **Anyone can follow it.** Each person chooses a mode: *Simply* (a flat 2D home, short sentences, big buttons, the
-  voice leads) for people who rarely use apps, or *In full* (a 3D home and every figure). In a couple, each adult
-  sees their own part.
+  voice leads) for people who rarely use apps, or *In full* (a 3D home and every figure). Each word lights up as
+  the voice says it, for anyone who hears badly or reads along. In a couple, each adult sees their own part.
 - **It is really theirs.** Each family gets its own home, its own words and the worries their own plan points to.
   None of the four plans records what the family is worried about, so we start by asking.
 - **It moves people to act.** Every repair is a step Sherpas already calculated, with the score before and after,

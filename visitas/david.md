@@ -3,6 +3,15 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 18:30 — feat/voice-captions — Claude Code
+- **Hecho:** subtítulos que siguen a la voz: cada palabra de la narración se ilumina mientras se dice
+  (`captions.py`, `web/captions.js`). La voz guarda `audio/<escena>.words.json` junto a cada MP3. Ficha `voz-subtitulos.md`.
+- **Estado:** `bash check.sh` pasa. Probado en el navegador con edge; falta iPhone y la ruta real de ElevenLabs.
+- **Decisiones:** sin tocar el contrato ni `narration`; el texto escrito se ilumina aunque la voz lo diga distinto.
+- **Para Raúl:** 2 líneas en `stage_page.html` (busca `captions.js`); el color está en `STYLE` de `web/captions.js`.
+- **Para Samuel:** `SUBMISSION.md` menciona ya el sonido de la casa y los subtítulos. Regenerar `out/` crea los tiempos.
+- **Siguiente:** botón de la nota para la pareja, vuelta del día 3 con voz, Matilda en las 4 familias.
+
 ## 2026-11-16 17:30 — feat/voice-preview-sound — Claude Code
 - **Hecho:** «Preview this change» suena (brillo suave de 4 notas, distinto del «ding» de «completed»). El «ding» y
   el brillo ya no bajan mientras habla la voz (antes quedaba tapado).

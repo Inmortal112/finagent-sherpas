@@ -25,6 +25,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from contracts.schemas import Presentation, Scene
+from finagent import captions
 from finagent.speech_text import to_speech
 
 log = logging.getLogger(__name__)
@@ -180,16 +181,26 @@ async def _eleven_all(scenes: list[Scene], out_dir: Path, language: str) -> None
         (audio_dir / f"{scene.id}.mp3").write_bytes(audios[scene.id])
         scene.audio_path = f"{AUDIO_DIR}/{scene.id}.mp3"
         scene.duration_s = round(voice_eleven.mp3_duration_s(audios[scene.id]), 1)
+        timed = voice_eleven.word_times(texts[scene.id]) or captions.estimate(texts[scene.id], scene.duration_s)
+        captions.save(audio_dir / f"{scene.id}.mp3", scene.narration, timed)
 
 
 async def _edge_bytes(text: str, voice: str) -> bytes:
+    return (await _edge_speech(text, voice))[0]
+
+
+async def _edge_speech(text: str, voice: str) -> tuple[bytes, list[captions.Timed]]:
+    """The MP3 and when each word is said (edge-tts reports times in units of 100 nanoseconds)."""
     import edge_tts  # imported here so a missing package falls back to mock
 
-    audio = bytearray()
-    async for chunk in edge_tts.Communicate(text, voice, rate=speaking_rate()).stream():
+    audio, timed = bytearray(), []
+    async for chunk in edge_tts.Communicate(text, voice, rate=speaking_rate(), boundary="WordBoundary").stream():
         if chunk["type"] == "audio":
             audio.extend(chunk["data"])
-    return bytes(audio)
+        elif chunk["type"] == "WordBoundary":
+            start = chunk["offset"] / 1e7
+            timed.append((chunk["text"], start, start + chunk["duration"] / 1e7))
+    return bytes(audio), timed
 
 
 async def _edge_all(scenes: list[Scene], out_dir: Path, voice: str, language: str) -> None:
@@ -198,12 +209,14 @@ async def _edge_all(scenes: list[Scene], out_dir: Path, voice: str, language: st
     limit = asyncio.Semaphore(MAX_PARALLEL_REQUESTS)
 
     async def one(scene: Scene) -> None:
+        spoken = to_speech(scene.narration, language)
         async with limit:
-            audio = await _edge_bytes(to_speech(scene.narration, language), voice)
+            audio, timed = await _edge_speech(spoken, voice)
         if not audio:
             raise RuntimeError(f"no audio returned for scene {scene.id!r}")
         (audio_dir / f"{scene.id}.mp3").write_bytes(audio)
         scene.audio_path = f"{AUDIO_DIR}/{scene.id}.mp3"
         scene.duration_s = round(len(audio) / EDGE_MP3_BYTES_PER_SECOND, 1)
+        captions.save(audio_dir / f"{scene.id}.mp3", scene.narration, timed or captions.estimate(spoken, scene.duration_s))
 
     await asyncio.gather(*(one(scene) for scene in scenes))
