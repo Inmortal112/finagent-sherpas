@@ -2,6 +2,20 @@
 
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 
+## 2026-11-16 — feat/stage-architectural-review · paisaje, cámara y cabecera — Codex
+- **Hecho:** recuperados terreno, montañas, árboles y pájaros articulados; tarjeta de puntuación nueva, centrada y con contexto. El clima sigue vuestra puntuación original.
+- **Decisiones:** eliminado el lienzo fijo que atravesaba la página. Un único renderizador vive en cajas reales; conserva una imagen local al salir y anima giro/acercamiento al entrar. Continúa el movimiento de agua, nubes y jardín.
+- **Estado:** `check.sh`: 171 tests; JS correcto. Navegador: 1280×800, 390×844 y 390×600; puntuación centrada, sin desborde del panel y con un solo lienzo.
+- **Para Samuel y David:** cambios solo en escena y documentación de Raúl. Sin cambios de datos, contrato, backend o narraciones. iPhone real pendiente.
+- **Siguiente:** valoración visual y de movimiento de Raúl; no publicado ni integrado hasta su aprobación.
+
+## 2026-11-16 — feat/stage-architectural-review · clima y recorrido — Codex
+- **Hecho:** a petición de Raúl, recuperado el clima original según puntuación (lluvia/día/atardecer), con materiales y luz mejorados; escena delimitada, cámara más suave y sin encuadres extremos.
+- **Estado:** `check.sh`: 171 tests; sintaxis JS; ocho páginas; navegación de 1/12 a 10/12 y revisión en escritorio y móvil.
+- **Decisiones:** puntuación y contexto fuera del dibujo; Back/Next y contador de capítulos; resumen inicial desplegable; textos opacos y anclaje al cambiar tamaño. Leer no completa pasos ni mejora la nota.
+- **Para Samuel y David:** se conserva vuestra lógica y paletas del clima; Michael 26 sigue lluvioso y su simulación individual 62 cambia a despejado sin registrar pasos completados. Sin cambios de backend, contrato ni voz.
+- **Siguiente:** revisión de Raúl y prueba en iPhone real; la rama continúa local hasta autorizar publicación.
+
 ## 2026-11-16 — feat/stage-architectural-review · segunda revisión — Codex
 - **Hecho:** tras valorar Raúl que quedaba apagado: azul/violeta, sol lateral, sombras más profundas, cristal con reflejos, agua con ondas y vegetación más llena.
 - **Estado:** `VOICE_ENGINE=mock bash check.sh`: 171 tests; ocho páginas; sintaxis JS correcta; revisión en escritorio y móvil.

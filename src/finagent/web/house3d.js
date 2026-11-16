@@ -7,13 +7,13 @@
 //        states: { roof: "solid" | "cracked" | "broken" | "repaired" | null (the family has no such part), ... }
 //        focus:  the part being talked about (the others fade), or null
 //        lush:   1 = a green garden, 0 = a dry one
-//        health: 0..1, the selected scenario's score (used only for subtle window lighting)
+//        health: 0..1, the selected scenario's score; original rain/day/sunset weather mapping
 //   home.setFrame({ x, y, w, h })   the box of the canvas the home must sit in (the page's scene), in pixels
 //   home.setIntro(p)                 0 = high above the clouds, 1 = at the home: the hero's scroll drives it
 //   home.dispose()
 //
 // What it shows: each part's state, the part in focus, the garden drying up and a subtle glow for selected
-// improvements. The calm studio light remains consistent across families and scores.
+// improvements. The team's rain, clear day and sunset follow the displayed scenario's score.
 // Plans: 02-DOCS/ftd/stage-casa-3d.md and 02-DOCS/ftd/stage-casa-que-mejora.md.
 import * as THREE from "./vendor/three.module.min.js";
 
@@ -43,17 +43,17 @@ const SUN_DIR = new THREE.Vector3(-0.32, 0.075, -1).normalize();   // low, behin
 // Where the camera stands for the whole home and for each part: the point it looks at ("at"), the side it
 // looks from ("from": right, up, front) and the room that must fit on the screen around that point.
 const VIEWS = {
-  home: { at: [0, 1.25, 0.2], from: [0.62, 0.43, 0.72], halfWidth: 6.3, halfHeight: 3.5, depth: 1.0 },
-  roof: { at: [-0.3, 3.1, -0.4], from: [0.5, 0.68, 0.6], halfWidth: 4.7, halfHeight: 2.5, depth: 0.9 },
-  walls: { at: [-0.2, 2.0, 0.9], from: [0.36, 0.23, 0.91], halfWidth: 4.3, halfHeight: 2.25, depth: 0.9 },
-  plumbing: { at: [2.9, 0.6, 2.8], from: [0.42, 0.58, 0.72], halfWidth: 2.45, halfHeight: 1.6, depth: 0.9 },
-  foundations: { at: [0, 0.55, 1.5], from: [0.42, 0.25, 0.88], halfWidth: 5.6, halfHeight: 2.4, depth: 0.9 },
-  garden: { at: [-2.8, 1.15, 1.3], from: [-0.25, 0.42, 0.87], halfWidth: 3.5, halfHeight: 2.2, depth: 0.9 },
+  home: { at: [0, 1.5, 0.2], from: [0.62, 0.30, 0.76], halfWidth: 6.3, halfHeight: 4.1, depth: 1.0 },
+  roof: { at: [0, 1.5, .1], from: [.57, .56, .70], halfWidth: 6.3, halfHeight: 4.15, depth: 1 },
+  walls: { at: [0, 1.5, .2], from: [.48, .38, .79], halfWidth: 6.3, halfHeight: 4.1, depth: 1 },
+  plumbing: { at: [.2, 1.5, .3], from: [.64, .48, .65], halfWidth: 6.25, halfHeight: 4.1, depth: 1 },
+  foundations: { at: [0, 1.5, .2], from: [.57, .36, .74], halfWidth: 6.3, halfHeight: 4.1, depth: 1 },
+  garden: { at: [-.2, 1.5, .3], from: [.42, .48, .78], halfWidth: 6.3, halfHeight: 4.1, depth: 1 },
 };
 // High above the clouds, looking at the sun: where the visit starts (setIntro(0)).
 const INTRO = { position: new THREE.Vector3(12, 46, 52), at: new THREE.Vector3(-26, 30, -120) };
 const FOV = 32;
-const GLIDE_MS = 900;        // short and slow: nobody should feel the room move
+const GLIDE_MS = 1250;
 const HEAL_MS = 1400;
 const SLOW_FRAME_MS = 45;    // a glide that averages worse than this (about 22 frames a second) is a jerky one
 const HOPELESS_FRAME_MS = 150;
@@ -292,7 +292,7 @@ function skyDome() {
       varying vec3 vDir;
       void main() {
         vec3 d = normalize(vDir);
-        float y = max(d.y, 0.0);
+        float y = clamp(d.y * 0.5 + 0.35, 0.0, 1.0);
         vec3 c = mix(horizon, mid, smoothstep(0.0, 0.22, y));
         c = mix(c, top, smoothstep(0.22, 0.85, y));
         float s = max(dot(d, sunDir), 0.0);
@@ -373,7 +373,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   studio.dispose(); pmrem.dispose();
   scene.fog = new THREE.Fog(0xffffff, 40, 190);
   const sky = skyDome();
-  sky.dome.visible = false; // A continuous studio backdrop keeps text and the home in one visual space.
+  sky.dome.visible = true; // The team's score-driven weather stays inside the home's viewing area.
   scene.add(sky.dome);
   const hemi = new THREE.HemisphereLight(0xffffff, 0xc9cbd8, 1.6);
   scene.add(hemi);
@@ -392,14 +392,39 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
 
   // The land: a wide field around the plinth, hills and trees far off.
   const field = mesh(new THREE.CircleGeometry(220, 64), 0x78ab62);
-  field.material.dispose();
-  field.material = new THREE.ShadowMaterial({ color: 0x152c50, opacity: .23 });
+  field.material.roughness = 1;
   field.rotation.x = -Math.PI / 2; field.position.y = -0.02; field.castShadow = false;
   scene.add(field);
   const contact = glowTexture("rgba(18,35,60,.4)", "rgba(18,35,60,.16)");
   const contactPlane = new THREE.Mesh(new THREE.PlaneGeometry(16, 12), new THREE.MeshBasicMaterial({ map: contact, transparent: true, depthWrite: false }));
   contactPlane.rotation.x = -Math.PI / 2; contactPlane.position.y = -.01;
   scene.add(contactPlane);
+  // Restore the team's landscape, with layered rounded ridges and fuller, shaded trees.
+  const scenery = [];
+  for (let i = 0; i < 7; i++) {
+    const terrain = new THREE.SphereGeometry(1, 32, 18), points = terrain.attributes.position;
+    for (let vertex = 0; vertex < points.count; vertex++) {
+      const y = points.getY(vertex);
+      if (y > 0) points.setY(vertex, y * (.9 + .15 * Math.sin(points.getX(vertex) * 4 + points.getZ(vertex) * 3 + i)));
+    }
+    terrain.computeVertexNormals();
+    const hill = mesh(terrain, 0x6b9a6f, -38 + i * 13, -3, -30 - (i % 3) * 7);
+    hill.scale.set(11 + (i % 3) * 3, 7 + (i % 3) * 2, 9 + (i % 2) * 3);
+    hill.castShadow = false; hill.userData.tone = "hills"; scenery.push(hill);
+  }
+  for (let i = 0; i < 14; i++) {
+    const x = (i % 2 ? -1 : 1) * between(9, 19), z = between(-23, -5), h = between(1.8, 3.6);
+    const trunk = rod(.07, WOOD, [x, 0, z], [x, h * .7, z]);
+    trunk.castShadow = false; scenery.push(trunk);
+    for (let tier = 0; tier < 3; tier++) {
+      const broadleaf = i % 3 === 0;
+      const geometry = broadleaf ? new THREE.IcosahedronGeometry(h * .3, 2) : new THREE.ConeGeometry(h * (.34 - tier * .06), h * .65, 12);
+      const top = mesh(geometry, 0x397956, x + (broadleaf ? (tier - 1) * h * .16 : 0), h * (broadleaf ? .8 + (tier % 2) * .18 : .48 + tier * .21), z);
+      top.castShadow = false; top.userData.tone = "trees"; scenery.push(top);
+    }
+  }
+  scene.add(...scenery);
+  scene.fog.near = 24; scene.fog.far = 105;
   // The clouds: a deck the camera comes down through at the start, and a bank along the horizon.
   const puff = cloudTexture();
   const clouds = [];
@@ -412,6 +437,9 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     clouds.push(sprite);
     scene.add(sprite);
   };
+
+  // A restrained cloud layer, using the team's locally drawn puffs.
+  for (let i = 0; i < 8; i++) addCloud(-24 + i * 7, 5 + (i % 3) * 2, -18 - (i % 2) * 8, 8 + (i % 3) * 3, .15);
 
   // Rain: short streaks falling around the home. It only shows on a low score.
   const DROPS = 180;
@@ -464,6 +492,30 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
 
   // Birds over a home that is doing well: a few dark wings wheeling high up.
   const birds = [];
+  const wingShape = new THREE.Shape();
+  wingShape.moveTo(0, .06);
+  wingShape.bezierCurveTo(.22, .12, .55, -.02, .82, -.28);
+  wingShape.quadraticCurveTo(.58, -.25, .32, -.13);
+  wingShape.quadraticCurveTo(.15, -.13, 0, -.07);
+  wingShape.closePath();
+  const wingGeometry = new THREE.ShapeGeometry(wingShape, 16);
+  wingGeometry.rotateX(-Math.PI / 2);
+  const feather = new THREE.MeshStandardMaterial({ color: 0x344250, roughness: .85, side: THREE.DoubleSide });
+  for (let i = 0; i < 3; i++) {
+    const bird = new THREE.Group(), leftHinge = new THREE.Group(), rightHinge = new THREE.Group();
+    const left = new THREE.Mesh(wingGeometry, feather), right = new THREE.Mesh(wingGeometry, feather);
+    right.scale.x = -1;
+    leftHinge.add(left); rightHinge.add(right);
+    const body = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 10), feather);
+    body.scale.set(.07, .08, .24);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(.065, 12, 8), feather);
+    head.position.set(0, .035, .22);
+    const tail = new THREE.Mesh(new THREE.ConeGeometry(.075, .22, 3), feather);
+    tail.rotation.x = -Math.PI / 2; tail.position.z = -.25;
+    bird.add(body, head, tail, leftHinge, rightHinge);
+    bird.userData = { leftHinge, rightHinge, speed: .15, height: 4.8 + i * .22, phase: i * 1.3, flap: 5.3 + i * .2 };
+    birds.push(bird); scene.add(bird);
+  }
   // The page's own state colours, so the marks match the legend.
   const css = getComputedStyle(host);
   const pins = {};
@@ -498,7 +550,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 900);
   let alive = true, queued = 0, last = 0, clock = 0;
   let view = "home", glide = null, slowGlides = 0, still = false, placed = false;
-  let intro = 1;
+  let intro = 1, route = 0, routeWanted = 0, arrival = 0;
   let frameBox = null;   // the scene's box on the canvas; null = the whole canvas
   let width = 1, height = 1;
   let health = -1, healthWanted = 0.5, rainAmount = 0;
@@ -535,10 +587,11 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     // The camera drifts slowly around the home, like a film, and leans towards the pointer.
     pointer.nowX += (pointer.x - pointer.nowX) * 0.05; pointer.nowY += (pointer.y - pointer.nowY) * 0.05;
     const orbit = (view === "home" ? 0.035 : 0.01) * Math.sin(clock * 0.13);
-    const from = now.from.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), orbit - pointer.nowX * 0.025);
-    from.y += pointer.nowY * 0.015;
+    const arrivalEase = arrival * arrival * (3 - 2 * arrival);
+    const from = now.from.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), orbit - pointer.nowX * .025 + route * .24 - arrivalEase * .48);
+    from.y += pointer.nowY * .015 + arrivalEase * .1;
     from.normalize();
-    position.copy(now.at).addScaledVector(from, now.distance);
+    position.copy(now.at).addScaledVector(from, now.distance * (1 + .26 * arrivalEase));
     lookAt.copy(now.at);
     if (intro < 1) {
       const t = intro * intro * (3 - 2 * intro);
@@ -555,18 +608,23 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   function weather(h) {
     const [a, b, t] = h < 0.5 ? [WEATHER[0], WEATHER[1], h / 0.5] : [WEATHER[1], WEATHER[2], (h - 0.5) / 0.5];
     for (const key in a) mixed[key] = typeof a[key] === "number" ? a[key] + (b[key] - a[key]) * t : (mixed[key] || new THREE.Color()).copy(a[key]).lerp(b[key], t);
-    sky.uniforms.top.value.set(0xd5dfd7);
-    sky.uniforms.mid.value.set(0xe9e9df);
-    sky.uniforms.horizon.value.set(0xf4f1e9);
+    sky.uniforms.top.value.copy(mixed.top);
+    sky.uniforms.mid.value.copy(mixed.mid);
+    sky.uniforms.horizon.value.copy(mixed.horizon);
     sky.uniforms.sunColor.value.copy(mixed.sun);
-    sky.uniforms.sunPower.value = .1;
-    scene.fog.color.set(0xf4f1e9);
-    sun.color.set(0xffe5b5); sun.intensity = 4;
-    rim.color.set(0xc4e3ff); rim.intensity = 1.6;
-    hemi.color.set(0xc8e3ff); hemi.groundColor.set(0x63745a); hemi.intensity = .7;
-    renderer.toneMappingExposure = 1.08;
-    for (const cloud of clouds) cloud.material.color.copy(mixed.shade).lerp(mixed.cloud, 0.45 + 0.55 * cloud.userData.shade);
-    rainAmount = 0; // Diagnosis is carried by labelled states, rather than punishing a low score with a storm.
+    sky.uniforms.sunPower.value = mixed.sunPower;
+    scene.fog.color.copy(mixed.horizon);
+    sun.color.copy(mixed.light); sun.intensity = 1.9 + mixed.lightPower;
+    rim.color.copy(mixed.sun); rim.intensity = .6 + .9 * h;
+    hemi.color.copy(mixed.sky); hemi.groundColor.copy(mixed.ground); hemi.intensity = .85;
+    renderer.toneMappingExposure = mixed.exposure;
+    field.material.color.copy(mixed.grass).lerp(new THREE.Color(0x528561), .35);
+    for (const node of scenery) {
+      if (node.userData.tone === "hills") node.material.color.copy(mixed.hills);
+      if (node.userData.tone === "trees") node.material.color.copy(node.userData.color).lerp(mixed.hills, .25);
+    }
+    for (const cloud of clouds) cloud.material.color.copy(mixed.shade).lerp(mixed.cloud, .45 + .55 * cloud.userData.shade);
+    rainAmount = Math.min(1, Math.max(0, (.38 - h) / .3));
     // Lights on inside: a home that is looked after, at golden hour.
     for (const pane of windows) pane.material.emissive.copy(LAMP).multiplyScalar(.015 + Math.max(0, h - .45) * .04);
   }
@@ -583,6 +641,8 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     last = time;
     const dt = Math.min(gap, 100) / 1000;
     clock += dt;
+    route += (routeWanted - route) * Math.min(1, dt * 4);
+    arrival = Math.max(0, arrival - dt / 1.6);
     if (gap > 0 && gap < 500) watch(gap);
 
     if (glide) {
@@ -658,9 +718,10 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
       bird.visible = flying;
       if (!flying) continue;
       const b = bird.userData, a = clock * b.speed + b.phase;
-      bird.position.set(Math.cos(a) * b.radius, b.height + Math.sin(a * 3) * 0.6, Math.sin(a) * b.radius - 2);
-      bird.rotation.y = -a;
-      const flap = Math.sin(clock * b.flap + b.phase) * 0.6;
+      bird.position.set(-7 + Math.sin(a) * 6, b.height + Math.sin(a * 2) * .25, -9 + Math.cos(a) * 2);
+      bird.rotation.y = Math.atan2(6 * Math.cos(a), -2 * Math.sin(a));
+      bird.rotation.z = Math.sin(a) * .06;
+      const flap = Math.sin(clock * b.flap + b.phase) * (.12 + .3 * Math.max(0, Math.sin(clock * .7 + b.phase)));
       b.leftHinge.rotation.z = flap; b.rightHinge.rotation.z = -flap;
     }
     if (ringTime >= 0) {
@@ -781,7 +842,8 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
       part.halo.userData.w ??= part.halo.scale.x; part.halo.userData.h ??= part.halo.scale.y;
       part.halo.visible = state === "repaired" && !faded;
       part.pin.material.map = pins[state] || pins.solid;
-      part.pin.material.opacity = faded ? 0.35 : 1;
+      part.pin.visible = Boolean(focus) && focus === name;
+      part.pin.material.opacity = 1;
       const size = focus === name ? 0.78 : 0.62;
       part.pin.scale.set(size, size, 1);
       part.canopies.forEach((canopy) => canopy.scale.setScalar(0.72 + 0.28 * green));
@@ -830,5 +892,15 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   // The phone took the graphics memory back (another app, a locked screen): the drawn home takes over.
   canvas.addEventListener("webglcontextlost", (event) => { event.preventDefault(); if (alive) onFail(); });
 
-  return { update, setFrame, setIntro, dispose };
+  function snapshot() {
+    if (!alive || !last) return null;
+    try { renderer.render(scene, camera); return canvas.toDataURL("image/webp", .9); }
+    catch (error) { return null; }
+  }
+  function setTravel(progress, entering = false) {
+    routeWanted = Math.min(1, Math.max(0, progress));
+    if (entering && !still) arrival = 1;
+    draw();
+  }
+  return { update, setFrame, setIntro, setTravel, snapshot, dispose };
 }

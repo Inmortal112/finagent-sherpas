@@ -46,6 +46,68 @@ an individual preview, with zero completed steps. Physical iPhone and live voice
 
 ## Explore, preview, complete
 
+### Fourth review: landscape, score card and a contained camera journey
+
+Raúl asked to restore the landscape and motion that made the team's original feel alive, and to fix the
+opening score and the house crossing the text during the opening-to-journey transition.
+
+- Restored ground, seven layered terrain ridges, fourteen background trees with mixed foliage, drifting clouds
+  and three articulated birds. The original score/weather mapping still governs rain, clear days and sunsets;
+  birds fly in the corresponding fair-weather states. Water ripples and garden sway are retained.
+- The opening score now uses a dedicated card: a centered 82/out-of-100 dial, Sherpas label, source assessment
+  and a short explanation. No floats, viewport-positioned score, or overlap with the greeting or mode controls.
+- Removed the full-viewport fixed canvas and interpolated viewport offsets. A single renderer now lives in the
+  actual opening or scene container, both clipped locally. A locally rendered still remains in the departing
+  container; no empty frame or floating canvas crosses the explanation.
+- Scrolling drives a camera turn inside the picture. Entering the next scene adds a 1.6-second orbit/dolly arrival;
+  a brief fade covers the container handoff. This is camera motion, not only a fade between two still pictures.
+- Birds use curved wing outlines, body/head/tail geometry, articulated flapping, gliding intervals and banking.
+  These are procedural 3D illustrations, not photorealistic footage.
+- At short mobile heights the scene has enough minimum space for the score, picture and context. The current
+  chapter remains anchored on resize. Reduced-motion and the existing 2D fallback remain supported.
+
+![Landscape and redesigned opening score](../review-assets/architectural/hero-landscape-v4.jpg)
+
+![Opening on mobile](../review-assets/architectural/mobile-hero-v4.jpg)
+
+![Landscape and live camera in the journey](../review-assets/architectural/stage-landscape-v4.jpg)
+
+Validation: `check.sh` passes 171 tests and generated JavaScript parses. Browser checks cover 1280×800,
+390×844 and 390×600: the dial is centered (under 0.01 CSS px geometric offset), one WebGL renderer is present,
+both handoff stills load, the canvas stays inside its owning box, and the scene footer does not overrun the
+panel at the shorter height. Physical iPhone motion/performance review is still required before release.
+
+### Third review: original weather, a clearer reading flow
+
+At Raúl's request, the team's original score-driven weather is restored. The original `WEATHER` palettes and
+`healthOf` mapping remain the source: rain and grey skies for low scores, a clear day in the middle, and a warm
+sunset for high scores. Material detail, reflections, directional lighting and a restrained cloud layer improve
+the rendering. The sky gradient is adjusted for the house's downward-facing camera. The weather follows the
+displayed scenario; an unscored combination retains the original score's weather rather than inventing one.
+
+![Clearer desktop reading flow, Samantha 82](../review-assets/architectural/desktop-flow-v3.jpg)
+
+The picture now stays clipped to its own rounded viewing area, including the opening transition. Score,
+scenario explanation and chapter navigation are outside the picture. Camera moves take 1.25 seconds and retain
+the house's overall shape instead of extreme close-ups. Only the current part's marker is shown.
+
+Back/Next and a phase/chapter counter provide explicit orientation. Desktop emphasizes a single active card;
+mobile uses readable, opaque cards in normal document flow below an opaque, sticky scene. The initial five-part
+summary is folded into a disclosure. Resizing anchors the current chapter under the scene to avoid losing the
+text. Score labels are shorter, the denominator is more legible, and floating point-gain decorations are removed.
+
+Validation: `check.sh` passes 171 tests; syntax checks pass; all eight family/mode pages generated. Browser
+navigation verified through nine consecutive Next actions to chapter 10/12. Michael stays at 26 while reading;
+previewing his second step displays 62 with zero completed steps and changes rain to the corresponding clearer
+weather. Mobile geometry checked: score ends above the picture, the card starts below the stage, no horizontal
+overflow at 390×844. Physical iPhone performance remains pending.
+
+![Original low-score weather, Michael 26](../review-assets/architectural/rain-v3.jpg)
+
+![Individual preview, Michael 62](../review-assets/architectural/weather-preview-v3.jpg)
+
+![Separated score, picture and explanation on mobile](../review-assets/architectural/mobile-flow-v3.jpg)
+
 - Scrolling explains the original plan and never completes a step.
 - **Preview this change** shows the supplied result of that step alone. It does not combine other confirmed steps
   with the preview, save completion, execute a transaction, or call an external model.

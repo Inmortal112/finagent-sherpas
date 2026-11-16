@@ -147,3 +147,90 @@ body.h3d .scene-top .score-chip { background: rgba(255,255,255,.87); padding: .5
 @media (prefers-reduced-motion: reduce) {
   .card, body.h3d .chapter:not(.on) .card { transform: none; }
 }
+
+/* A dedicated picture, one readable chapter, and a clearly labelled score. */
+.stage { isolation: isolate; }
+.scene, body.h3d .scene { background: #f9fbff; border: 1px solid #d5e1f1; border-radius: 20px; padding: 1rem; }
+.scene-top, body.h3d .scene-top { flex: none; gap: 1rem; align-items: start; padding: 0 0 .5rem; }
+.when { max-width: 60%; font-size: .62rem; line-height: 1.6; }
+.when b { font-size: 1.25rem; line-height: 1.35; margin-top: .3rem; }
+.score-chip, body.h3d .scene-top .score-chip { max-width: 39%; min-width: 105px; padding: .5rem .65rem; background: #fff; border: 1px solid var(--line); box-shadow: none; }
+.score-label { font-size: .58rem; line-height: 1.5; letter-spacing: .03em; text-transform: none; }
+.score-chip b { font-size: 2rem; }
+.score-chip small { font-size: .75rem; }
+.score-chip .delta, .gain { display: none !important; }
+#house { order: 2; margin: .35rem 0 !important; min-height: 120px; }
+.scenario-caption { position: static; order: 3; transform: none; flex: none; width: 100%; max-width: none; margin-top: .5rem; padding: .6rem .2rem 0; background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0; font-size: .72rem; text-align: left; }
+.scenario-state { font-size: .6rem; letter-spacing: .06em; margin-bottom: .2rem; }
+.legend, .rail { display: none; }
+.journey-nav { display: flex; align-items: center; justify-content: space-between; gap: .6rem; padding: .8rem .2rem 0; }
+.journey-nav button { flex: none; border: 1px solid var(--line); border-radius: 8px; padding: .55rem .8rem; background: #fff; font-size: .78rem; }
+.journey-nav span { color: var(--ink-3); font-size: .69rem; text-align: center; }
+.overview-details { margin-top: 1rem; border-block: 1px solid var(--line); padding: .75rem 0; font-size: .8rem; }
+.overview-details summary { cursor: pointer; color: var(--blue); }
+.hero .ring .num span, body.h3d .hero .ring .num span { font-size: .62rem; }
+.chapter:not(.on) .card, body.h3d .chapter:not(.on) .card { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(12px); }
+.chapter.on .card { visibility: visible; transition: opacity .35s, transform .45s ease; }
+.toast { bottom: 5.5rem; max-width: 90%; }
+@media (max-width: 860px) {
+  .stage, body.h3d .stage { height: 52svh; min-height: 330px; padding: 4rem 0 .6rem; background: #edf4ff; }
+  .scene, body.h3d .scene { padding: .65rem .75rem; border-radius: 14px; }
+  .scene-top, body.h3d .scene-top { gap: .6rem; padding-bottom: .2rem; }
+  .when { font-size: .53rem; max-width: 58%; }
+  .when b { font-size: .95rem; line-height: 1.3; }
+  .score-chip, body.h3d .scene-top .score-chip { min-width: 100px; padding: .3rem .5rem; border: 0; background: transparent; }
+  .score-label { font-size: .68rem; }
+  .score-chip b { font-size: 1.6rem; }
+  .scenario-caption { font-size: .6rem; line-height: 1.45; margin-top: .2rem; padding-top: .35rem; }
+  .scenario-state { font-size: .52rem; }
+  .journey-nav { padding: .4rem 0 0; gap: .4rem; }
+  .journey-nav button { padding: .4rem .6rem; font-size: .7rem; }
+  .journey-nav span { font-size: .65rem; }
+  .chapter { scroll-margin-top: 54svh; }
+  .chapter:not(.years) { min-height: 46svh; padding-bottom: 1.5rem; }
+  .chapter:not(.on) .card, body.h3d .chapter:not(.on) .card { opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
+  .chapter.years .card { top: calc(max(52svh, 330px) + .7rem); }
+  .chat { top: calc(max(52svh, 330px) - .5rem); }
+}
+/* Contained canvases: the scene scrolls with its real box and cannot cross the text. */
+.hero, body.h3d .hero { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.3fr); gap: 2.5rem; }
+.hero-in, body.h3d .hero-in { width: 100%; }
+.hero-visual { position: relative; width: 100%; height: min(70svh, 660px); border-radius: 24px; overflow: hidden; pointer-events: auto; }
+body:not(.h3d) .hero { grid-template-columns: 1fr; }
+body:not(.h3d) .hero-visual { display: none; }
+.home-viewport { position: relative; isolation: isolate; order: 2; flex: 1; min-height: 120px; overflow: hidden; border-radius: 16px; }
+.home-viewport #house { width: 100%; height: 100%; margin: 0 !important; }
+body.h3d #house3d { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0 !important; border-radius: inherit; overflow: hidden; }
+.hero-score-card { display: flex; align-items: center; gap: 1.15rem; width: min(100%, 400px); margin: 1.6rem 0 0; padding: 1rem 1.2rem; border: 1px solid #d3def5; border-radius: 18px; background: rgba(255,255,255,.94); box-shadow: 0 15px 35px -25px #5774b4; }
+.hero-score-dial { position: relative; width: 98px; height: 98px; flex: none; }
+.hero-score-dial svg { display: block; width: 100%; height: 100%; transform: rotate(-90deg); }
+.hero-score-dial circle { fill: none; stroke-width: 6; }
+.hero-score-dial .track { stroke: #e7edf9; }
+.hero-score-dial .value { stroke: url(#ringGrad); stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+.hero-score-number { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px; text-align: center; }
+.hero-score-number b { font-size: 2.45rem; font-weight: 500; line-height: 1; letter-spacing: -.055em; font-variant-numeric: tabular-nums; }
+.hero-score-number span { font-size: .65rem; line-height: 1; color: var(--ink-3); }
+.hero-score-copy { min-width: 0; }
+.hero-score-kicker { display: block; font-size: .64rem; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
+.hero-score-copy .band, body.h3d .hero-score-copy .band { display: flex; margin: .35rem 0 0; font-size: 1.15rem; color: var(--ink); font-weight: 500; text-transform: capitalize; }
+.hero-score-copy p { margin: .35rem 0 0; font-size: .71rem; color: var(--ink-3); }
+@media (max-width: 860px) {
+  .hero, body.h3d .hero { grid-template-columns: 1fr; gap: 1.25rem; padding: 5.5rem 1rem 2rem; }
+  .hero-visual { height: 280px; width: 100%; border-radius: 18px; }
+  .hero-score-card { margin-top: 1rem; padding: .75rem 1rem; gap: 1rem; }
+  .hero-score-dial { width: 82px; height: 82px; }
+  .hero-score-number b { font-size: 2.1rem; }
+  .hero-score-copy .band, body.h3d .hero-score-copy .band { font-size: 1.05rem; }
+  .hero-score-kicker { font-size: .6rem; }
+  .hero .hint { display: none; }
+  .illustration-note { position: static; grid-column: 1; margin: 0; font-size: .5rem; }
+}
+.home-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 0; } body.h3d #house3d { z-index: 1; } body:not(.h3d) .home-poster { display: none; }
+.home-viewport { min-height: 0; }
+.home-viewport #house { min-height: 0; }
+body:not(.h3d) .hero-score-card { margin-inline: auto; }
+@media (max-width: 860px) {
+  .stage, body.h3d .stage { height: max(52svh, 390px); min-height: 390px; }
+  .chapter.years .card { top: calc(max(52svh, 390px) + .7rem); }
+  .chat { top: calc(max(52svh, 390px) - .5rem); }
+}

@@ -393,19 +393,19 @@ __ARCHITECTURAL_CSS__
 <main>
   <section class="hero" id="hero">
     <div class="hero-in">
-      <div class="mono" style="color:#9799b1">Your financial health</div>
+      <div class="mono" style="color:#9799b1">Your plan, brought to life</div>
       <h1>Hello, <em id="heroName"></em>.</h1>
-      <div class="ring">
-        <svg viewBox="0 0 120 120"><defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#afbff8"/><stop offset=".55" stop-color="#948df7"/><stop offset="1" stop-color="#df7afe"/></linearGradient></defs>
+      <div class="hero-score-card" role="group" aria-label="Your Sherpas financial health score"><div class="hero-score-dial">
+        <svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#afbff8"/><stop offset=".55" stop-color="#948df7"/><stop offset="1" stop-color="#df7afe"/></linearGradient></defs>
           <circle class="track" cx="60" cy="60" r="52"/><circle class="value" id="ringValue" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg>
-        <div class="num"><b id="heroScore">0</b><span>out of 100</span></div>
-      </div>
-      <div class="band" id="heroBand"><i></i><span></span></div>
+        <div class="hero-score-number"><b id="heroScore">0</b><span>out of 100</span></div>
+      </div><div class="hero-score-copy"><span class="hero-score-kicker">Sherpas health score</span><div class="band" id="heroBand"><i></i><span></span></div><p>A snapshot of today's plan</p></div></div>
       <div class="opts" id="opts"></div>
       <p class="lede"><span class="hero-question-label">A question worth exploring</span><strong id="heroQuestion">What matters most to your family?</strong><span class="hero-plan-fact" id="heroPlanFact" hidden></span></p>
       <button class="pill primary" id="enter">Step inside your home <span aria-hidden="true">↓</span></button>
       <span class="mono hint">Explore · understand · take your first step</span>
     </div>
+    <div class="hero-visual" id="heroViewport" aria-label="Your plan's home and landscape"></div>
     <span class="illustration-note">An illustration of your financial plan</span>
   </section>
 
@@ -417,7 +417,7 @@ __ARCHITECTURAL_CSS__
           <div class="score-chip"><span class="score-label" id="scoreLabel">Original plan</span><b id="chipScore"></b><small id="scoreDenominator"> /100</small><span class="delta" id="chipDelta"></span></div>
         </div>
         <div class="scenario-caption" aria-live="polite"><span class="scenario-state" id="scenarioState">Your plan today</span><span id="scenarioDetail">The score in your original Sherpas plan.</span></div>
-        <svg id="house" viewBox="0 0 640 430" role="img" aria-label="Your plan drawn as a home">
+        <div class="home-viewport" id="sceneViewport"><svg id="house" viewBox="0 0 640 430" role="img" aria-label="Your plan drawn as a home">
           <defs>
             <linearGradient id="gRep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#948df7"/><stop offset="1" stop-color="#4565d6"/></linearGradient>
             <linearGradient id="gRoof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#30303f"/><stop offset="1" stop-color="#141419"/></linearGradient>
@@ -486,10 +486,12 @@ __ARCHITECTURAL_CSS__
           </g>
         </svg>
         <div id="house3d" hidden></div>
+        </div>
         <div class="toast" id="toast"></div>
         <div class="legend" id="legend"></div>
       </div>
       <div class="rail" id="rail"></div>
+      <nav class="journey-nav" aria-label="Plan chapters"><button id="chapterBack" type="button">← Back</button><span id="journeyProgress" aria-live="polite"></span><button id="chapterNext" type="button">Next →</button></nav>
     </div>
     <div class="chapters" id="chapters"></div>
   </div>
@@ -606,7 +608,7 @@ function build() {
   $("heroPlanFact").hidden = !runsOut;
   $("heroPlanFact").textContent = runsOut ? `On today's plan, savings run out at age ${runsOut.age}.` : "";
   $("heroBand").dataset.colour = data.colour || "";
-  $("heroBand").querySelector("span").textContent = `Sherpas calls that ${data.band}`;
+  $("heroBand").querySelector("span").textContent = data.band;
   const score = Number(fact("score").value);
   $("heroScore").textContent = score;
   requestAnimationFrame(() => { $("ringValue").style.strokeDashoffset = 326.7 * (1 - score / 100); });
@@ -646,9 +648,9 @@ function build() {
   add({ id: "today", tag: "Today", title: "Your home today", scene: intro, html: `
     <div class="eyebrow mono">Today · who lives here</div>
     <h2>This is your home, ${esc(P.client_name)}.</h2>
-    <div class="chips">${people}${living}${cars}</div>
+    <div class="chips">${people}</div>
     <p>${esc(intro.narration)}</p>
-    <ul class="rows">${PARTS.filter((p) => baseStates[p]).map((p) => `<li><span>The ${p} · ${PART_OF[p]}</span><b><span class="state" data-state="${baseStates[p]}"><i></i>${baseStates[p]}</span></b></li>`).join("")}</ul>
+    <details class="overview-details"><summary>See all five parts of your plan</summary><div class="chips">${living}${cars}</div><ul class="rows">${PARTS.filter((p) => baseStates[p]).map((p) => `<li><span>The ${p} · ${PART_OF[p]}</span><b><span class="state" data-state="${baseStates[p]}"><i></i>${baseStates[p]}</span></b></li>`).join("")}</ul></details>
     <div class="worry" id="worryBox" hidden><div class="eyebrow mono">Before we walk through it</div>
       <b>What worries you most about money?</b>
       <form id="worryForm"><input id="worryText" placeholder="In your own words" maxlength="300" autocomplete="off"><button class="pill dark">Tell us</button></form>
@@ -845,6 +847,11 @@ function update() {
     [...$("rail").children].forEach((b, i) => { b.classList.toggle("on", i === index); b.classList.toggle("done", i < index); });
     if (journeyTop < vh * 0.6) narrate(index);
   }
+  const phase = chapter.final ? "Choose a first step" : chapter.move != null ? "Explore your options" : chapter.years || chapter.id === "ahead" ? "Look ahead" : chapter.id.startsWith("person_") ? "Each person's plan" : chapter.id === "today" ? "Meet your plan" : "Understand your plan";
+  const progressText = `${phase} · ${index + 1} of ${chapters.length}`;
+  if ($("journeyProgress").textContent !== progressText) $("journeyProgress").textContent = progressText;
+  $("chapterBack").disabled = index === 0;
+  $("chapterNext").disabled = index === chapters.length - 1;
   paint();
   frame3d();
 }
@@ -940,23 +947,37 @@ function showScore(score) {
   }
 }
 
-// Where the 3D home sits: in the hero it fills the screen and the camera is high in the clouds; as the hero
-// scrolls away the camera comes down to the home, which settles into the scene's box.
+// Keep a single renderer in real layout containers; drive an internal camera route as the page scrolls.
 function frame3d() {
   if (!house3d) return;
-  const hero = $("hero").getBoundingClientRect(), host = $("house3d").getBoundingClientRect();
-  const p = Math.min(1, Math.max(0, -hero.top / Math.max(1, hero.height * 0.85)));
-  const slot = $("house").getBoundingClientRect();
-  const mix = (a, b) => a + (b - a) * p;
-  const narrow = innerWidth <= 860;
-  // Show the home immediately. The opening is a composed architectural view, not a wait in the clouds.
-  const openingY = Math.max(host.height * .52, $("hero").querySelector(".hero-in").getBoundingClientRect().bottom + 16);
-  const opening = narrow ? { x: 0, y: openingY, w: host.width, h: Math.max(180, host.height - openingY - 55) } : { x: host.width * .40, y: host.height * .12, w: host.width * .59, h: host.height * .76 };
+  const host = $("house3d"), opening = $("heroViewport"), scene = $("sceneViewport");
+  const keep = (box, image) => {
+    let poster = box.querySelector(".home-poster");
+    if (!poster) { poster = document.createElement("img"); poster.className = "home-poster"; poster.alt = ""; box.appendChild(poster); }
+    poster.src = image;
+  };
+  // The renderer lives inside actual layout boxes. It never travels above the page as a fixed overlay.
+  const sceneTop = scene.getBoundingClientRect().top;
+  if (host.parentElement === opening && sceneTop < innerHeight * 1.15 && !scene.querySelector(".home-poster")) {
+    const image = house3d.snapshot();
+    if (image) keep(scene, image);
+  }
+  const target = sceneTop < innerHeight * (host.parentElement === opening ? .9 : 1.02) ? scene : opening;
+  if (host.parentElement !== target) {
+    const snapshot = house3d.snapshot();
+    if (snapshot) {
+      // Keep a local still in the departing box, so no empty frame or flying canvas is exposed.
+      keep(host.parentElement, snapshot);
+      if (!target.querySelector(".home-poster")) keep(target, snapshot);
+    }
+    target.appendChild(host);
+    house3d.setTravel(target === scene ? 1 : 0, true);
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) host.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 350, easing: "ease-out" });
+  }
   house3d.setIntro(1);
-  house3d.setFrame({ x: mix(opening.x, slot.left - host.left), y: mix(opening.y, slot.top - host.top), w: mix(opening.w, slot.width), h: mix(opening.h, slot.height) });
-  // On a phone the home is the top of the screen and the chapters scroll under it.
-  const scene = $("house").closest(".scene").getBoundingClientRect();
-  $("house3d").style.clipPath = narrow ? `inset(0 0 ${Math.max(0, host.height - mix(host.height, scene.bottom))}px 0)` : "";
+  house3d.setFrame(null);
+  const progress = Math.min(1, Math.max(0, -opening.getBoundingClientRect().top / Math.max(1, opening.clientHeight * .8)));
+  house3d.setTravel(target === scene ? 1 : progress);
 }
 
 function paint() {
@@ -980,6 +1001,8 @@ function paint() {
   });
 
   let tag = chapter.tag || "", title = chapter.title || "";
+  if (chapter.move != null && chapter.part) title = `The ${chapter.part}`;
+  if (chapter.final) { tag = "Choose your first step"; title = previewStep === "all" ? "Your home with these changes" : doneSteps.size ? "Your reported progress" : "Your next step"; }
   if (chapter.years) {
     const pts = timeline.points, p = pts[yearIndex], max = Math.max(...pts.map((q) => q.investable_assets), 1);
     lush = Math.max(0.04, p.investable_assets / max);
@@ -988,10 +1011,11 @@ function paint() {
   // The score is what the family has done so far; the last chapter shows it with every step done.
   const base = Number(fact("score").value), scenario = currentScenario(), score = scenario.score;
   const delta = score != null && score > base ? "+" + (score - base) : "";
-  $("scoreLabel").textContent = score == null ? "No combined score" : scenario.label;
+  $("scoreLabel").textContent = score == null ? "Not scored together" : scenario.isPreview ? (previewStep === "all" ? "All steps · preview" : "One step · preview") : doneSteps.size ? "Reported steps" : "Original plan";
   $("scoreDenominator").hidden = score == null;
-  $("scenarioState").textContent = scenario.isPreview ? "Exploring a possibility" : doneSteps.size ? "Based on what you reported" : "Your plan today";
-  $("scenarioDetail").textContent = scenario.detail;
+  const stateText = scenario.isPreview ? "Exploring a possibility" : doneSteps.size ? "Based on what you reported" : "Your plan today";
+  if ($("scenarioState").textContent !== stateText) $("scenarioState").textContent = stateText;
+  if ($("scenarioDetail").textContent !== scenario.detail) $("scenarioDetail").textContent = scenario.detail;
   document.body.classList.toggle("previewing", scenario.isPreview);
   $("house").style.setProperty("--lush", lush);
   if (house3d) house3d.update({ states, focus, lush, health: healthOf(score == null ? base : score) });
@@ -1032,14 +1056,29 @@ function toast(text) {
 
 function goToPart(part) {
   const target = chapters.find((c) => c.part === part && c.id.startsWith("pillar_"));
-  if (target) target.node.scrollIntoView({ block: "center" });
+  if (target) scrollChapter(target);
 }
 document.querySelectorAll(".part").forEach((node) => node.addEventListener("click", () => goToPart(node.dataset.part)));
 
 let ticking = false;
 const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); } };
 addEventListener("scroll", onScroll, { passive: true });
-addEventListener("resize", onScroll);
+addEventListener("resize", () => {
+  if (active >= 0 && $("journey").getBoundingClientRect().top < 0) scrollChapter(chapters[active], true);
+  onScroll();
+});
+function changeChapter(direction) {
+  const next = chapters[Math.max(0, Math.min(chapters.length - 1, active + direction))];
+  if (!next) return;
+  scrollChapter(next);
+}
+function scrollChapter(next, immediate = false) {
+  const narrow = innerWidth <= 860;
+  const top = next.node.getBoundingClientRect().top + scrollY - (narrow ? document.querySelector(".stage").getBoundingClientRect().height + 16 : 100);
+  scrollTo({ top, behavior: immediate || matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+}
+$("chapterBack").addEventListener("click", () => changeChapter(-1));
+$("chapterNext").addEventListener("click", () => changeChapter(1));
 
 $("enter").addEventListener("click", () => {
   entered = true;
