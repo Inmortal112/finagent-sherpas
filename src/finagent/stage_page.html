@@ -564,10 +564,17 @@ function play(src, button) {
 }
 player.addEventListener("ended", stopVoice);
 player.addEventListener("error", stopVoice);
+// The home's background sound (rain, birds, the "done" chime), far below the voice: web/house_sound.js.
+let houseSound = null;
+import(SITE + "web/house_sound.js").then(({ create }) => {   // served by the backend; opened as a file there is none
+  houseSound = create({ voice: player, enabled: soundOn });
+  houseSound.setWeather(healthOf(achieved()));
+}).catch(() => {});
 document.querySelectorAll("[data-sound]").forEach((b) => b.addEventListener("click", () => {
   soundOn = !soundOn;
   try { localStorage.setItem("uor-sound", soundOn ? "on" : "off"); } catch (e) { /* private window */ }
   showSound();
+  if (houseSound) houseSound.setEnabled(soundOn);
   if (!soundOn) stopVoice(); else narrate(active, 0);
 }));
 function narrate(index, wait = 700) {
@@ -892,6 +899,7 @@ function markDone(id, done) {
   store.set("uor-done-" + P.client_name, [...doneSteps].join(",") || null);
   showDone();
   const part = step.visual.data.house_part;
+  if (done && houseSound) houseSound.repaired();
   if (done && part && !house3d) {
     const node = $("p-" + part);
     node.classList.remove("heal"); void node.getBoundingClientRect(); node.classList.add("heal");
@@ -972,6 +980,7 @@ function paint() {
   const delta = score > base ? "+" + (score - base) : "";
   $("house").style.setProperty("--lush", lush);
   if (house3d) house3d.update({ states, focus, lush, health: healthOf(score) });
+  if (houseSound) houseSound.setWeather(healthOf(score));
   $("whenTag").textContent = tag;
   $("whenTitle").textContent = title;
   showScore(score);

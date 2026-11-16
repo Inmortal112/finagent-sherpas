@@ -3,6 +3,17 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 13:30 — feat/voice-house-sound — Claude Code
+- **Hecho:** la casa suena: lluvia suave con nota baja, pájaros con nota alta y un «ding» con «I've done this»
+  (`web/house_sound.js`, Web Audio, sin archivos). Mismo `healthOf(score)` que el cielo 3D. Ficha `voz-casa-suena.md`.
+- **Estado:** `bash check.sh` pasa. Probado en el navegador: niveles medidos y enganches funcionando, sin errores.
+  Falta oírlo en el iPhone.
+- **Decisiones:** fondo muy bajo (lluvia −30 dB respecto a la voz) y ducking de −9 dB mientras habla la voz.
+- **Bloqueos:** el PR #63 se quedó atascado en GitHub (502): esta rama va encima de la suya y lo incluye.
+- **Para Raúl:** 6 líneas en `stage_page.html` (busca `houseSound`): cargar el módulo, `paint()`, `markDone()` y el
+  botón de sonido. Si chocan con lo tuyo, consérvalas al resolver.
+- **Siguiente:** oírlo en el iPhone; botón de la nota para la pareja cuando suba Raúl.
+
 ## 2026-11-16 13:05 — feat/voice-partner-note — Claude Code
 - **Hecho:** nota de voz para la pareja: `partner_note.py` + `GET /partner-note` y `/partner-note/{id}.mp3`. Quien
   recorre el plan manda a su pareja ~15 s con su preocupación y el paso elegido (nota antes → después). Revisadas
