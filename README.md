@@ -110,12 +110,12 @@ temporary public link.
 This repo starts from [`SherpasEngineering/hackathon-upv-2026`](https://github.com/SherpasEngineering/hackathon-upv-2026)
 (remote `upstream`).
 
-- [`BRIEF.md`](BRIEF.md): the official brief (challenge, cases, criteria, access to the MCP and the proxy, prices).
+- [`02-DOCS/brief.md`](02-DOCS/brief.md): the official brief (challenge, cases, criteria, access to the MCP and the proxy, prices).
 - [`cases/`](cases/): the four families (`financial-health.json`, `investment-analysis.json`, `persona.md`, PDF).
-- [`examples/voice/`](examples/voice/): Sherpas' real-time voice example (Node 22).
 
+Their real-time voice example (`examples/voice/`, Node 22) is not kept: our voice is in `src/finagent/voice.py`.
 To bring in changes from Sherpas: `git remote add upstream git@github.com:SherpasEngineering/hackathon-upv-2026.git`
-(once) and `git pull upstream main`. If they change their `README.md`, the change goes to `BRIEF.md`; ours stays.
+(once) and `git pull upstream main`. If they change their `README.md`, the change goes to `02-DOCS/brief.md`; ours stays.
 
 ## How we work
 

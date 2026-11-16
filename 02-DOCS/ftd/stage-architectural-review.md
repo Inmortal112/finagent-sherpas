@@ -20,11 +20,11 @@ directional sunlight, darker roofs, sky reflections, animated water ripples and 
 Desktop keeps the explanation alongside the home; mobile keeps the home above the scrolling explanation.
 Each part still responds to the family's actual plan. The opening explicitly calls the home an illustration.
 
-![Desktop opening](../review-assets/architectural/desktop-home.jpg)
+![Desktop opening](../review-assets/architectural/desktop-home-v2.jpg)
 
-![Previewing one change](../review-assets/architectural/desktop-preview.jpg)
+![Previewing one change](../review-assets/architectural/desktop-preview-v2.jpg)
 
-![Mobile opening](../review-assets/architectural/mobile-home.jpg)
+![Mobile opening](../review-assets/architectural/mobile-home-v2.jpg)
 
 ## Second visual review: daylight and a reason to explore
 

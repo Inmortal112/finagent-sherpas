@@ -1,8 +1,7 @@
 """Run with Blender -b La-cala-estados.blend -P export_coast.py -- OUTPUT_DIR."""
-import bpy, os, sys, math, gzip, struct, json, random
+import bpy, os, sys, math, gzip, struct, json
 from collections import defaultdict
 from mathutils import Vector
-from array import array
 out=sys.argv[-1]
 os.makedirs(out,exist_ok=True)
 s=bpy.context.scene

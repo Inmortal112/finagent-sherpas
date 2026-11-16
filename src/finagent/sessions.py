@@ -176,7 +176,7 @@ def advisor_note(session: dict) -> dict:
 def context_for(session: dict) -> dict | None:
     """What the model should know about this conversation before the next question, or None at the start.
 
-    A summary made by code, the same size however long the session is (see escalabilidad.md): what worries
+    A summary made by code, the same size however long the session is (see 02-DOCS/ideas/escalabilidad.md): what worries
     them, the parts of the home they asked about most and the step they chose, all without figures, plus
     the last question and its answer word for word so that "that" or "it" can be understood.
     Set ASK_HISTORY=off to answer every question on its own, as before.

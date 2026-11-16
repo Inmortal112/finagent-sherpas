@@ -6,7 +6,7 @@ of a pillar's 0-100 score (Sherpas publishes no bands per pillar).
 """
 import re
 
-# Pillar keyword -> house part (table agreed in idea-david.md, English names from nota-idea.md).
+# Pillar keyword -> house part (table agreed in 02-DOCS/ideas/idea-david.md, English names from 02-DOCS/ideas/nota-idea.md).
 PILLAR_PARTS = {
     "liquidity": "foundations",
     "insurance": "roof",

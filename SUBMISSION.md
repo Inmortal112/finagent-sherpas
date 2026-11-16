@@ -1,10 +1,10 @@
 # /entregar — Under One Roof
 
 > Draft of the final hand-in, for the three of us to review. Due **Wed 18 Nov, 23:59**, on Discord.
-> The brief asks for four things (BRIEF.md, "18 Nov, 23:59"):
+> The brief asks for four things (02-DOCS/brief.md, "18 Nov, 23:59"):
 >
 > 1. Repo link (public): https://github.com/Inmortal112/finagent-sherpas
-> 2. Working MVP: a link they can open, or run steps in the README ("Run it" section). **Link: TODO**
+> 2. Working MVP: a link they can open, or run steps in the README ("Run it" section). **Link: https://finagent-sherpas.onrender.com** (free hosting: the first visit after a quiet spell takes about a minute)
 > 3. 2-minute video, YouTube unlisted or Google Drive. **Link: TODO**
 > 4. Half a page to one page on what we built and why: the text below the line.
 >
