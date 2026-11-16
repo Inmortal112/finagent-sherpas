@@ -2,6 +2,13 @@
 
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 
+## 2026-11-16 — feat/stage-architectural-review · diseño de toda la web — Codex
+- **Hecho:** extendida la revisión a portada, puntuación, capítulos numerados, navegación con progreso, proyecciones, propuestas, elección de paso y panel de preguntas. Azul noche, tarjetas claras y acentos iris; se mantienen Poppins y los colores del proyecto.
+- **Escena:** cordilleras en tres capas, bosque mixto agrupado, plantación y flores; luz direccional y cámara más baja. Corregido el dato de color de las flores que activó temporalmente el respaldo 2D.
+- **Verificado:** 171 tests, ocho páginas con voz mock; escritorio 1440×1000 y móvil, lienzo 3D activo, sin desborde horizontal. Rueda manual hasta 814.7 muestra la casa aún fijada.
+- **Para Samuel y David:** conservados vuestros contenidos, partes, estados, clima y narraciones. Sin cambios de contrato, backend o voz ni consumo de servicios de IA. No se suman puntuaciones ni se confunde scroll con completar acciones.
+- **Siguiente:** revisión visual de Raúl y fluidez en iPhone real. Cambios guardados solo en la rama local hasta aprobar la publicación.
+
 ## 2026-11-16 — feat/stage-architectural-review · scroll manual y ambiente — Codex
 - **Hecho:** corregido el fallo señalado por Raúl: la escena queda fijada durante el descenso y muestra la casa antes de liberarse. Quitado el `overflow: hidden` que anulaba el sticky. No se transfiere el lienzo con el descenso a medias.
 - **Verificado:** rueda manual, sin botón: scroll 603 con foto en y=72; scroll 814 con casa completamente visible, aún fijada. 171 tests funcionales y sintaxis JS correcta.

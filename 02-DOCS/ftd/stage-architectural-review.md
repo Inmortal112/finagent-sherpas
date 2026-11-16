@@ -6,7 +6,7 @@ this local review is intentionally not shared yet.
 
 ## What the family experiences
 
-The home is visible immediately, with larger framing and quieter camera motion. Warm plaster, timber details,
+The home is revealed through the team's cloud descent, with larger framing and quieter camera motion. Warm plaster, timber details,
 glazing, paving, contact shadows and reflections give the team's existing modern home more depth.
 The revised blue and violet palette follows the project's Sherpas-inspired colors, with warm architecture,
 directional sunlight, darker roofs, sky reflections, animated water ripples and fuller foliage.
@@ -45,6 +45,32 @@ pass; desktop 1280×800 and mobile 390×844 checked. Samantha's step preview sho
 an individual preview, with zero completed steps. Physical iPhone and live voice/model rehearsal remain pending.
 
 ## Explore, preview, complete
+
+### Seventh review: a consistent design across the whole website
+
+The new treatment extends beyond the house: midnight-blue opening, translucent score panel, a pale-green
+entry button, porcelain chapter cards, numbered chapter headings, iris accents and a visible journey progress
+line. The scene's dark frame separates the illustration from its financial explanation. Proposals use a
+dedicated before/after score panel; the final choice, timeline, question panel and controls share the same
+spacing, borders and focus treatment. Poppins and the project's blue/violet identity remain.
+
+The landscape now uses three continuous ridgelines with slope shading and atmospheric distance, batched
+mixed woodland, foreground planting and a flowering garden border. More directional light and a slightly
+lower overview camera give the facade more presence. All scenery remains local and procedural.
+
+A missing base color on the new instanced flowers initially triggered the 2D fallback. It was corrected and
+the actual 3D canvas verified again in the browser. Departing-box snapshots can now render before the first
+animation frame, covering refreshes partway through the page.
+
+Validation: 171 tests pass, eight family/mode pages generated with mock voice, desktop 1440×1000 and the
+default narrow viewport inspected. Manual wheel scrolling revealed the home at scroll 814.7 while it was
+still pinned in the opening. No horizontal overflow in either inspected layout. Physical iPhone performance
+is still pending. Narration, financial facts, contract, score/weather mapping and preview/completion semantics
+are unchanged. No publication or merge yet.
+
+![Whole website: desktop](../review-assets/architectural/whole-web-v7-desktop.jpg)
+![Proposal presentation](../review-assets/architectural/whole-web-v7-options.jpg)
+![Manual descent on mobile](../review-assets/architectural/whole-web-v7-mobile-descent.jpg)
 
 ### Sixth review: manual-scroll reveal and atmosphere polish
 

@@ -776,9 +776,10 @@ function build() {
 }
 
 function add(chapter) {
-  const node = el("section", "chapter" + (chapter.years ? " years" : ""));
+  const node = el("section", "chapter" + (chapter.years ? " years" : "") + (chapter.move != null ? " option-chapter" : "") + (chapter.final ? " final-chapter" : ""));
   node.id = "ch-" + chapter.id;
-  node.append(el("div", "card", chapter.html));
+  const number = String(chapters.length + 1).padStart(2, "0");
+  node.append(el("div", "card", `<div class="chapter-number" aria-hidden="true">${number}<span> / YOUR PLAN</span></div>` + chapter.html));
   $("chapters").append(node);
   chapters.push({ ...chapter, node });
 }
@@ -849,6 +850,7 @@ function update() {
   }
   const phase = chapter.final ? "Choose a first step" : chapter.move != null ? "Explore your options" : chapter.years || chapter.id === "ahead" ? "Look ahead" : chapter.id.startsWith("person_") ? "Each person's plan" : chapter.id === "today" ? "Meet your plan" : "Understand your plan";
   const progressText = `${phase} · ${index + 1} of ${chapters.length}`;
+  $("journey").style.setProperty("--journey-progress", `${((index + 1) / chapters.length) * 100}%`);
   if ($("journeyProgress").textContent !== progressText) $("journeyProgress").textContent = progressText;
   $("chapterBack").disabled = index === 0;
   $("chapterNext").disabled = index === chapters.length - 1;

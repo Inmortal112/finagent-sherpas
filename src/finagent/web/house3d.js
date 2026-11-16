@@ -43,7 +43,7 @@ const SUN_DIR = new THREE.Vector3(-0.32, 0.075, -1).normalize();   // low, behin
 // Where the camera stands for the whole home and for each part: the point it looks at ("at"), the side it
 // looks from ("from": right, up, front) and the room that must fit on the screen around that point.
 const VIEWS = {
-  home: { at: [0, 1.5, 0.2], from: [0.62, 0.30, 0.76], halfWidth: 6.3, halfHeight: 4.1, depth: 1.0 },
+  home: { at: [0, 1.65, 0.2], from: [0.62, 0.26, 0.76], halfWidth: 6.0, halfHeight: 3.9, depth: 1.0 },
   roof: { at: [0, 1.5, .1], from: [.57, .56, .70], halfWidth: 6.3, halfHeight: 4.15, depth: 1 },
   walls: { at: [0, 1.5, .2], from: [.48, .38, .79], halfWidth: 6.3, halfHeight: 4.1, depth: 1 },
   plumbing: { at: [.2, 1.5, .3], from: [.64, .48, .65], halfWidth: 6.25, halfHeight: 4.1, depth: 1 },
@@ -219,13 +219,24 @@ function plumbing() {
 }
 
 function garden() {
-  const leaf = (r, x, y, z, light) => { const m = ball(r, 0, x, y, z); m.userData.leaf = light ? LEAF_LIGHT : LEAF; return m; };
+  const leaf = (r, x, y, z, light) => {
+    const m = ball(r, 0, x, y, z), p = m.geometry.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const a=p.getX(i)/r,b=p.getY(i)/r,c=p.getZ(i)/r;
+      const lobe=1+.09*Math.sin(a*9+c*5)*Math.cos(b*8);
+      p.setXYZ(i,p.getX(i)*lobe,p.getY(i)*lobe,p.getZ(i)*lobe);
+    }
+    m.geometry.computeVertexNormals();
+    m.userData.leaf = light ? LEAF_LIGHT : LEAF;
+    return m;
+  };
   // A round tree (or a bush) that sways from its foot and shrinks as the garden dries.
   const tree = (x, z, size = 1) => {
     const g = group("canopy", rod(0.045 * size, WOOD, [0, 0, 0], [0, 1.05 * size, 0]),
       rod(.025 * size, WOOD, [0, .5 * size, 0], [-.23 * size, .95 * size, .1 * size]),
       leaf(.38 * size, 0, 1.15 * size, 0), leaf(.29 * size, -.23 * size, .92 * size, .1 * size),
-      leaf(.31 * size, .22 * size, .95 * size, .06 * size, true), leaf(.25 * size, .07 * size, .98 * size, -.22 * size));
+      leaf(.31 * size, .22 * size, .95 * size, .06 * size, true), leaf(.25 * size, .07 * size, .98 * size, -.22 * size),
+      leaf(.19 * size, -.2 * size, 1.28 * size, -.1 * size, true), leaf(.18 * size, .2 * size, 1.18 * size, .21 * size));
     g.position.set(x, LAWN_TOP, z);
     g.userData.sway = rand() * 6;
     return g;
@@ -242,6 +253,18 @@ function garden() {
   const bushes = [bush(-3.9, 3.75), bush(-3.2, 3.8, 0.17), bush(-2.5, 3.75, 0.22), bush(0.6, 3.8), bush(1.2, 3.75, 0.16), bush(4.6, 1.2, 0.24), bush(4.55, 0.5, 0.18)];
   const flower = (x, z, color) => group("flower", rod(0.015, 0x57bf93, [x, LAWN_TOP, z], [x, LAWN_TOP + 0.25, z]), ball(0.07, color, x, LAWN_TOP + 0.25, z));
   const bloom = group("bloom", flower(-3.55, 3.5, 0xdf7afe), flower(-2.85, 3.55, 0x948df7), flower(0.9, 3.55, 0xdf7afe), flower(4.3, 0.85, 0xffd27a));
+  // Repeated planting is batched: a flowering border, rather than isolated toy flowers.
+  const petals = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.035,1),new THREE.MeshStandardMaterial({color:0xafa0de,roughness:.9}),84);
+  const stems = new THREE.InstancedMesh(new THREE.ConeGeometry(.035,.26,5),new THREE.MeshStandardMaterial({color:0x637f50,roughness:1}),84);
+  petals.userData.color=petals.material.color.clone();
+  stems.userData.color=stems.material.color.clone();
+  const plant = new THREE.Object3D();
+  for(let i=0;i<84;i++) {
+    const x=i<60?-3.9+(i%30)*.058:4.48+between(-.13,.13),z=i<60?3.55+Math.floor(i/30)*.16:-.8+(i-60)*.105;
+    const h=between(.16,.32);plant.position.set(x,LAWN_TOP+h,z);plant.scale.setScalar(between(.7,1.2));plant.updateMatrix();petals.setMatrixAt(i,plant.matrix);
+    plant.position.y=LAWN_TOP+h*.5;plant.scale.set(1,h/.26,1);plant.updateMatrix();stems.setMatrixAt(i,plant.matrix);
+  }
+  bloom.add(petals,stems);
   return {
     body: [lawn, ...trees, ...bushes, bloom],
     crk: [box(1.3, 0.01, 0.8, DRY, -3.3, LAWN_TOP + 0.004, 2.3), box(0.8, 0.01, 0.6, DRY, 4.0, LAWN_TOP + 0.004, -2.6)],
@@ -400,7 +423,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   const hemi = new THREE.HemisphereLight(0xffffff, 0xc9cbd8, 1.6);
   scene.add(hemi);
   const sun = new THREE.DirectionalLight(0xffffff, 1.6);   // the key light, from the camera's side so the front reads
-  sun.position.set(-5, 10, 8);
+  sun.position.set(-8, 7, 5);
   sun.castShadow = true;
   sun.shadow.mapSize.set(innerWidth > 860 ? 2048 : 1024, innerWidth > 860 ? 2048 : 1024);
   Object.assign(sun.shadow.camera, { left: -10, right: 10, top: 10, bottom: -10, near: 1, far: 50 });
@@ -422,32 +445,60 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   const contactPlane = new THREE.Mesh(new THREE.PlaneGeometry(16, 12), new THREE.MeshBasicMaterial({ map: contact, transparent: true, depthWrite: false }));
   contactPlane.rotation.x = -Math.PI / 2; contactPlane.position.y = -.01;
   scene.add(contactPlane);
-  // Restore the team's landscape, with layered rounded ridges and fuller, shaded trees.
+  // Three continuous ridgelines: distant blue peaks, a middle valley and wooded foothills.
+  // Vertex colours describe the slopes; the palette still follows the family's score.
   const scenery = [];
-  for (let i = 0; i < 7; i++) {
-    const terrain = new THREE.SphereGeometry(1, 32, 18), points = terrain.attributes.position;
-    for (let vertex = 0; vertex < points.count; vertex++) {
-      const y = points.getY(vertex);
-      if (y > 0) points.setY(vertex, y * (.9 + .15 * Math.sin(points.getX(vertex) * 4 + points.getZ(vertex) * 3 + i)));
+  for (let layer = 0; layer < 3; layer++) {
+    const terrain = new THREE.PlaneGeometry(210,32,100,12);
+    terrain.rotateX(-Math.PI/2);
+    const points=terrain.attributes.position,colors=[];
+    for(let v=0;v<points.count;v++) {
+      const x=points.getX(v),z=points.getZ(v),across=(z+16)/32;
+      const ridge=6+Math.sin(x*.063+layer*2)*3+Math.sin(x*.145+layer)*1.8+Math.sin(x*.31+layer)*.65;
+      const height=ridge*Math.sin(across*Math.PI)* (layer===0?1.5:layer===1?1:.6);
+      points.setY(v,height-.7);
+      const shade=.74+.22*across+.04*Math.sin(x*.3);
+      colors.push(shade,shade,shade);
     }
     terrain.computeVertexNormals();
-    const hill = mesh(terrain, 0x6b9a6f, -38 + i * 13, -3, -30 - (i % 3) * 7);
-    hill.scale.set(11 + (i % 3) * 3, 7 + (i % 3) * 2, 9 + (i % 2) * 3);
-    hill.castShadow = false; hill.userData.tone = "hills"; scenery.push(hill);
+    terrain.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+    const ridge=mesh(terrain,0x6b9a6f,0,0,-78+layer*24);
+    ridge.material.vertexColors=true;ridge.castShadow=false;
+    ridge.userData.tone='hills';ridge.userData.layer=layer;scenery.push(ridge);
   }
-  for (let i = 0; i < 14; i++) {
-    const x = (i % 2 ? -1 : 1) * between(9, 19), z = between(-23, -5), h = between(1.8, 3.6);
-    const trunk = rod(.07, WOOD, [x, 0, z], [x, h * .7, z]);
-    trunk.castShadow = false; scenery.push(trunk);
-    for (let tier = 0; tier < 3; tier++) {
-      const broadleaf = i % 3 === 0;
-      const geometry = broadleaf ? new THREE.IcosahedronGeometry(h * .3, 2) : new THREE.ConeGeometry(h * (.34 - tier * .06), h * .65, 12);
-      const top = mesh(geometry, 0x397956, x + (broadleaf ? (tier - 1) * h * .16 : 0), h * (broadleaf ? .8 + (tier % 2) * .18 : .48 + tier * .21), z);
-      top.castShadow = false; top.userData.tone = "trees"; scenery.push(top);
+  // A whole forest costs four draw calls. Leave a clearing around the house and its silhouettes.
+  const forestCount=70,forestPose=new THREE.Object3D();
+  const trunks=new THREE.InstancedMesh(new THREE.CylinderGeometry(.045,.07,1,6),new THREE.MeshStandardMaterial({color:WOOD,roughness:1}),forestCount);
+  scenery.push(trunks);
+  for(let tier=0;tier<6;tier++) {
+    const broadleaf=tier>=3,level=tier%3;
+    const forest=new THREE.InstancedMesh(broadleaf?new THREE.IcosahedronGeometry(1,2):new THREE.ConeGeometry(1,1,9),new THREE.MeshStandardMaterial({color:broadleaf?0x477b51:0x326b59,roughness:1}),forestCount/2);
+    let forestSeed=29;
+    const forestRand=()=>((forestSeed=forestSeed*16807%2147483647)-1)/2147483646;
+    for(let i=0;i<forestCount;i++) {
+      const x=(forestRand()-.5)*100,z=-15-forestRand()*34,h=1.1+forestRand()*3.5;
+      const rotation=forestRand()*6,tone=new THREE.Color().setHSL(.38+forestRand()*.045,.25+forestRand()*.15,.55+forestRand()*.25);
+      if((i%2===0)!==broadleaf) continue;
+      forestPose.rotation.set(0,rotation,0);
+      if(tier===0||tier===3) { forestPose.position.set(x,h*.3,z);forestPose.scale.set(1,h*.6,1);forestPose.updateMatrix();trunks.setMatrixAt(i,forestPose.matrix); }
+      forestPose.position.set(x+(broadleaf?(level-1)*h*.16:0),h*(broadleaf?.74+(level%2)*.13:.46+level*.2),z+(broadleaf?Math.sin(level*2)*h*.13:0));
+      forestPose.scale.set(h*(broadleaf?.28:.31-level*.065),h*(broadleaf?.31:.65),h*(broadleaf?.29:.31-level*.065));
+      forestPose.updateMatrix();forest.setMatrixAt(Math.floor(i/2),forestPose.matrix);
+      forest.setColorAt(Math.floor(i/2),tone);
     }
+    forest.userData.color=forest.material.color.clone();forest.userData.tone='trees';scenery.push(forest);
   }
+  // Near-camera planting frames the clearing without covering the house or its status marks.
+  const grasses=new THREE.InstancedMesh(new THREE.ConeGeometry(.07,.65,4),new THREE.MeshStandardMaterial({color:0x688659,roughness:1}),100);
+  for(let i=0;i<100;i++) {
+    const side=i%2?-1:1;
+    forestPose.position.set(side*between(6.7,10.8),between(.15,.32),between(-3,8));
+    forestPose.scale.set(between(.6,1.4),between(.5,1.5),between(.6,1.4));
+    forestPose.rotation.set(0,between(0,6),between(-.15,.15));forestPose.updateMatrix();grasses.setMatrixAt(i,forestPose.matrix);
+  }
+  grasses.userData.color=new THREE.Color(0x688659);grasses.userData.tone='trees';scenery.push(grasses);
   scene.add(...scenery);
-  scene.fog.near = 24; scene.fog.far = 105;
+  scene.fog.near = 30; scene.fog.far = 155;
   // The clouds: a deck the camera comes down through at the start, and a bank along the horizon.
   const puff = cloudTexture();
   const clouds = [];
@@ -639,13 +690,13 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     sky.uniforms.sunColor.value.copy(mixed.sun);
     sky.uniforms.sunPower.value = mixed.sunPower;
     scene.fog.color.copy(mixed.horizon);
-    sun.color.copy(mixed.light); sun.intensity = 1.9 + mixed.lightPower;
-    rim.color.copy(mixed.sun); rim.intensity = .6 + .9 * h;
-    hemi.color.copy(mixed.sky); hemi.groundColor.copy(mixed.ground); hemi.intensity = .85;
+    sun.color.copy(mixed.light); sun.intensity = 2.2 + mixed.lightPower;
+    rim.color.copy(mixed.sun); rim.intensity = .8 + 1.3 * h;
+    hemi.color.copy(mixed.sky); hemi.groundColor.copy(mixed.ground); hemi.intensity = .62;
     renderer.toneMappingExposure = mixed.exposure;
     field.material.color.copy(mixed.grass).lerp(new THREE.Color(0x528561), .35);
     for (const node of scenery) {
-      if (node.userData.tone === "hills") node.material.color.copy(mixed.hills);
+      if (node.userData.tone === "hills") node.material.color.copy(mixed.hills).lerp(mixed.mid, .55-node.userData.layer*.2);
       if (node.userData.tone === "trees") node.material.color.copy(node.userData.color).lerp(mixed.hills, .25);
     }
     for (const cloud of clouds) cloud.material.color.copy(mixed.shade).lerp(mixed.cloud, .45 + .55 * cloud.userData.shade);
@@ -918,8 +969,8 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   canvas.addEventListener("webglcontextlost", (event) => { event.preventDefault(); if (alive) onFail(); });
 
   function snapshot() {
-    if (!alive || !last) return null;
-    try { renderer.render(scene, camera); return canvas.toDataURL("image/webp", .9); }
+    if (!alive) return null;
+    try { place(); renderer.render(scene, camera); return canvas.toDataURL("image/webp", .9); }
     catch (error) { return null; }
   }
   function setTravel(progress, entering = false) {
