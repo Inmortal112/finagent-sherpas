@@ -373,6 +373,7 @@ body.h3d .chapter .card { transition: opacity .6s, transform .7s cubic-bezier(.2
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition-duration: .01s !important; }
 }
+__ARCHITECTURAL_CSS__
 </style>
 </head>
 <body class="muted">
@@ -392,19 +393,20 @@ body.h3d .chapter .card { transition: opacity .6s, transform .7s cubic-bezier(.2
 <main>
   <section class="hero" id="hero">
     <div class="hero-in">
-      <div class="mono" style="color:#9799b1">Your financial health</div>
+      <div class="mono" style="color:#9799b1">Your plan, brought to life</div>
       <h1>Hello, <em id="heroName"></em>.</h1>
-      <div class="ring">
-        <svg viewBox="0 0 120 120"><defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#afbff8"/><stop offset=".55" stop-color="#948df7"/><stop offset="1" stop-color="#df7afe"/></linearGradient></defs>
+      <div class="hero-score-card" role="group" aria-label="Your Sherpas financial health score"><div class="hero-score-dial">
+        <svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#afbff8"/><stop offset=".55" stop-color="#948df7"/><stop offset="1" stop-color="#df7afe"/></linearGradient></defs>
           <circle class="track" cx="60" cy="60" r="52"/><circle class="value" id="ringValue" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg>
-        <div class="num"><b id="heroScore">0</b><span>out of 100</span></div>
-      </div>
-      <div class="band" id="heroBand"><i></i><span></span></div>
+        <div class="hero-score-number"><b id="heroScore">0</b><span>out of 100</span></div>
+      </div><div class="hero-score-copy"><span class="hero-score-kicker">Sherpas health score</span><div class="band" id="heroBand"><i></i><span></span></div><p>A snapshot of today's plan</p></div></div>
       <div class="opts" id="opts"></div>
-      <p class="lede">A score is hard to feel. A home is not. This is your plan, as the home you live in.</p>
+      <p class="lede"><span class="hero-question-label">A question worth exploring</span><strong id="heroQuestion">What matters most to your family?</strong><span class="hero-plan-fact" id="heroPlanFact" hidden></span></p>
       <button class="pill primary" id="enter">Step inside your home <span aria-hidden="true">↓</span></button>
-      <span class="mono hint">Then scroll · the voice starts with you</span>
+      <span class="mono hint">Scroll to descend through the clouds</span>
     </div>
+    <div class="hero-visual" id="heroViewport" aria-label="Your plan's home and landscape"></div>
+    <span class="illustration-note">An illustration of your financial plan</span>
   </section>
 
   <div class="journey" id="journey">
@@ -412,9 +414,10 @@ body.h3d .chapter .card { transition: opacity .6s, transform .7s cubic-bezier(.2
       <div class="scene">
         <div class="scene-top">
           <div class="when mono"><span id="whenTag">Today</span><b id="whenTitle"></b></div>
-          <div class="score-chip"><b id="chipScore"></b><small> /100</small><span class="delta" id="chipDelta"></span></div>
+          <div class="score-chip"><span class="score-label" id="scoreLabel">Original plan</span><b id="chipScore"></b><small id="scoreDenominator"> /100</small><span class="delta" id="chipDelta"></span></div>
         </div>
-        <svg id="house" viewBox="0 0 640 430" role="img" aria-label="Your plan drawn as a home">
+        <div class="scenario-caption" aria-live="polite"><span class="scenario-state" id="scenarioState">Your plan today</span><span id="scenarioDetail">The score in your original Sherpas plan.</span></div>
+        <div class="home-viewport" id="sceneViewport"><svg id="house" viewBox="0 0 640 430" role="img" aria-label="Your plan drawn as a home">
           <defs>
             <linearGradient id="gRep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#948df7"/><stop offset="1" stop-color="#4565d6"/></linearGradient>
             <linearGradient id="gRoof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#30303f"/><stop offset="1" stop-color="#141419"/></linearGradient>
@@ -483,10 +486,12 @@ body.h3d .chapter .card { transition: opacity .6s, transform .7s cubic-bezier(.2
           </g>
         </svg>
         <div id="house3d" hidden></div>
+        </div>
         <div class="toast" id="toast"></div>
         <div class="legend" id="legend"></div>
       </div>
       <div class="rail" id="rail"></div>
+      <nav class="journey-nav" aria-label="Plan chapters"><button id="chapterBack" type="button">← Back</button><span id="journeyProgress" aria-live="polite"></span><button id="chapterNext" type="button">Next →</button></nav>
     </div>
     <div class="chapters" id="chapters"></div>
   </div>
@@ -516,6 +521,7 @@ body.h3d .chapter .card { transition: opacity .6s, transform .7s cubic-bezier(.2
 
 <script id="presentation" type="application/json">__PRESENTATION_JSON__</script>
 <script>
+__PLAN_STATE_JS__
 "use strict";
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; };
@@ -533,9 +539,8 @@ const SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 let P = JSON.parse($("presentation").textContent);
 let chapters = [], active = -1, yearIndex = 0, entered = false, askFocus = null, askFocusTimer = 0;
 let baseStates = {}, moves = [], timeline = null, chosenStep = null, person = null;
-const doneParts = new Set();   // parts repaired because the family said they took the step
 const doneSteps = new Set();   // the steps the family marked "I've done this" (kept in this browser)
-let shownScore = null;
+let shownScore = null, previewStep = null;
 const store = {
   get(key) { try { return localStorage.getItem(key); } catch (e) { return null; } },
   set(key, value) { try { if (value == null) localStorage.removeItem(key); else localStorage.setItem(key, value); } catch (e) { /* private window */ } },
@@ -598,15 +603,19 @@ function build() {
 
   document.title = `${P.client_name} · Under One Roof`;
   $("heroName").textContent = P.client_name;
+  $("heroQuestion").textContent = data.worries?.[0] || "What matters most to your family?";
+  const runsOut = timeline?.events?.find((event) => event.kind === "savings_run_out" && Number.isFinite(event.age));
+  $("heroPlanFact").hidden = !runsOut;
+  $("heroPlanFact").textContent = runsOut ? `On today's plan, savings run out at age ${runsOut.age}.` : "";
   $("heroBand").dataset.colour = data.colour || "";
-  $("heroBand").querySelector("span").textContent = `Sherpas calls that ${data.band}`;
+  $("heroBand").querySelector("span").textContent = data.band;
   const score = Number(fact("score").value);
-  countTo($("heroScore"), score);
+  $("heroScore").textContent = score;
   requestAnimationFrame(() => { $("ringValue").style.strokeDashoffset = 326.7 * (1 - score / 100); });
 
   document.body.classList.toggle("simple", MODE === "simple");
-  doneParts.clear();
   doneSteps.clear();
+  previewStep = null;
   shownScore = null;
   (store.get("uor-done-" + P.client_name) || "").split(",").filter((id) => moves.some((s) => s.id === id)).forEach((id) => doneSteps.add(id));
   const adults = (data.people || []).filter((p) => p.role !== "child");
@@ -639,9 +648,9 @@ function build() {
   add({ id: "today", tag: "Today", title: "Your home today", scene: intro, html: `
     <div class="eyebrow mono">Today · who lives here</div>
     <h2>This is your home, ${esc(P.client_name)}.</h2>
-    <div class="chips">${people}${living}${cars}</div>
+    <div class="chips">${people}</div>
     <p>${esc(intro.narration)}</p>
-    <ul class="rows">${PARTS.filter((p) => baseStates[p]).map((p) => `<li><span>The ${p} · ${PART_OF[p]}</span><b><span class="state" data-state="${baseStates[p]}"><i></i>${baseStates[p]}</span></b></li>`).join("")}</ul>
+    <details class="overview-details"><summary>See all five parts of your plan</summary><div class="chips">${living}${cars}</div><ul class="rows">${PARTS.filter((p) => baseStates[p]).map((p) => `<li><span>The ${p} · ${PART_OF[p]}</span><b><span class="state" data-state="${baseStates[p]}"><i></i>${baseStates[p]}</span></b></li>`).join("")}</ul></details>
     <div class="worry" id="worryBox" hidden><div class="eyebrow mono">Before we walk through it</div>
       <b>What worries you most about money?</b>
       <form id="worryForm"><input id="worryText" placeholder="In your own words" maxlength="300" autocomplete="off"><button class="pill dark">Tell us</button></form>
@@ -698,7 +707,8 @@ function build() {
       <details class="action"><summary>What your plan says, word for word</summary>${esc(s.title)}: ${esc(d.action)}</details>
       <div class="fromto"><b class="from">${esc(d.score_before)}</b><span>→</span><b class="to">${esc(d.score_after)}</b><span>${gain > 0 ? "your score with this step alone" : "on its own the score stays; it counts together with the others"}</span></div>
       <p>${esc(s.narration)}</p>
-      <div class="do-it"><button class="pill done-btn" data-done="${esc(s.id)}"></button><span class="small">Try it: watch your home change.</span></div>` });
+      <div class="do-it"><button class="pill preview-btn" data-preview="${esc(s.id)}" aria-pressed="false">Preview this change <span aria-hidden="true">↗</span></button><button class="pill done-btn" data-done="${esc(s.id)}"></button></div>
+      <p class="note">Preview explores the plan. Completed means you report having taken the step; it does not execute a transaction or verify a new score.</p>` });
   });
 
   // 6. every step done
@@ -707,10 +717,11 @@ function build() {
   const left = PARTS.filter((p) => baseStates[p] && baseStates[p] !== "solid" && !repairedParts.includes(p));
   add({ id: "repaired", tag: "Every step done", title: "Your home, repaired", scene: all || null, final: true, html: `
     <div class="eyebrow mono">If you take every step</div>
-    <h2>Your home, with the plan carried out.</h2>
+    <h2>A stronger home starts with one step.</h2>
     ${all ? `<div class="fromto"><b class="from">${esc(all.visual.data.score_before)}</b><span>→</span><b class="to">${esc(all.visual.data.score_after)}</b><span>${esc((all.visual.data.plain_moves || all.visual.data.moves).join(" + "))}</span></div><p>${esc(all.narration)}</p>`
           : `<p>Sherpas scored each step on its own, so there is no single combined score to promise here. Each repair below shows what it changes by itself.</p>`}
-    <div class="progress"><div class="row"><span>Repairs you have done: <b id="doneCount"></b></span><button type="button" id="doneReset" hidden>Start again</button></div>
+    <div class="do-it"><button class="pill preview-btn" data-preview="all" aria-pressed="false">Preview all planned changes <span aria-hidden="true">↗</span></button></div>
+    <div class="progress"><div class="row"><span>Steps you reported completed: <b id="doneCount"></b></span><button type="button" id="doneReset" hidden>Reset completed steps</button></div>
       <div class="track"><i id="doneBar"></i></div></div>
     ${left.length ? `<p class="note">No step in this plan touches the ${esc(left.join(" or the "))} yet. That is a good question for your advisor, or for the “?” button.</p>` : ""}
     <div class="eyebrow mono" style="margin-top:1.4rem">Which one do you start with?</div>
@@ -730,6 +741,10 @@ function build() {
 
   root.querySelectorAll("[data-step]").forEach((b) => b.addEventListener("click", () => chooseStep(b)));
   root.querySelectorAll("[data-done]").forEach((b) => b.addEventListener("click", () => markDone(b.dataset.done, !doneSteps.has(b.dataset.done))));
+  root.querySelectorAll("[data-preview]").forEach((b) => b.addEventListener("click", () => {
+    previewStep = previewStep === b.dataset.preview ? null : b.dataset.preview;
+    showDone(); paint();
+  }));
   $("doneReset").addEventListener("click", () => { [...doneSteps].forEach((id) => markDone(id, false)); });
   showDone();
   root.querySelectorAll(".chapter").forEach((c, i) => {
@@ -749,7 +764,8 @@ function build() {
   });
   $("legend").innerHTML = "";
   PARTS.filter((p) => baseStates[p]).forEach((p) => {
-    const b = el("button", "", `<i></i>${p[0].toUpperCase() + p.slice(1)} <em>${PART_OF[p]}</em>`);
+    const b = el("button", "", `<i></i>${PART_OF[p]}`);
+    b.setAttribute("aria-label", `${PART_OF[p]}: the ${p}`);
     b.dataset.part = p;
     b.addEventListener("click", () => goToPart(p));
     $("legend").append(b);
@@ -760,9 +776,10 @@ function build() {
 }
 
 function add(chapter) {
-  const node = el("section", "chapter" + (chapter.years ? " years" : ""));
+  const node = el("section", "chapter" + (chapter.years ? " years" : "") + (chapter.move != null ? " option-chapter" : "") + (chapter.final ? " final-chapter" : ""));
   node.id = "ch-" + chapter.id;
-  node.append(el("div", "card", chapter.html));
+  const number = String(chapters.length + 1).padStart(2, "0");
+  node.append(el("div", "card", `<div class="chapter-number" aria-hidden="true">${number}<span> / YOUR PLAN</span></div>` + chapter.html));
   $("chapters").append(node);
   chapters.push({ ...chapter, node });
 }
@@ -805,11 +822,13 @@ function countTo(node, target, from = 0) {
 }
 
 /* ================= scroll drives the home ================= */
+let chapterMotion = 0, navigationChapter = null;
 function update() {
   const vh = innerHeight, narrow = innerWidth <= 860;
-  const probe = narrow ? vh * 0.74 : vh * 0.5;
+  const probe = narrow ? Math.min(vh - 48, document.querySelector(".stage").getBoundingClientRect().bottom + 40) : vh * 0.5;
   let index = 0;
   chapters.forEach((c, i) => { if (c.node.getBoundingClientRect().top <= probe) index = i; });
+  if (navigationChapter) { const requested = chapters.indexOf(navigationChapter); if (requested >= 0) index = requested; }
   const journeyTop = $("journey").getBoundingClientRect().top;
   $("bar").classList.toggle("light", journeyTop < 60);
 
@@ -824,11 +843,19 @@ function update() {
   }
   if (index !== active) {
     active = index;
+    previewStep = null;
+    showDone();
     chapters.forEach((c, i) => c.node.classList.toggle("on", i === index));
     chapter.node.querySelectorAll(".track i").forEach((bar) => { bar.style.width = bar.dataset.w + "%"; });
     [...$("rail").children].forEach((b, i) => { b.classList.toggle("on", i === index); b.classList.toggle("done", i < index); });
     if (journeyTop < vh * 0.6) narrate(index);
   }
+  const phase = chapter.final ? "Choose a first step" : chapter.move != null ? "Explore your options" : chapter.years || chapter.id === "ahead" ? "Look ahead" : chapter.id.startsWith("person_") ? "Each person's plan" : chapter.id === "today" ? "Meet your plan" : "Understand your plan";
+  const progressText = `${phase} · ${index + 1} of ${chapters.length}`;
+  $("journey").style.setProperty("--journey-progress", `${((index + 1) / chapters.length) * 100}%`);
+  if ($("journeyProgress").textContent !== progressText) $("journeyProgress").textContent = progressText;
+  $("chapterBack").disabled = index === 0;
+  $("chapterNext").disabled = index === chapters.length - 1;
   paint();
   frame3d();
 }
@@ -863,38 +890,21 @@ async function tryHouse3d() {
   }
 }
 
-// A part is repaired when the family did a step that repairs it (or said so at the day-3 check-in). The last
-// chapter ("If you take every step") previews the home with every step done.
-// The steps counted as done here: the ones the family marked, and, as they scroll on, the steps they have
-// already walked past (step 3's chapter shows steps 1 and 2 done). The last chapter shows every step done.
-function doneHere() {
-  const chapter = chapters[active] || {};
-  const passed = chapter.final ? moves.length : chapter.move != null ? chapter.move : 0;
-  return moves.filter((s, i) => i < passed || doneSteps.has(s.id));
+// Scrolling explains; previewing simulates; only an explicit confirmation records completion.
+function currentScenario() {
+  return planScenario({ base: Number(fact("score").value), moves, combined: scene("all_moves"), completed: [...doneSteps], preview: previewStep });
 }
 function stateOf(part) {
-  if (doneParts.has(part)) return "repaired";
-  if (doneHere().some((s) => s.visual.data.house_part === part)) return "repaired";
-  return baseStates[part];
+  return repairState(part, baseStates[part], moves, currentScenario().selected);
 }
 
-// The score for those steps, never a figure Sherpas did not give: the best of the steps done, each scored on
-// its own, or the score of all of them together once every step is done. Sherpas does not score a part of
-// the steps together, so nothing is added up here, and the score never goes down as the family goes on.
-function achieved() {
-  const base = Number(fact("score").value), all = scene("all_moves");
-  const done = doneHere();
-  let score = base;
-  done.forEach((s) => { score = Math.max(score, Number(s.visual.data.score_after)); });
-  if (all && moves.length && done.length === moves.length) score = Math.max(score, Number(all.visual.data.score_after));
-  return score;
-}
-// The weather of the 3D home: grey and rainy at 25 or less, a clear day around 55, a golden evening from 85.
+// A visual lighting input only. It never derives a financial result.
 const healthOf = (score) => Math.min(1, Math.max(0, (score - 25) / 60));
 
 function markDone(id, done) {
   const step = scene(id);
   if (!step) return;
+  previewStep = null;
   if (done) doneSteps.add(id); else doneSteps.delete(id);
   store.set("uor-done-" + P.client_name, [...doneSteps].join(",") || null);
   showDone();
@@ -910,8 +920,13 @@ function showDone() {
   document.querySelectorAll("[data-done]").forEach((b) => {
     const done = doneSteps.has(b.dataset.done);
     b.classList.toggle("is-done", done);
-    b.textContent = done ? "Done ✓  ·  undo" : "✓ I've done this";
+    b.textContent = done ? "✓ Completed · undo" : "I've completed this step";
     b.setAttribute("aria-pressed", String(done));
+  });
+  document.querySelectorAll("[data-preview]").forEach((b) => {
+    const on = previewStep === b.dataset.preview;
+    b.setAttribute("aria-pressed", String(on));
+    b.textContent = on ? "Back to my plan ↙" : b.dataset.preview === "all" ? "Preview all planned changes ↗" : "Preview this change ↗";
   });
   if (!$("doneCount")) return;
   $("doneCount").textContent = `${doneSteps.size} of ${moves.length}`;
@@ -922,10 +937,11 @@ function showDone() {
 // The score in the corner of the home: it counts up to the new figure and shows what was gained.
 function showScore(score) {
   const node = $("chipScore");
+  if (score == null) { node.textContent = "—"; shownScore = null; return; }
   if (shownScore === score) return;
   if (shownScore == null) { node.textContent = score; shownScore = score; return; }
   const gain = score - shownScore;
-  countTo(node, score, shownScore);
+  node.textContent = score; // Switch directly to the supplied scenario, without showing intermediate scores.
   shownScore = score;
   node.classList.remove("bump"); void node.offsetWidth; node.classList.add("bump");
   if (gain > 0) {
@@ -935,24 +951,51 @@ function showScore(score) {
   }
 }
 
-// Where the 3D home sits: in the hero it fills the screen and the camera is high in the clouds; as the hero
-// scrolls away the camera comes down to the home, which settles into the scene's box.
+// Keep a single renderer in real layout containers; drive an internal camera route as the page scrolls.
 function frame3d() {
   if (!house3d) return;
-  const hero = $("hero").getBoundingClientRect(), host = $("house3d").getBoundingClientRect();
-  const p = Math.min(1, Math.max(0, -hero.top / Math.max(1, hero.height * 0.85)));
-  const slot = $("house").getBoundingClientRect();
-  const mix = (a, b) => a + (b - a) * p;
-  house3d.setIntro(p);
-  house3d.setFrame({ x: mix(0, slot.left - host.left), y: mix(0, slot.top - host.top), w: mix(host.width, slot.width), h: mix(host.height, slot.height) });
-  // On a phone the home is the top of the screen and the chapters scroll under it.
-  const narrow = innerWidth <= 860, scene = $("house").closest(".scene").getBoundingClientRect();
-  $("house3d").style.clipPath = narrow ? `inset(0 0 ${Math.max(0, host.height - mix(host.height, scene.bottom))}px 0)` : "";
+  const host = $("house3d"), opening = $("heroViewport"), scene = $("sceneViewport");
+  // Finish the flight while the picture is pinned, then hold the revealed home before releasing it.
+  const hero = $("hero").getBoundingClientRect();
+  const style = getComputedStyle($("hero")), stickyTop = innerWidth <= 860 ? 72 : 104;
+  const heroStart = hero.top + scrollY;
+  const start = innerWidth <= 860 ? heroStart + parseFloat(style.paddingTop) + $("hero").querySelector(".hero-in").offsetHeight + parseFloat(style.rowGap) - stickyTop : heroStart;
+  const noteHeight = innerWidth <= 860 ? $("hero").querySelector(".illustration-note").offsetHeight + parseFloat(style.rowGap) : 0;
+  const release = heroStart + hero.height - parseFloat(style.paddingBottom) - noteHeight - opening.clientHeight - stickyTop;
+  const end = Math.max(start + 260, release - 180);
+  const descent = Math.min(1, Math.max(0, (scrollY - start) / (end - start)));
+  house3d.setIntro(descent);
+  const keep = (box, image) => {
+    let poster = box.querySelector(".home-poster");
+    if (!poster) { poster = document.createElement("img"); poster.className = "home-poster"; poster.alt = ""; box.appendChild(poster); }
+    poster.src = image;
+  };
+  // The renderer lives inside actual layout boxes. It never travels above the page as a fixed overlay.
+  const sceneTop = scene.getBoundingClientRect().top;
+  if (host.parentElement === opening && sceneTop < innerHeight * 1.15 && !scene.querySelector(".home-poster")) {
+    const image = house3d.snapshot();
+    if (image) keep(scene, image);
+  }
+  const target = descent >= 1 && sceneTop < innerHeight * (host.parentElement === opening ? .9 : 1.02) ? scene : opening;
+  if (host.parentElement !== target) {
+    const snapshot = house3d.snapshot();
+    if (snapshot) {
+      // Keep a local still in the departing box, so no empty frame or flying canvas is exposed.
+      keep(host.parentElement, snapshot);
+      if (!target.querySelector(".home-poster")) keep(target, snapshot);
+    }
+    target.appendChild(host);
+    house3d.setTravel(0);
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) host.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 350, easing: "ease-out" });
+  }
+  house3d.setFrame(null);
+  house3d.setTravel(0);
 }
 
 function paint() {
   const chapter = chapters[active] || {};
-  const focus = askFocus || chapter.part || null;
+  const previewPart = previewStep && previewStep !== "all" ? scene(previewStep)?.visual.data.house_part : null;
+  const focus = askFocus || (previewStep === "all" ? null : previewPart || chapter.part) || null;
   $("house").classList.toggle("focus", Boolean(focus));
   let lush = 1;
   const states = {};
@@ -970,18 +1013,26 @@ function paint() {
   });
 
   let tag = chapter.tag || "", title = chapter.title || "";
+  if (chapter.move != null && chapter.part) title = `The ${chapter.part}`;
+  if (chapter.final) { tag = "Choose your first step"; title = previewStep === "all" ? "Your home with these changes" : doneSteps.size ? "Your reported progress" : "Your next step"; }
   if (chapter.years) {
     const pts = timeline.points, p = pts[yearIndex], max = Math.max(...pts.map((q) => q.investable_assets), 1);
     lush = Math.max(0.04, p.investable_assets / max);
     title = String(p.year);
   }
   // The score is what the family has done so far; the last chapter shows it with every step done.
-  const base = Number(fact("score").value), score = achieved();
-  const delta = score > base ? "+" + (score - base) : "";
+  const base = Number(fact("score").value), scenario = currentScenario(), score = scenario.score;
+  const delta = score != null && score > base ? "+" + (score - base) : "";
+  $("scoreLabel").textContent = score == null ? "Not scored together" : scenario.isPreview ? (previewStep === "all" ? "All steps · preview" : "One step · preview") : doneSteps.size ? "Reported steps" : "Original plan";
+  $("scoreDenominator").hidden = score == null;
+  const stateText = scenario.isPreview ? "Exploring a possibility" : doneSteps.size ? "Based on what you reported" : "Your plan today";
+  if ($("scenarioState").textContent !== stateText) $("scenarioState").textContent = stateText;
+  if ($("scenarioDetail").textContent !== scenario.detail) $("scenarioDetail").textContent = scenario.detail;
+  document.body.classList.toggle("previewing", scenario.isPreview);
   $("house").style.setProperty("--lush", lush);
-  if (house3d) house3d.update({ states, focus, lush, health: healthOf(score) });
-  if (houseSound) houseSound.setWeather(healthOf(score));
-  $("whenTag").textContent = tag;
+  if (house3d) house3d.update({ states, focus, lush, health: healthOf(score == null ? base : score) });
+  if (houseSound) houseSound.setWeather(healthOf(score == null ? base : score));
+  $("whenTag").textContent = focus ? `${tag} · ${PART_OF[focus]}` : tag;
   $("whenTitle").textContent = title;
   showScore(score);
   $("chipDelta").textContent = delta;
@@ -1017,20 +1068,71 @@ function toast(text) {
 
 function goToPart(part) {
   const target = chapters.find((c) => c.part === part && c.id.startsWith("pillar_"));
-  if (target) target.node.scrollIntoView({ block: "center" });
+  if (target) scrollChapter(target);
 }
 document.querySelectorAll(".part").forEach((node) => node.addEventListener("click", () => goToPart(node.dataset.part)));
 
 let ticking = false;
 const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); } };
 addEventListener("scroll", onScroll, { passive: true });
-addEventListener("resize", onScroll);
+addEventListener("resize", () => {
+  if (active >= 0 && $("journey").getBoundingClientRect().top < 0) scrollChapter(chapters[active], true);
+  onScroll();
+});
+function changeChapter(direction) {
+  const next = chapters[Math.max(0, Math.min(chapters.length - 1, active + direction))];
+  if (!next) return;
+  scrollChapter(next);
+}
+function scrollChapter(next, immediate = false) {
+  cancelChapterMotion();
+  const narrow = innerWidth <= 860;
+  const top = next.node.getBoundingClientRect().top + scrollY - (narrow ? document.querySelector(".stage").getBoundingClientRect().height + 16 : 100);
+  if (immediate || matchMedia("(prefers-reduced-motion: reduce)").matches) { scrollTo({ top, behavior: "instant" }); return; }
+  const from = scrollY, destination = Math.max(0, Math.min(top, document.documentElement.scrollHeight-innerHeight));
+  const duration = Math.min(1400, 850 + Math.abs(destination-from)*.08);
+  navigationChapter = next;
+  update();
+  let started = null;
+  const travel = (time) => {
+    if (started == null) started = time;
+    const t = Math.min(1,(time-started)/duration), eased=t*t*t*(10+t*(-15+6*t));
+    scrollTo({top:from+(destination-from)*eased,behavior:"instant"});
+    if(t<1) chapterMotion=requestAnimationFrame(travel);
+    else { chapterMotion=0;navigationChapter=null;update(); }
+  };
+  chapterMotion=requestAnimationFrame(travel);
+}
+function cancelChapterMotion() {
+  if(chapterMotion) cancelAnimationFrame(chapterMotion);
+  chapterMotion=0;navigationChapter=null;
+}
+for(const event of ["wheel","touchstart","pointerdown","keydown"]) addEventListener(event,cancelChapterMotion,{passive:true});
+$("chapterBack").addEventListener("click", () => changeChapter(-1));
+$("chapterNext").addEventListener("click", () => changeChapter(1));
 
 $("enter").addEventListener("click", () => {
   entered = true;
   if (active >= 0) narrate(active, 900);
-  $("journey").scrollIntoView();
+  descendIntoHome();
 });
+
+let introMotion = 0;
+function cancelDescent() { if (introMotion) cancelAnimationFrame(introMotion); introMotion = 0; }
+function descendIntoHome() {
+  cancelDescent();
+  const from = scrollY, destination = $("journey").getBoundingClientRect().top + scrollY;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { scrollTo({ top: destination, behavior: "instant" }); return; }
+  let start = null;
+  const frame = (time) => {
+    if (start == null) start = time;
+    const p = Math.min(1, (time - start) / 2200), eased = p * p * (3 - 2 * p);
+    scrollTo({ top: from + (destination - from) * eased, behavior: "instant" });
+    introMotion = p < 1 ? requestAnimationFrame(frame) : 0;
+  };
+  introMotion = requestAnimationFrame(frame);
+}
+for (const event of ["wheel", "touchstart", "pointerdown", "keydown"]) addEventListener(event, cancelDescent, { passive: true });
 
 /* ================= the backend: questions, the chosen step, other families ================= */
 const api = { base: null, family: WHERE ? WHERE[2] : null, session: null, ready: null };
@@ -1100,7 +1202,7 @@ async function afterBackend() {
       const button = document.querySelector(`[data-step="${history.decision.scene_id}"]`);
       if (button) { button.classList.add("chosen"); $("chosenNote").textContent = `Chosen: ${history.decision.title}.`; }
       const step = scene(history.decision.scene_id);
-      if (step && history.follow_up && history.follow_up.done) { if (step.visual.data.house_part) doneParts.add(step.visual.data.house_part); markDone(step.id, true); }
+      if (step) chosenStep = step; // The day-3 answer records starting, not completing, the chosen step.
     }
   } catch (e) { /* the page works without the earlier visit */ }
 }
@@ -1162,11 +1264,9 @@ async function followUp(done, box, note = null, reply = "") {
     const data = await response.json();
     if (!response.ok) throw new Error();
     const part = data.repaired_house_part;
-    if (part) doneParts.add(part);
-    if (done && chosenStep) markDone(chosenStep.id, true);   // the score climbs too
     if (part) turnHome(part);
     if (done) {
-      box.textContent = `Well done. ${part ? `Your ${part} ${part.endsWith("s") ? "are" : "is"} repaired, and your` : "Your"} advisor will see it.`;
+      box.textContent = "A good start. Your advisor will see that you have begun. Mark the step completed when it is finished.";
     } else {
       box.innerHTML = `<div>${reply}</div><div class="small">Your advisor will see what got in the way, so the next talk starts there.</div>`;
     }

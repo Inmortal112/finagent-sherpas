@@ -21,6 +21,8 @@ def page(presentation: Presentation) -> str:
         TEMPLATE.read_text(encoding="utf-8")
         .replace("__LANG__", presentation.language)
         .replace("__CLIENT_NAME__", escape(presentation.client_name))
+        .replace("__PLAN_STATE_JS__", TEMPLATE.with_name("web").joinpath("plan-state.js").read_text(encoding="utf-8"))
+        .replace("__ARCHITECTURAL_CSS__", TEMPLATE.with_name("web").joinpath("architectural.css").read_text(encoding="utf-8"))
         .replace("__PRESENTATION_JSON__", data)
     )
 
