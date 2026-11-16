@@ -3,6 +3,16 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 12:39 — docs/visitas-iphone-3d — Claude Code
+- **Hecho:** probada la casa 3D nueva (PR #60) en el iPhone de David: `out/` regenerado (voz edge, sin gastar
+  créditos: la narración sale de `narrations/`), servidor local y túnel `scripts/share.sh` (cloudflared).
+- **Estado:** **en el iPhone va fluido.** En el navegador del ordenador, 3D activo y sin errores en consola.
+  No probados aún en el iPhone: «I've done this», «Simply» en 2D y el micrófono.
+- **Decisiones:** **el 3D se queda por defecto en el modo completo** (era la decisión del 17 a las 14:00).
+- **Bloqueos:** ninguno. Ojo al copiar enlaces: un `**` pegado a la URL da un 500 en Windows (el `*` no vale en nombres).
+- **Para Samuel y Raúl:** no hace falta volver al 2D; lo que queda es pulir.
+- **Siguiente:** micrófono en el iPhone; README y párrafo de entrega.
+
 ## 2026-11-15 23:57 — docs/visitas-public-repo — Claude Code
 - **Hecho:** regeneradas las páginas de las cuatro familias en los dos modos (`finagent.run --all`, voz edge; `out/`
   no va a git). Revisado el historial entero del repo antes de hacerlo público (ver «Para Samuel»).
