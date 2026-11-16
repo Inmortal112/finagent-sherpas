@@ -2,6 +2,13 @@
 
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 
+## 2026-11-16 — feat/stage-architectural-review · publicación autorizada — Codex
+- **Hecho:** Raúl autoriza subir la revisión para que el equipo decida cómo integrarla. Rama actualizada sobre `1aa79f0` (PR #64); tarea #65. Se publica como PR, sin merge automático.
+- **Integración:** conservados todos los enganches `houseSound` de David; sonido y cielo usan la nota original cuando Sherpas no aporta una nota combinada. Backend de nota de pareja y documentación del equipo intactos.
+- **Estado:** `check.sh` pasa 181 tests tras actualizar. Cambios de código limitados a escena, estilos y estado visual; capturas y ficha explican las revisiones.
+- **Para Samuel y David:** el scroll ya no marca acciones hechas. Preview y Completed son distintos; no se usa el máximo de notas individuales como nota conjunta. Se mantienen partes, estados, narraciones y clima. El botón para compartir la nota de pareja sigue pendiente tal como indicó David; podéis añadirlo sobre esta rama o tras integrarla.
+- **Pendiente:** revisar las nuevas cámaras en iPhone real (la prueba previa de David era de la escena original). El equipo decide el merge y próximos ajustes.
+
 ## 2026-11-16 — feat/stage-architectural-review · recorridos y encuadres — Codex
 - **Hecho:** cinco encuadres diferenciados: cubierta aérea, muros frontales, piscina cercana, cimientos bajos y jardín lateral. Órbita por ángulos, pequeño alejamiento y elevación en tránsito, llegada suave y más próxima al detalle.
 - **Navegación:** botones y selección de parte desplazan de forma controlada y cancelable; mantienen el destino durante el viaje para no pasar por cámaras intermedias. Activación móvil corregida al llegar debajo de la escena fija.

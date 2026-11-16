@@ -1,8 +1,13 @@
 # Architectural stage review
 
-Local review branch: `feat/stage-architectural-review`, based on main `1eeadca` (PR #60).
-Prepared for Raúl's approval before publishing or merging. A GitHub issue and PR will be created at publication;
-this local review is intentionally not shared yet.
+Review branch: `feat/stage-architectural-review`, updated onto main `1aa79f0` (PR #64).
+Raúl authorized publication on 2026-11-16. Tracking issue: #65. Published for the team to review and integrate;
+the branch is not merged automatically. Earlier review entries describe the local preparation history.
+
+Publication checks: `check.sh` passes 181 tests after integration. David's ambient sound hooks are retained;
+when no combined score is supplied, sound and sky both use the original score. The partner-note backend,
+submission draft and teammates' visit logs are unchanged. The partner-note sharing button remains pending
+as noted by David. His iPhone result applies to the original scene; this revised camera still needs that check.
 
 ## What the family experiences
 
