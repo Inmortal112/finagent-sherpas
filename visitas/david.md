@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 13:05 — feat/voice-partner-note — Claude Code
+- **Hecho:** nota de voz para la pareja: `partner_note.py` + `GET /partner-note` y `/partner-note/{id}.mp3`. Quien
+  recorre el plan manda a su pareja ~15 s con su preocupación y el paso elegido (nota antes → después). Revisadas
+  además las 92 narraciones finales con `to_speech` y Whisper: suenan bien, nada que cambiar.
+- **Estado:** `bash check.sh` pasa. Probada con el servidor y edge: Whisper oye el texto palabra por palabra.
+- **Decisiones:** frases fijas sin modelo; solo cifras del plan; sin pronombres; solo parejas. Ficha `voz-nota-pareja.md`.
+- **Bloqueos:** falta el botón en la página: espero a que Raúl suba lo suyo para no pisarle `stage_page.html`.
+- **Para Samuel:** dos rutas nuevas en `server.py` (y su línea en el docstring); nada más cambia.
+- **Para Raúl:** cuando subas, un botón «Send to {to}» tras elegir paso: `GET /partner-note?session_id=&person=` y,
+  en iPhone, `navigator.share({files: [mp3]})`. Detalles en `VOICE.md`. Lo puedo hacer yo si prefieres.
+- **Siguiente:** el botón; después añadirlo a `SUBMISSION.md` (aún no, porque la página no lo enseña).
+
 ## 2026-11-16 12:44 — docs/submission-draft — Claude Code
 - **Hecho:** borrador de la entrega final en `SUBMISSION.md` (inglés, ~650 palabras): lista de las 4 cosas que pide
   BRIEF.md y, bajo la línea, el texto de «half a page to one page» para pegar en Discord.
