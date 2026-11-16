@@ -1,5 +1,17 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-16 11:40 — feat/stage-house-3d-default — Claude Code
+- **Hecho:** la casa 3D nueva (PR #59: casa moderna, cielo según la puntuación, reparación animada) sale **por defecto**
+  en el modo completo. `?house=2d` la apaga. Fichas `stage-casa-que-mejora.md` y `stage-casa-3d.md` actualizadas.
+- **Estado:** `./check.sh` pasa (167). Navegador sin interfaz: completo → 3D; `?house=2d` y «Simply» → 2D; sin errores.
+- **Decisiones:** se adelanta la decisión del 17 a las 14:00 para que todos veáis la casa nueva sin tocar la dirección.
+  Respaldo 2D intacto: «Simply», sin WebGL, «reducir movimiento» o móvil lento.
+- **Bloqueos:** falta el iPhone de verdad.
+- **Para David y Raúl:** para verla: `git pull`, regenerar `out/` (`PYTHONPATH=src:. .venv/bin/python -m finagent.run --all`;
+  sin voz nueva si los textos no cambian) y reiniciar `scripts/serve.sh`. **David:** pruébala en tu iPhone; si va
+  lenta o falla, decidlo y volvemos al 2D por defecto (una línea: `wanted = wanted || "3d"` en `tryHouse3d`).
+- **Siguiente:** prueba en iPhone antes del 17 a las 14:00.
+
 ## 2026-11-16 11:30 — feat/stage-house-heals — Claude Code
 - **Hecho:** la casa mejora cuando la familia hace los pasos. Cada paso tiene «I've done this»: repara su parte, la
   puntuación sube con animación (+N) y, en 3D, las grietas se cierran con chispas y el cielo pasa de gris con lluvia a

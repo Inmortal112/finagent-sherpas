@@ -107,7 +107,7 @@ main { transition: padding-right .35s; }
   color: #fff; font-size: .78rem; font-weight: 500; vertical-align: middle; opacity: 0; transform: translateY(4px); transition: .4s; }
 .score-chip .delta.show { opacity: 1; transform: none; }
 #house { flex: 1; min-height: 0; width: 100%; --lush: 1; transition: --lush .7s; }
-#house3d { flex: 1; min-height: 0; width: 100%; position: relative; }   /* the home in 3D, only with ?house=3d */
+#house3d { flex: 1; min-height: 0; width: 100%; position: relative; }   /* the home in 3D: the default in full mode (?house=2d turns it off) */
 #house3d canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .toast { position: absolute; left: 50%; bottom: 6.4rem; transform: translate(-50%, 8px); background: var(--ink); color: #fff;
   border-radius: 999px; padding: .45rem 1rem; font-size: .84rem; opacity: 0; transition: .35s; white-space: nowrap; pointer-events: none; max-width: 92%; overflow: hidden; text-overflow: ellipsis; }
@@ -826,7 +826,7 @@ function update() {
   frame3d();
 }
 
-/* ---- the home in 3D: only when asked for (?house=3d), never in the simple mode. The drawn home is the fallback. ---- */
+/* ---- the home in 3D: the default in full mode, never in the simple mode. The drawn home is the fallback. ---- */
 let house3d = null;
 function drawnHome() {
   if (house3d) { house3d.dispose(); house3d = null; }
@@ -835,11 +835,13 @@ function drawnHome() {
   document.body.classList.remove("h3d");
 }
 async function tryHouse3d() {
-  // ?house=3d turns it on and ?house=2d off; it is remembered while the tab is open, so it survives a change of family.
+  // On by default; ?house=2d turns it off (and ?house=3d back on). Remembered while the tab is open, so it survives a
+  // change of family. Without WebGL, with "reduce motion" or on a slow phone the drawn home shows instead.
   const asked = new URLSearchParams(location.search).get("house");
   try { if (asked) sessionStorage.setItem("uor-house", asked); } catch (e) { /* private window */ }
   let wanted = asked;
   try { wanted = wanted || sessionStorage.getItem("uor-house"); } catch (e) { /* private window */ }
+  wanted = wanted || "3d";
   if (wanted !== "3d" || MODE === "simple" || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   try {
     const { mount } = await import(SITE + "web/house3d.js");   // served by the backend; opened as a file this fails

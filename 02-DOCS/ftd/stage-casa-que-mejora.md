@@ -33,8 +33,9 @@ tarjetas flotan sobre la escena.
 - **Lo hecho se guarda en el navegador** (`localStorage`, por familia), con «Start again» para la demo. No toca el
   backend ni el contrato.
 - **Cielo según la puntuación**: 25 o menos, gris con lluvia; ~55, día claro; 85 o más, atardecer dorado.
-- **Sigue detrás de `?house=3d`** (decisión del equipo el 17 a las 14:00). Lo de marcar pasos y la puntuación en
-  directo funciona también en 2D.
+- **3D por defecto en el modo completo** (Samuel, 16 nov, para que el equipo vea la casa nueva sin tocar la dirección;
+  se adelanta la decisión prevista para el 17 a las 14:00). `?house=2d` lo apaga. La casa dibujada sigue siendo el
+  respaldo: modo «Simply», sin WebGL, «reducir movimiento» o móvil lento. Marcar pasos funciona igual en 2D.
 
 ## Alcance
 
