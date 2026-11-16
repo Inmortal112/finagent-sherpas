@@ -679,6 +679,7 @@ function build() {
   opts.innerHTML = "";
   const segment = (label, items, current, pick) => {
     const box = el("div", "seg", `<span class="mono">${label}</span>`);
+    box.dataset.seg = label;
     items.forEach(([value, text]) => {
       const b = el("button", value === current ? "on" : ""); b.textContent = text;
       b.addEventListener("click", () => { [...box.querySelectorAll("button")].forEach((x) => x.classList.toggle("on", x === b)); pick(value); });
@@ -1331,11 +1332,14 @@ $("family").addEventListener("change", (event) => switchTo(event.target.value, M
 // page redrawn with what the backend sends (no narration voice).
 async function switchTo(family, mode) {
   if (!family) return;
+  // The same family in the other mode comes back to the chapter they were reading, not to the top.
+  const reading = family === api.family && active >= 0 && $("journey").getBoundingClientRect().top < innerHeight * 0.6 ? chapters[active].id : null;
+  try { if (reading && entered) sessionStorage.setItem("uor-entered", "1"); else sessionStorage.removeItem("uor-entered"); } catch (e) { /* private window */ }
   stopVoice();
-  const page = `${SITE}families/${family}/${mode}/index.html`;
-  if (!location.protocol.startsWith("http")) { location.href = page; return; }
+  const page = `${SITE}families/${family}/${mode}/index.html`, there = page + (reading ? "#ch-" + reading : "");
+  if (!location.protocol.startsWith("http")) { location.href = there; return; }
   try {
-    if ((await fetch(page, { method: "HEAD" })).ok) { location.href = page; return; }
+    if ((await fetch(page, { method: "HEAD" })).ok) { location.href = there; return; }
   } catch (e) { /* no such page: ask the backend */ }
   try {
     const response = await fetch(`${api.base}/presentation/${family}?mode=${mode}`);
@@ -1346,8 +1350,27 @@ async function switchTo(family, mode) {
     build();
     if (MODE === "simple") drawnHome();
     await afterBackend();
-    scrollTo({ top: 0 });
+    const again = reading && chapters.find((c) => c.id === reading);
+    if (again) scrollChapter(again, true); else scrollTo({ top: 0 });
   } catch (e) { $("family").value = api.family; }
+}
+// Arriving from the other mode ("Change", or "Guide me"): the address names the chapter to come back to.
+function resumeChapter() {
+  const wanted = location.hash.startsWith("#ch-") ? chapters.find((c) => "#ch-" + c.id === location.hash) : null;
+  if (!wanted) return;
+  try { entered = sessionStorage.getItem("uor-entered") === "1"; sessionStorage.removeItem("uor-entered"); } catch (e) { /* private window */ }
+  history.replaceState(null, "", location.pathname + location.search);
+  scrollChapter(wanted, true);
+}
+
+// What the family chose on the opening screen, or later with "Change" (web/welcome.js): who is here, how much
+// detail and how it is explained. The way of explaining is already saved for that person; the page shows it.
+function takeChoices(choice) {
+  person = choice.person || null;
+  store.set("uor-person-" + P.client_name, person);
+  document.querySelectorAll('#opts [data-seg="I am"] button').forEach((b) => b.classList.toggle("on", b.textContent === person));
+  if (styles && spanishHere()) styles.forPerson(person);
+  if (choice.mode !== MODE) switchTo(api.family, choice.mode);
 }
 
 // Once the backend answers: show what needs it, and bring back the visit this browser already started.
@@ -1708,9 +1731,19 @@ mic.addEventListener("contextmenu", (event) => event.preventDefault());         
 
 showSound();
 build();
-tryHouse3d();
+tryHouse3d().then(resumeChapter);
 api.ready = findBackend();
 afterBackend();
+// The opening screen: who is here, how much detail, how it is explained. "Change" in the top bar brings it back.
+let welcome = null;
+Promise.all([import(SITE + "web/welcome.js"), stylesReady]).then(([{ create }]) => {
+  welcome = create({
+    site: SITE, household: () => P.client_name, family: () => api.family, person: () => person, mode: () => MODE,
+    adults: () => (scene("intro").visual.data.people || []).filter((p) => p.role !== "child").map((p) => p.first_name),
+    styles: () => (styles && spanishHere() ? styles : null), families: $("family"), ready: api.ready, apply: takeChoices,
+  });
+  welcome.offer();
+}).catch(() => {});
 </script>
 </body>
 </html>

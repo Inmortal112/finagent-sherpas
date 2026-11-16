@@ -96,5 +96,5 @@ def test_the_switch_is_served_from_the_repo():
 
     module = TestClient(server.app).get("/web/styles.js")
     assert module.status_code == 200 and "javascript" in module.headers["content-type"]
-    assert 'fetch("styles.json")' in module.text
+    assert 'load(url = "styles.json")' in module.text and "fetch(url)" in module.text
     assert "http://" not in module.text and "https://" not in module.text
