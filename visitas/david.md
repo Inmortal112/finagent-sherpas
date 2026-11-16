@@ -3,6 +3,18 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-17 01:30 — feat/stage-polish-and-docs — Claude Code
+- **Hecho (docs):** `SUBMISSION.md`, `README.md`, `STAGE.md` y `VOICE.md` describen la casa de hoy: villa de Blender
+  que se gira, botones de cada paso sobre la casa, preview distinto de hecho. Siguen en `TODO` los enlaces de MVP y vídeo.
+- **Hecho (3D):** `house3d.js` sin la casa de cubos ni sus restos (1.033 → 751 líneas; ya no pinta 6 texturas al
+  arrancar). La villa baja de 3,96 MB a 1,38 MB: geometría en columnas de diferencias (`villa.cols.gz`, antes
+  `villa.bin.gz`) y plantas en WebP. Mismos datos, comprobado byte a byte.
+- **Hecho (voz):** `JNK` se dice «J N K»; con guiones se oía «J and K» (Whisper local, voz gratuita, 4 frases).
+- **Estado:** `bash check.sh` pasa. Navegador: Michael carga la villa sin errores. Sin probar: iPhone real, Matilda.
+- **Para Raúl:** `scripts/export_coast.py` escribe ya el formato nuevo (columnas + WebP), pero **no lo he podido
+  ejecutar** (no tengo Blender ni el `.blend`): si reexportas y falla, es ahí. Las nubes y la lluvia cambian de sitio
+  (misma semilla, menos tiradas previas). `lush` ya no hace nada en 3D: el jardín lo lleva `coast.update(states)`.
+
 ## 2026-11-17 00:30 — feat/stage-actions-in-home — Claude Code
 - **Hecho:** los botones de cada paso («Preview this change», «I've completed this step», «Preview all planned changes»)
   salen ahora **sobre la casa 3D**: un marcador numerado en la parte que repara cada paso y, al tocarlo o al llegar a

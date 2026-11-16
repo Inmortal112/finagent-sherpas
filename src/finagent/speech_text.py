@@ -51,7 +51,7 @@ SPOKEN_TERMS = {
     "SCHD": "S-C-H-D",
     "SCHP": "S-C-H-P",
     "TBIL": "T-bill",
-    "JNK": "J-N-K",          # still heard as "J and K" in every spelling tried
+    "JNK": "J N K",          # with hyphens or commas it is heard as "J and K"; with spaces it is not
     "LQD": "L-Q-D",
     "UPRO": "U-P-R-O",       # "U-PRO" is heard as "you pro"
 }
