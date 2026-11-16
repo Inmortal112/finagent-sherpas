@@ -2,7 +2,8 @@
 
 - Fecha: 2026-11-15 · Rama: `docs/stage-house-3d-plan` (solo este plan; el código irá en ramas `feat/stage-house-3d-*`)
 - Decide: David, tras la decisión del equipo de hacer la casa en 3D. Etapa de Raúl (escena).
-- Estado: **pasos 1–3 fusionados detrás de `?house=3d` (PRs #51–#53). Pasa a Raúl** (ver «Para Raúl» al final).
+- Estado: **por defecto en el modo completo desde el 16 nov** (Samuel; casa moderna del PR #59). `?house=2d` lo apaga.
+  Antes: pasos 1–3 detrás de `?house=3d` (PRs #51–#53).
 
 ## Intención
 
