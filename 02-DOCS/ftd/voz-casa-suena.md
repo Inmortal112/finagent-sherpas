@@ -27,7 +27,13 @@ marcar un paso hecho. Pedido por David: **fondo bajito, que la voz se oiga siemp
 ## Checklist
 - [x] Medición de niveles con la peor nota, media y alta (con nota alta no llueve).
 - [x] En la página: «I've done this» suena y la lluvia baja (Michael 26 → 31); el botón de sonido lo apaga; sin errores.
-- [ ] Escucharlo en el iPhone de David.
+- [x] Escucharlo en el iPhone de David (16 nov): va fluido, pero **la lluvia no sonaba a lluvia** (era ruido rosa
+  filtrado: un «shhh» continuo).
+- [x] Lluvia rehecha con gotas (rama `feat/voice-rain-drops`): bucle estéreo de 8 s con ~320 golpecitos/s por oído,
+  ~5 «plics» por segundo (tono corto que sube, como una gota en agua) y un lavado de ruido brillante; filtrada
+  500–7000 Hz. Mismo volumen medio que antes (−30 dB bajo la voz); se genera justo después del primer toque (~0,2 s
+  en el portátil) para no congelarlo.
+- [ ] Volver a escucharla en el iPhone.
 - [x] `bash check.sh` pasa.
 
 ## Para Raúl

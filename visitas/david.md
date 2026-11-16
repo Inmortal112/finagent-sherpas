@@ -3,6 +3,14 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 17:00 — feat/voice-rain-drops — Claude Code
+- **Hecho:** fusionado el PR #66 de Raúl (rediseño + cámaras; check.sh en verde). Probado en el iPhone de David:
+  fluido. La lluvia no sonaba a lluvia: rehecha con gotas (golpecitos, «plics», estéreo) en `web/house_sound.js`.
+- **Estado:** `bash check.sh` pasa. Medido: −30 dB bajo la voz como antes; sin errores en la página.
+- **Decisiones:** sigue sin archivos de audio; la lluvia se genera justo después del primer toque para no congelarlo.
+- **Para Raúl:** no toco `stage_page.html` ni `house3d.js`; solo cambia el sonido de la lluvia.
+- **Siguiente:** que David la vuelva a oír en el iPhone; botón «Send to …» de la nota para la pareja.
+
 ## 2026-11-16 13:30 — feat/voice-house-sound — Claude Code
 - **Hecho:** la casa suena: lluvia suave con nota baja, pájaros con nota alta y un «ding» con «I've done this»
   (`web/house_sound.js`, Web Audio, sin archivos). Mismo `healthOf(score)` que el cielo 3D. Ficha `voz-casa-suena.md`.
