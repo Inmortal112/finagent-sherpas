@@ -161,6 +161,19 @@ the visitor and which step they chose.
   Daniel* and *Hear it first*. On a phone the MP3 goes to the share sheet (`navigator.share({files: [...]})`), which
   sends it to WhatsApp or Messages as audio; on a computer it is saved as a file. A plan for one person shows nothing.
 
+## The welcome back, spoken
+
+When the family comes back a few days later, the home speaks first instead of waiting to be read:
+
+> *"Welcome back, Emily. A few days ago you chose a first step: Add more life insurance. Have you been able to
+> start it?"*
+
+- `GET /reminders?session_id=…&today=…&person=…` now also returns `spoken` and `audio_url`;
+  `GET /reminders/{session}.mp3` is that text in the tour's voice, made once per text and kept.
+- Fixed sentences (`src/finagent/welcome_back.py`): the greeting, the question about their own step, and at most
+  one date of their plan. No model, no new figures. The route only ever speaks that session's own reminders, so a
+  public link cannot be used to make the voice say anything else.
+
 ## The sound of the home
 
 Under the voice, the home has its own quiet sound (`src/finagent/web/house_sound.js`): soft rain while the score is
@@ -201,7 +214,8 @@ badly, a noisy room, or anyone who follows better with both.
 | `src/finagent/voice_eleven.py` | ElevenLabs: speech, Scribe, cache, cap, MP3 duration (standard library only) |
 | `src/finagent/speech_text.py` | `to_speech`: written text → spoken text |
 | `src/finagent/partner_note.py` | the voice note for the other half of a couple |
+| `src/finagent/welcome_back.py` | what the home says aloud when the family comes back |
 | `src/finagent/captions.py`, `web/captions.js` | when each word is said, and lighting it on the page |
-| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py`, `test_partner_note.py`, `test_captions.py` | all HTTP faked, nothing spent |
+| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py`, `test_partner_note.py`, `test_captions.py`, `test_welcome_back.py` | all HTTP faked, nothing spent |
 
 Design notes (Spanish, for the team): `02-DOCS/ftd/voz-*.md`.

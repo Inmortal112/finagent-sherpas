@@ -1246,9 +1246,10 @@ async function comeBack() {
   if (!api.session) { list.innerHTML = '<div class="due">Choose a first step above, or ask a question, and then come back.</div>'; return; }
   try {
     const day = new Date(Date.now() + 4 * 864e5).toISOString().slice(0, 10);
-    const response = await fetch(`${api.base}/reminders?session_id=${encodeURIComponent(api.session)}&today=${day}`);
+    const response = await fetch(`${api.base}/reminders?session_id=${encodeURIComponent(api.session)}&today=${day}${person ? `&person=${encodeURIComponent(person)}` : ""}`);
     const data = await response.json();
     list.innerHTML = "";
+    if (data.audio_url) play(api.base + data.audio_url);   // the home says it aloud: "Welcome back, ..."
     if (!data.due.length) list.append(el("div", "due", "Nothing is waiting for you yet."));
     data.due.forEach((due) => {
       const box = el("div", "due");

@@ -3,6 +3,15 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 19:30 — feat/voice-welcome-back — Claude Code
+- **Hecho:** la vuelta del día 3 habla: «Welcome back, Emily. A few days ago you chose…» (`welcome_back.py`,
+  `GET /reminders/{session}.mp3`). Frases fijas, sin modelo; audio guardado por texto. Ficha `voz-vuelta-dia-3.md`.
+- **Estado:** `bash check.sh` pasa. Probado en el navegador con los Johnson; falta oírlo en iPhone.
+- **Para Samuel:** `GET /reminders` añade `spoken` y `audio_url` y acepta `person` (opcional); lo demás no cambia.
+  No toco `sessions.py`.
+- **Para Raúl:** 2 líneas en `comeBack()` de `stage_page.html`: `person` en la petición y `play(...)` del audio.
+- **Siguiente:** Matilda en las 4 familias (con tiempos para los subtítulos).
+
 ## 2026-11-16 19:00 — feat/voice-partner-button — Claude Code
 - **Hecho:** botón de la nota de voz para la pareja (`web/partner_share.js`): tras elegir el primer paso, una pareja
   ve el texto, «Send to …» (menú de compartir del móvil, o guardar el MP3) y «Hear it first».

@@ -43,7 +43,7 @@ what they asked and what they decided.
 - **It is really theirs.** Each family gets its own home, its own words and the worries their own plan points to.
   None of the four plans records what the family is worried about, so we start by asking.
 - **It moves people to act.** Every repair is a step Sherpas already calculated, with the score before and after,
-  and the page comes back to ask whether they started.
+  and when they come back the home greets them by name, aloud, and asks whether they started.
 - **It is honest.** No number is invented. Every figure said or shown is read from the family's diagnostic, and a
   check (`guard`) blocks any narration or answer that quotes a number that is not there. If the plan does not cover
   a question, the family is told so and the question goes to the advisor.

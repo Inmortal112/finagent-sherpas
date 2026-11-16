@@ -10,6 +10,7 @@
     GET  /history?session_id=...        every question and answer of one session, oldest first
     POST /decision                      the step the family chose
     GET  /reminders?session_id=&today=  what to say when they come back: day-3 check-in and the plan's dates
+    GET  /reminders/{session}.mp3       the same, spoken: "Welcome back, Daniel. A few days ago you chose..."
     POST /follow-up                     their answer to the check-in: did they take the step?
     GET  /advisor-note?session_id=...   what worries them, what they asked, what they chose
     GET  /answers/{session}/{turn}.mp3  that answer spoken (made on the first request, then kept)
@@ -29,6 +30,7 @@ import time
 from collections import deque
 from datetime import date, datetime, timezone
 from pathlib import Path
+from urllib.parse import quote
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,7 +39,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from contracts.schemas import Presentation
-from finagent import ask, brain, house, partner_note, sessions, voice
+from finagent import ask, brain, house, partner_note, sessions, voice, welcome_back
 
 ROOT = Path(__file__).resolve().parents[2]
 CASES = ROOT / "cases"
@@ -246,14 +248,39 @@ def decision(body: Decision) -> dict:
 
 
 @app.get("/reminders")
-def reminders(session_id: str, today: str | None = None) -> dict:
-    """What to say when the family comes back. `today` (YYYY-MM-DD) lets the demo travel in time."""
+def reminders(session_id: str, today: str | None = None, person: str | None = None) -> dict:
+    """What to say when the family comes back. `today` (YYYY-MM-DD) lets the demo travel in time.
+    `person` is who is on the page, for the greeting, when the session does not know it yet."""
     session = _session(session_id)
+    name = session.get("person") or _person(_diagnostic(session["family"]), person)
     try:
         day = date.fromisoformat(today) if today else datetime.now(timezone.utc).date()
     except ValueError:
         raise HTTPException(422, "today must look like 2026-11-18") from None
-    return sessions.reminders(session, _diagnostic(session["family"]), day)
+    due = sessions.reminders(session, _diagnostic(session["family"]), day)
+    spoken = welcome_back.text({"person": name}, due)
+    if spoken:  # the same reminders, said aloud by the home: GET /reminders/{session}.mp3
+        due["spoken"] = spoken
+        due["audio_url"] = (f"/reminders/{session['session_id']}.mp3?today={day.isoformat()}"
+                            + (f"&person={quote(name)}" if name else ""))
+    return due
+
+
+@app.get("/reminders/{session_id}.mp3")
+async def reminders_audio(session_id: str, today: str | None = None, person: str | None = None) -> FileResponse:
+    """The welcome back, spoken. It only ever says this session's own reminders, and each text is made once."""
+    due = reminders(session_id, today, person)
+    if "spoken" not in due:
+        raise HTTPException(404, "Nothing is waiting for this family yet")
+    digest = hashlib.sha256(due["spoken"].encode("utf-8")).hexdigest()[:12]
+    path = sessions.directory() / "audio" / f"{session_id}-back-{digest}.mp3"
+    if not path.exists():
+        spoken = await voice.speak_async(due["spoken"])
+        if not spoken.audio:
+            raise HTTPException(503, "The voice is not available right now; show the text")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(spoken.audio)
+    return FileResponse(path, media_type="audio/mpeg")
 
 
 @app.post("/follow-up")
