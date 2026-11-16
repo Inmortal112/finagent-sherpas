@@ -23,5 +23,17 @@
     "move_2": "Your plan takes less money out of savings each year. This repairs your plumbing and lifts the score to 62 out of 100.",
     "move_3": "Your plan moves more of your long term money into stocks. This repairs your garden and lifts the score to 31 out of 100.",
     "timeline": "Your savings run out at age 85 on this plan. Your debts get paid off along the way, but later spending goes unpaid."
+  },
+  "numbers": {
+    "intro": "Michael, your financial health score is 26 out of 100, which is critical. That means your income is doing several jobs at once and the plan has real gaps.",
+    "pillar_savings_and_cash_flow": "Your savings and cash flow score is 0 out of 25, and your plumbing is broken. You save $43,000 a year, but cash flow is about $8,336 a year short. Your $30,000 cash covers 3.2 months and is $16,530 short of the $46,530 low reserve, so a surprise expense hits before saving for later can.",
+    "pillar_debt": "Your debt score is 8 out of 10, and your walls are solid. Total debt is $28,500, but the $3,500 card at 20% costs you most. That card is projected to clear by July 2028 only if $200 a month keeps going, and your $30,000 cash is $16,530 short of the $46,530 low reserve.",
+    "pillar_investments": "Your investments score is 11 out of 25, and your garden is cracked. You hold $145,000 invested, but 73.5% in stocks against a 98% target. That gap means your money is taking less growth than the plan assumes, while $24,000 a year keeps going in.",
+    "pillar_liquidity_and_emergency_fund": "Your emergency fund score is 4 out of 20, and your foundations are broken. Your $30,000 cash covers 3.2 months of $9,306 in monthly expenses, $16,530 short of the $46,530 low reserve. After the $113,300 home purchase and $3,500 vacation, that cash covers 0 months.",
+    "pillar_insurance_and_protection": "Your insurance and protection score is 4 out of 20, and your roof is broken. You have $180,000 of life insurance against a recommended $900,000 to $1,800,000, a $720,000 shortfall. With no extra cover for large claims, a claim beyond your $172,000 of liquid assets could reach your $218,500 net worth.",
+    "move_1": "This takes your score from 26 to 31 out of 100. You would add $1M of cover for large claims against you, a repair for your roof.",
+    "move_2": "This takes your score from 26 to 62 out of 100. You would take less out of your savings each year in retirement, down to $10,300 a year, which is 6.0%. That repairs your plumbing.",
+    "move_3": "This takes your score from 26 to 31 out of 100. You would move more of your invested savings toward growth, from 74% to 88%, about $19,900. That repairs your garden.",
+    "timeline": "Your savings and investments run out at age 85. You plan to retire at 58, and the plan has your debts paid off by 2057. That leaves the years after 85 without the savings the plan relies on."
   }
 }

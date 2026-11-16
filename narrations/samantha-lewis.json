@@ -23,5 +23,17 @@
     "move_2": "This step spreads out the money you hold in a single fund and repairs your garden, lifting your score to 83 out of 100.",
     "move_3": "This step moves your investments a little safer and repairs your garden, lifting your score to 83 out of 100.",
     "timeline": "Looking ahead, on this plan your savings run out at age 73, after you stop working."
+  },
+  "numbers": {
+    "intro": "Samantha, your financial health score is 82 out of 100, a strong result. Your $80,000 in cash covers 7.9 months of essential expenses, so everyday costs are covered while your plan works toward college and retirement.",
+    "pillar_savings_and_cash_flow": "Savings and cash flow score is 22 out of 30 points, and your plumbing is solid. You save $60,000 a year, but you are about $6,418 a year short, so college and retirement draw on the same cash, leaving only $750 above your reserve after $18,500 of near term goals.",
+    "pillar_debt": "Debt score is 20 out of 20 points, and your walls are solid. With no loan payments, your income is free for college and retirement, but only $750 sits above your reserve once your near term goals are set aside.",
+    "pillar_investments": "Investments score is 10 out of 15 points, and your garden is cracked. Your $335,000 is invested with 85.1% in stocks against an 80.0% target, while $98,837.55 is still needed for college, so that cost would come from the same cash you rely on.",
+    "pillar_liquidity_and_emergency_fund": "Emergency fund score is 15 out of 15 points, and your foundations are solid. Your $80,000 cash covers 7.9 months of essential expenses, but after $18,500 of near term goals it covers 6.1 months, with only $750 above the reserve.",
+    "pillar_insurance_and_protection": "Insurance and protection score is 14 out of 20 points, and your roof is solid. Your $2,000,000 life insurance and $2,000,000 extra liability cover are in place, but your home and car still show as uninsured in the data, so that cover is worth confirming.",
+    "move_1": "This step takes your score from 82 out of 100 to 84 out of 100. You would add homeowners insurance on your main home. It closes a gap in your roof, which is solid.",
+    "move_2": "This step takes your score from 82 out of 100 to 83 out of 100. You would spread out the money you hold in a single fund from 39% to 25%, about $58,300, repairing your garden, which is cracked.",
+    "move_3": "This step takes your score from 82 out of 100 to 83 out of 100. You would move the mix of your investments from 85% to 80% in stocks, about $17,100, repairing your garden, which is cracked.",
+    "timeline": "Your savings and investments run out at age 73, while you plan to retire at 65. By the end of the plan $1,448,673 of planned spending is unpaid, so the later years depend on savings that are not there."
   }
 }
