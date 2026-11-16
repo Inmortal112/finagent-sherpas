@@ -575,6 +575,12 @@ import(SITE + "web/house_sound.js").then(({ create }) => {   // served by the ba
   houseSound = create({ voice: player, enabled: soundOn });
   houseSound.setWeather(healthOf(achieved()));
 }).catch(() => {});
+// A voice note for the other half of a couple, offered once a first step is chosen (web/partner_share.js).
+const partnerShare = import(SITE + "web/partner_share.js").catch(() => null);
+async function offerPartnerNote() {
+  const share = await partnerShare;
+  if (share && api.session) share.offer({ base: api.base, session: api.session, person, people: scene("intro").visual.data.people || [], after: $("firstMove") });
+}
 // Captions: each word of the narration lights up as the voice says it (web/captions.js).
 import(SITE + "web/captions.js").then(({ create }) => create({ voice: player, scenes: P.scenes })).catch(() => {});
 document.querySelectorAll("[data-sound]").forEach((b) => b.addEventListener("click", () => {
@@ -1206,6 +1212,7 @@ async function afterBackend() {
       if (button) { button.classList.add("chosen"); $("chosenNote").textContent = `Chosen: ${history.decision.title}.`; }
       const step = scene(history.decision.scene_id);
       if (step) chosenStep = step; // The day-3 answer records starting, not completing, the chosen step.
+      if (step) offerPartnerNote();
     }
   } catch (e) { /* the page works without the earlier visit */ }
 }
@@ -1357,6 +1364,7 @@ async function chooseStep(button) {
     if (response.ok) {
       setSession((await response.json()).session_id);
       $("chosenNote").textContent = `Chosen: ${stepName(step)}. Your advisor will see it, and we check in with you in three days.`;
+      offerPartnerNote();
     }
   } catch (e) { /* the choice still shows on the page */ }
 }

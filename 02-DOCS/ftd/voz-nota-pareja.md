@@ -32,3 +32,12 @@ audio de WhatsApp: qué le preocupa y qué paso eligió, con la nota antes y des
   «ya lo empezó», familias de una persona, sin paso, sin remitente, rutas y caché del audio.
 - [x] Prueba real con el servidor y edge-tts: nota de los Johnson, transcrita con Whisper palabra por palabra (15,5 s).
 - [x] `bash check.sh` pasa.
+
+## Botón en la página (16 nov, rama `feat/voice-partner-button`)
+- `web/partner_share.js` (nuevo) + 3 enganches en `stage_page.html` (busca `offerPartnerNote`): al elegir el primer paso
+  (y al volver con la sesión guardada) una pareja ve el texto de la nota, «Send to …» y «Hear it first».
+- Si la página no sabe quién la usa (no pulsó «I am»), pregunta «Who is sending it?».
+- El MP3 se descarga al mostrar la caja, no al pulsar: el iPhone solo abre el menú de compartir si entre el toque y
+  la llamada no pasa nada lento. Sin menú de compartir (ordenador): guarda el archivo.
+- [x] Probado en el navegador (Johnson, Emily → Daniel): texto, botones y MP3 (93 KB) correctos.
+- [ ] Probar el menú de compartir en el iPhone de David.

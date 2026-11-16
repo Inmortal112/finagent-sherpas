@@ -3,6 +3,14 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 19:00 — feat/voice-partner-button — Claude Code
+- **Hecho:** botón de la nota de voz para la pareja (`web/partner_share.js`): tras elegir el primer paso, una pareja
+  ve el texto, «Send to …» (menú de compartir del móvil, o guardar el MP3) y «Hear it first».
+- **Estado:** `bash check.sh` pasa. Probado en el navegador con los Johnson; falta el menú de compartir en iPhone.
+- **Para Raúl:** 3 enganches en `stage_page.html` (busca `offerPartnerNote`): la función, y una llamada en
+  `chooseStep` y otra al recuperar la sesión. La caja usa tu clase `.first-move` y va justo debajo de `#firstMove`.
+- **Siguiente:** vuelta del día 3 con voz; Matilda en las 4 familias.
+
 ## 2026-11-16 18:30 — feat/voice-captions — Claude Code
 - **Hecho:** subtítulos que siguen a la voz: cada palabra de la narración se ilumina mientras se dice
   (`captions.py`, `web/captions.js`). La voz guarda `audio/<escena>.words.json` junto a cada MP3. Ficha `voz-subtitulos.md`.
