@@ -3,6 +3,17 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 23:50 — docs/explanation-style-plan — Claude Code
+- **Hecho:** solo un plan, sin código: `02-DOCS/ftd/estilo-de-explicacion.md`. Al abrir, cada persona elige quién es,
+  **cómo prefiere que se lo expliquen** y cuánto detalle (Simply / In full), y puede cambiarlo después.
+- **Propuesta:** el método es una segunda pista dentro de la misma página, como el español (siguen siendo 8 páginas,
+  cambia sin recargar, el contrato no se toca). Se guarda por persona. Inglés primero; el español, si sobra tiempo.
+- **Coste medido:** un método nuevo solo en «In full» = 46 escenas, ~8.800 caracteres. Texto, céntimos; edge, gratis.
+- **Estado:** `bash check.sh` pasa. Nada programado: toca las tres etapas y lo decidimos los tres.
+- **Para Samuel:** ¿el método como un párrafo más del aviso de `narrator` (`--style`)? ¿Valen los dos métodos propuestos?
+- **Para Raúl:** la pantalla de inicio y el botón «Change» son tu escena: ¿caben antes del 18 a las 12:00?
+- **Siguiente:** contestar las tres decisiones abiertas de la ficha; si es sí, fase 1 (texto) y fase 2 (voz).
+
 ## 2026-11-17 01:30 — feat/stage-polish-and-docs — Claude Code
 - **Hecho (docs):** `SUBMISSION.md`, `README.md`, `STAGE.md` y `VOICE.md` describen la casa de hoy: villa de Blender
   que se gira, botones de cada paso sobre la casa, preview distinto de hecho. Siguen en `TODO` los enlaces de MVP y vídeo.
