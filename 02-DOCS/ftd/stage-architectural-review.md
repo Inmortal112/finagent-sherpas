@@ -1,8 +1,10 @@
 # Architectural stage review
 
 Review branch: `feat/stage-architectural-review`, updated onto main `1aa79f0` (PR #64).
-Raúl authorized publication on 2026-11-16. Tracking issue: #65. Published for the team to review and integrate;
+Raúl authorized publication on 2026-11-16. Tracking issue: #65. Review PR: [#66](https://github.com/Inmortal112/finagent-sherpas/pull/66). Published for the team to review and integrate;
 the branch is not merged automatically. Earlier review entries describe the local preparation history.
+The branch is hosted in `rgradolico-bot/finagent-sherpas` because the connected account has no push permission
+on the team repository. PR #66 targets the team's `main` and permits maintainer edits.
 
 Publication checks: `check.sh` passes 181 tests after integration. David's ambient sound hooks are retained;
 when no combined score is supplied, sound and sky both use the original score. The partner-note backend,

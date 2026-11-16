@@ -3,7 +3,8 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 
 ## 2026-11-16 — feat/stage-architectural-review · publicación autorizada — Codex
-- **Hecho:** Raúl autoriza subir la revisión para que el equipo decida cómo integrarla. Rama actualizada sobre `1aa79f0` (PR #64); tarea #65. Se publica como PR, sin merge automático.
+- **Hecho:** Raúl autoriza subir la revisión para que el equipo decida cómo integrarla. Rama actualizada sobre `1aa79f0` (PR #64); tarea #65 y PR [#66](https://github.com/Inmortal112/finagent-sherpas/pull/66), abierto sin merge automático.
+- **Publicación:** GitHub rechazó el push directo del usuario conectado `rgradolico-bot` (403). Rama publicada en su fork `rgradolico-bot/finagent-sherpas`; el PR apunta al `main` del equipo y permite ediciones de mantenedores.
 - **Integración:** conservados todos los enganches `houseSound` de David; sonido y cielo usan la nota original cuando Sherpas no aporta una nota combinada. Backend de nota de pareja y documentación del equipo intactos.
 - **Estado:** `check.sh` pasa 181 tests tras actualizar. Cambios de código limitados a escena, estilos y estado visual; capturas y ficha explican las revisiones.
 - **Para Samuel y David:** el scroll ya no marca acciones hechas. Preview y Completed son distintos; no se usa el máximo de notas individuales como nota conjunta. Se mantienen partes, estados, narraciones y clima. El botón para compartir la nota de pareja sigue pendiente tal como indicó David; podéis añadirlo sobre esta rama o tras integrarla.
