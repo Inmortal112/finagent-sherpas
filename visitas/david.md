@@ -3,6 +3,16 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 12:44 — docs/submission-draft — Claude Code
+- **Hecho:** borrador de la entrega final en `SUBMISSION.md` (inglés, ~650 palabras): lista de las 4 cosas que pide
+  BRIEF.md y, bajo la línea, el texto de «half a page to one page» para pegar en Discord.
+- **Estado:** `bash check.sh` pasa. Solo documentación. Faltan dos enlaces (MVP y vídeo), marcados `TODO`.
+- **Decisiones:** solo cuenta lo que ya está en `main` (3D por defecto en completo, «I've done this», día 3, nota del
+  asesor). Cifras: solo las del README (82, 73 años).
+- **Bloqueos:** ninguno.
+- **Para Samuel y Raúl:** revisadlo y corregid lo que no sea cierto el día de la demo; si se recorta algo, su frase fuera.
+- **Siguiente:** revisar cómo suenan las narraciones finales (`to_speech`).
+
 ## 2026-11-16 12:39 — docs/visitas-iphone-3d — Claude Code
 - **Hecho:** probada la casa 3D nueva (PR #60) en el iPhone de David: `out/` regenerado (voz edge, sin gastar
   créditos: la narración sale de `narrations/`), servidor local y túnel `scripts/share.sh` (cloudflared).
