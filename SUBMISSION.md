@@ -41,6 +41,7 @@ what they asked and what they decided.
   the voice says it, for anyone who hears badly or reads along. In a couple, each adult sees their own part, and
   the one who went through the plan can send the other a fifteen-second voice note with the step they chose. The
   children are not left out: the home explains itself to them by name, in their own words and with no figures.
+  And a family that speaks Spanish at home can listen to the whole tour in Spanish, with the same figures.
 - **It is really theirs.** Each family gets its own home, its own words and the worries their own plan points to.
   None of the four plans records what the family is worried about, so we start by asking.
 - **It moves people to act.** Every repair is a step Sherpas already calculated, with the score before and after,

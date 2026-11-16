@@ -180,6 +180,23 @@ When the family comes back a few days later, the home speaks first instead of wa
   one date of their plan. No model, no new figures. The route only ever speaks that session's own reminders, so a
   public link cannot be used to make the voice say anything else.
 
+## Listen in Spanish
+
+Many families in the US speak Spanish at home. The product stays in English, but the tour has a second audio track:
+*Listen in: English | Español*. With Español on, the voice speaks Spanish and each narration shows its Spanish text
+underneath, lit word by word like the English.
+
+- **Translated once, kept in the repo** (`narrations/es/<family>.json`): `python -m finagent.spanish` translates what
+  is missing or whose English changed, with the cheap text model through the Sherpas proxy (a few cents).
+- **Every figure is checked.** A translation is used only if it holds exactly the same numbers as its English scene
+  and only while that English has not changed (a fingerprint is stored with it). Otherwise that scene has no Spanish.
+- **The Spanish spoken copy** (`to_speech_es`) spells amounts and decimals in words ("un millón ciento sesenta y seis
+  mil dólares", "24 punto nueve por ciento"): figures are written in US format, which a Spanish voice can misread.
+- **Voice:** `es-US-PalomaNeural` (free). Checked by transcribing the audio back with Scribe: every figure right.
+  ElevenLabs is opt-in (`SPANISH_VOICE_ENGINE=eleven`): its fast model said "38" for "31" in Spanish in our test.
+- The pipeline writes `audio/es/<scene>.mp3`, its word timings and `es.json` next to each page; the page side is
+  `web/spanish.js`. No translations or no voice: no switch, and the English page is the same.
+
 ## The home explained to the children
 
 Nobody explains the plan to the children. The home does, by name, in about thirty seconds:
@@ -234,9 +251,10 @@ badly, a noisy room, or anyone who follows better with both.
 | `src/finagent/voice_eleven.py` | ElevenLabs: speech, Scribe, cache, cap, MP3 duration (standard library only) |
 | `src/finagent/speech_text.py` | `to_speech`: written text → spoken text |
 | `src/finagent/partner_note.py` | the voice note for the other half of a couple |
+| `src/finagent/spanish.py`, `web/spanish.js`, `narrations/es/` | the Spanish track: checked translations, spoken copy, audio |
 | `src/finagent/kids_note.py` | the home explained to the children |
 | `src/finagent/welcome_back.py` | what the home says aloud when the family comes back |
 | `src/finagent/captions.py`, `web/captions.js` | when each word is said, and lighting it on the page |
-| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py`, `test_partner_note.py`, `test_captions.py`, `test_welcome_back.py`, `test_kids_note.py` | all HTTP faked, nothing spent |
+| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py`, `test_partner_note.py`, `test_captions.py`, `test_welcome_back.py`, `test_kids_note.py`, `test_spanish.py` | all HTTP faked, nothing spent |
 
 Design notes (Spanish, for the team): `02-DOCS/ftd/voz-*.md`.

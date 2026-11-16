@@ -171,9 +171,11 @@ def add_audio(presentation: Presentation, slug: str, mode: str, out_dir: Path) -
     """
     try:
         texts = saved(slug, mode, {scene.id: scene.narration for scene in presentation.scenes})
-        engine = os.getenv("VOICE_ENGINE", "edge").strip().lower()
-        if not texts or engine == "mock":
+        if not texts or os.getenv("VOICE_ENGINE", "edge").strip().lower() == "mock":
             return 0
+        # Spanish is spoken by the free Edge voice unless SPANISH_VOICE_ENGINE=eleven: on 2026-11-16 the fast
+        # ElevenLabs model said "treinta y ocho" for "31" in Spanish, while the Edge voice read every figure right.
+        engine = (os.getenv("SPANISH_VOICE_ENGINE") or "edge").strip().lower()
         spoken = asyncio.run(_speak_all(texts, Path(out_dir), engine))
         (Path(out_dir) / "es.json").write_text(
             json.dumps({scene_id: texts[scene_id] for scene_id in spoken}, ensure_ascii=False), encoding="utf-8")

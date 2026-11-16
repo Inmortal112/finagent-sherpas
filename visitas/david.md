@@ -3,6 +3,16 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 23:00 — feat/voice-spanish — Claude Code
+- **Hecho:** «Listen in: English | Español»: segunda pista de audio en español con su texto y subtítulos
+  (`spanish.py`, `narrations/es/`, `web/spanish.js`). 92 narraciones traducidas con las mismas cifras (comprobado).
+- **Estado:** `bash check.sh` pasa. Voz gratuita `es-US-PalomaNeural`, cifras verificadas con Scribe. Falta iPhone.
+- **Decisiones:** Matilda en español leyó mal una cifra → ElevenLabs solo con `SPANISH_VOICE_ENGINE=eleven`.
+  Auditadas con Whisper las 92 escenas en inglés de Matilda: todas bien.
+- **Para Samuel:** si cambias una narración, ejecuta `python -m finagent.spanish` (céntimos) o un test te avisará.
+  1 línea nueva en `run.py`. **Para Raúl:** 3 enganches en `stage_page.html` (busca `spanish`).
+- **Siguiente:** prueba completa en iPhone; enlace fijo del MVP el miércoles.
+
 ## 2026-11-16 21:45 — feat/voice-kids — Claude Code
 - **Hecho:** la casa explicada a los niños, por su nombre y sin cifras (`kids_note.py`, `GET /kids-note`). Botón
   «For the children · Explain it to Oliver and Sophia» en Johnson, Weah y Samantha (tono adolescente). Fusionado el #73.
