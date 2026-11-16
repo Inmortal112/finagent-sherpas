@@ -9,6 +9,7 @@
     POST /worry                         what worries them, asked before the tour starts
     GET  /history?session_id=...        every question and answer of one session, oldest first
     POST /decision                      the step the family chose
+    GET  /calendar/{session}.ics?day=   the chosen step in their calendar: tomorrow, and the day-3 check-in
     GET  /reminders?session_id=&today=  what to say when they come back: day-3 check-in and the plan's dates
     GET  /reminders/{session}.mp3       the same, spoken: "Welcome back, Daniel. A few days ago you chose..."
     POST /follow-up                     their answer to the check-in: did they take the step?
@@ -28,18 +29,18 @@ import os
 import re
 import time
 from collections import deque
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import quote
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from contracts.schemas import Presentation
-from finagent import ask, brain, house, partner_note, sessions, voice, welcome_back
+from finagent import ask, brain, calendar_invite, house, partner_note, sessions, voice, welcome_back
 
 ROOT = Path(__file__).resolve().parents[2]
 CASES = ROOT / "cases"
@@ -245,6 +246,23 @@ def decision(body: Decision) -> dict:
     return {"session_id": session["session_id"], "decision": sessions.decide(session, scene.id, scene.title,
                                                                                  scene.visual.data.get("plain_title")),
             "house_part": scene.visual.data.get("house_part")}
+
+
+@app.get("/calendar/{session_id}.ics")
+def calendar(session_id: str, request: Request, day: str | None = None, mode: str | None = None) -> Response:
+    """The chosen first step in the family's calendar: `day` (the page's local tomorrow) and the day-3 check-in."""
+    session = _session(session_id)
+    try:
+        first_day = date.fromisoformat(day) if day else datetime.now(timezone.utc).date() + timedelta(days=1)
+    except ValueError:
+        raise HTTPException(422, "day must look like 2026-11-18") from None
+    where = _mode(mode) if mode else session.get("mode") or "complete"   # the page says where the family is
+    page = f"{request.base_url}families/{session['family']}/{where}/"
+    text = calendar_invite.build(session, first_day, page)
+    if text is None:
+        raise HTTPException(404, "Choose a first step first")
+    return Response(text, media_type="text/calendar; charset=utf-8",
+                    headers={"Content-Disposition": 'inline; filename="first-step.ics"'})
 
 
 @app.get("/reminders")
