@@ -370,3 +370,49 @@ body.h3d #house3d { pointer-events:auto; }
 .orbit-tools button { width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:#fff;font:22px/1 system-ui;cursor:pointer; }
 .orbit-tools button:hover,.orbit-tools button:focus-visible {background:#ffffff30;}
 @media(max-width:860px){.orbit-tools button{width:44px;height:44px;}}
+
+/* The steps on the 3D home: a mark on the part each one repairs and a card with its two buttons. */
+.home-hint { display: none; }
+body.h3d .chapter .in-home { display: none; }
+body.h3d .chapter .home-hint { display: block; }
+.home-actions { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; border-radius: inherit; }
+#heroViewport .home-actions { display: none; }
+.home-actions > * { position: absolute; left: 0; top: 0; pointer-events: auto; }
+.home-actions [hidden] { display: none !important; }
+.home-spot { display: inline-flex; align-items: center; gap: .45rem; max-width: 190px; padding: .25rem .7rem .25rem .25rem; border: 1px solid #ffffffb0; border-radius: 999px; background: #152428d9; color: #fff; font: 500 .74rem/1.2 var(--sans, inherit); cursor: pointer; box-shadow: 0 6px 18px #0b142238; backdrop-filter: blur(6px); will-change: transform; }
+.home-spot b { display: grid; place-items: center; flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--grad); font-weight: 600; }
+.home-spot span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.home-spot.is-done b { background: #2f7d57; font-size: 0; }
+.home-spot.is-done b::before { content: "✓"; font-size: .8rem; }
+.home-spot:hover, .home-spot:focus-visible { background: #152428; border-color: #fff; }
+.home-line { height: 2px; background: #fff; box-shadow: 0 0 0 1px #17284033; transform-origin: 0 50%; pointer-events: none; border-radius: 2px; }
+.home-card { width: 248px; padding: .8rem .85rem .85rem; border-radius: 14px; background: #fffffff0; color: var(--ink); border: 1px solid #ffffffcc; box-shadow: 0 16px 40px #0b14224d; backdrop-filter: blur(10px); will-change: transform; }
+.home-card .eyebrow { margin: 0 1.4rem 0 0; font-size: .6rem; color: var(--ink-3); }
+.home-card h3 { margin: .3rem 0 0; font-size: .98rem; font-weight: 500; line-height: 1.25; letter-spacing: -.01em; }
+.home-score { display: flex; align-items: baseline; flex-wrap: wrap; gap: .1rem .45rem; margin-top: .45rem; }
+.home-score b { font-size: 1.5rem; font-weight: 500; line-height: 1; letter-spacing: -.02em; }
+.home-score .from { color: var(--ink-4); }
+.home-score .to { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.home-score span, .home-score small { color: var(--ink-3); font-size: .72rem; }
+.home-buttons { display: grid; gap: .4rem; margin-top: .65rem; }
+.home-buttons .pill { width: 100%; margin: 0; padding: .6rem .8rem; font-size: .78rem; gap: .5rem; justify-content: space-between; }
+.home-buttons .done-btn { justify-content: center; }
+.home-close { position: absolute; top: .35rem; right: .35rem; width: 28px; height: 28px; border: 0; border-radius: 50%; background: transparent; color: var(--ink-3); font: 20px/1 system-ui; cursor: pointer; }
+.home-close:hover, .home-close:focus-visible { background: #17284014; }
+.home-card.at-bottom { left: 50%; top: auto; bottom: 10px; transform: translateX(-50%); }
+.home-all { left: 50%; top: auto; bottom: 12px; transform: translateX(-50%); margin: 0; white-space: nowrap; box-shadow: 0 12px 30px #0b14224d; }
+/* A narrow picture (a phone): only the two buttons, in a slim row along the bottom, so the home stays in view. The
+   chapter's own step is already named above the picture; a step opened from its mark keeps its name. */
+.home-actions.docked .home-card { left: 6px; right: 6px; bottom: 6px; width: auto; transform: none; padding: 0; background: none; border: 0; box-shadow: none; backdrop-filter: none; }
+.home-actions.docked .home-card .eyebrow, .home-actions.docked .home-score, .home-actions.docked .home-card h3 { display: none; }
+.home-actions.docked .home-card.picked { padding: .4rem .45rem .45rem; background: #fffffff0; box-shadow: 0 10px 26px #0b14224d; }
+.home-actions.docked .home-card.picked h3 { display: block; margin: 0 1.7rem .35rem .2rem; font-size: .76rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.home-actions.docked .home-buttons { grid-template-columns: 1fr 1fr; gap: .35rem; margin: 0; }
+.home-actions.docked .home-buttons .pill { padding: .55rem .3rem; font-size: .68rem; gap: .25rem; justify-content: center; white-space: nowrap; box-shadow: 0 8px 20px #0b142240; }
+.home-actions.docked .home-buttons .done-btn:not(.is-done) { background: #fffffff2; }
+.home-actions.docked .home-spot span { display: none; }
+.home-actions.docked .home-spot { padding: .2rem; }
+.home-actions.docked .home-all { bottom: 6px; padding: .55rem .9rem; font-size: .7rem; }
+.home-actions.docked.has-card ~ .orbit-tools, .home-actions.docked:has(.home-all:not([hidden])) ~ .orbit-tools { display: none; }
+@media (prefers-reduced-motion: no-preference) { .home-card, .home-all { animation: home-card-in .28s ease-out; } }
+@keyframes home-card-in { from { opacity: 0; } }
