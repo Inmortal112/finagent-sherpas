@@ -180,6 +180,20 @@ When the family comes back a few days later, the home speaks first instead of wa
   one date of their plan. No model, no new figures. The route only ever speaks that session's own reminders, so a
   public link cannot be used to make the voice say anything else.
 
+## The home explained to the children
+
+Nobody explains the plan to the children. The home does, by name, in about thirty seconds:
+
+> *"Oliver and Sophia, this is your family's home. Each part of it is a piece of the family's money plan. The
+> foundations and the walls are strong. The roof keeps everyone safe if something goes wrong, like an accident or
+> someone getting sick. Right now it needs real work. ..."*
+
+- `GET /kids-note?family=…` → `{available, to, text, audio_url}`; `GET /kids-note/{family}.mp3` speaks it. The text
+  is fixed per family (from the parts' states), so each family's audio is made once.
+- Fixed sentences (`src/finagent/kids_note.py`): two tones (young children; teenagers, all 13 or older), the two
+  parts that need it most, no figures, and never "mom" or "dad" (the data does not say who is who).
+- On the page: *For the children · Explain it to Oliver and Sophia*, in both modes, only in families with children.
+
 ## The sound of the home
 
 Under the voice, the home has its own quiet sound (`src/finagent/web/house_sound.js`): soft rain while the score is
@@ -220,8 +234,9 @@ badly, a noisy room, or anyone who follows better with both.
 | `src/finagent/voice_eleven.py` | ElevenLabs: speech, Scribe, cache, cap, MP3 duration (standard library only) |
 | `src/finagent/speech_text.py` | `to_speech`: written text → spoken text |
 | `src/finagent/partner_note.py` | the voice note for the other half of a couple |
+| `src/finagent/kids_note.py` | the home explained to the children |
 | `src/finagent/welcome_back.py` | what the home says aloud when the family comes back |
 | `src/finagent/captions.py`, `web/captions.js` | when each word is said, and lighting it on the page |
-| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py`, `test_partner_note.py`, `test_captions.py`, `test_welcome_back.py` | all HTTP faked, nothing spent |
+| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py`, `test_partner_note.py`, `test_captions.py`, `test_welcome_back.py`, `test_kids_note.py` | all HTTP faked, nothing spent |
 
 Design notes (Spanish, for the team): `02-DOCS/ftd/voz-*.md`.

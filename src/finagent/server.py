@@ -9,6 +9,7 @@
     POST /worry                         what worries them, asked before the tour starts
     GET  /history?session_id=...        every question and answer of one session, oldest first
     POST /decision                      the step the family chose
+    GET  /kids-note?family=             the home explained to the children (+ /kids-note/{family}.mp3)
     GET  /calendar/{session}.ics?day=   the chosen step in their calendar: tomorrow, and the day-3 check-in
     GET  /reminders?session_id=&today=  what to say when they come back: day-3 check-in and the plan's dates
     GET  /reminders/{session}.mp3       the same, spoken: "Welcome back, Daniel. A few days ago you chose..."
@@ -40,7 +41,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from contracts.schemas import Presentation
-from finagent import ask, brain, calendar_invite, house, partner_note, sessions, voice, welcome_back
+from finagent import ask, brain, calendar_invite, house, kids_note, partner_note, sessions, voice, welcome_back
 
 ROOT = Path(__file__).resolve().parents[2]
 CASES = ROOT / "cases"
@@ -246,6 +247,32 @@ def decision(body: Decision) -> dict:
     return {"session_id": session["session_id"], "decision": sessions.decide(session, scene.id, scene.title,
                                                                                  scene.visual.data.get("plain_title")),
             "house_part": scene.visual.data.get("house_part")}
+
+
+@app.get("/kids-note")
+def kids_note_text(family: str) -> dict:
+    """The family's home explained to the children (no figures), or available False when the plan has none."""
+    note = kids_note.build(brain.build(_diagnostic(family)))
+    if note["available"]:
+        note["audio_url"] = f"/kids-note/{family}.mp3"
+    return {"family": family, **note}
+
+
+@app.get("/kids-note/{family}.mp3")
+async def kids_note_audio(family: str) -> FileResponse:
+    """The children's note spoken. The text is fixed per family, so each family's audio is made once."""
+    note = kids_note.build(brain.build(_diagnostic(family)))
+    if not note["available"]:
+        raise HTTPException(404, note["reason"])
+    digest = hashlib.sha256(note["text"].encode("utf-8")).hexdigest()[:12]
+    path = sessions.directory() / "audio" / f"kids-{family}-{digest}.mp3"
+    if not path.exists():
+        spoken = await voice.speak_async(note["text"])
+        if not spoken.audio:
+            raise HTTPException(503, "The voice is not available right now; show the text")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(spoken.audio)
+    return FileResponse(path, media_type="audio/mpeg")
 
 
 @app.get("/calendar/{session_id}.ics")

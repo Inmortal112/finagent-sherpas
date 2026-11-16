@@ -39,7 +39,8 @@ what they asked and what they decided.
 - **Anyone can follow it.** Each person chooses a mode: *Simply* (a flat 2D home, short sentences, big buttons, the
   voice leads) for people who rarely use apps, or *In full* (a 3D home and every figure). Each word lights up as
   the voice says it, for anyone who hears badly or reads along. In a couple, each adult sees their own part, and
-  the one who went through the plan can send the other a fifteen-second voice note with the step they chose.
+  the one who went through the plan can send the other a fifteen-second voice note with the step they chose. The
+  children are not left out: the home explains itself to them by name, in their own words and with no figures.
 - **It is really theirs.** Each family gets its own home, its own words and the worries their own plan points to.
   None of the four plans records what the family is worried about, so we start by asking.
 - **It moves people to act.** Every repair is a step Sherpas already calculated, with the score before and after,
