@@ -17,13 +17,13 @@
 // Plans: 02-DOCS/ftd/stage-casa-3d.md and 02-DOCS/ftd/stage-casa-que-mejora.md.
 import * as THREE from "./vendor/three.module.min.js";
 
-const INK = 0x23232e, WALL = 0xeee8db, PIPE = 0x538878, JOINT = 0x336456, CRACK = 0x5d5142;
-const WOOD = 0x94765b, GLASS = 0x36535a, FRAME = 0x303e3a, ROOF = 0x4b514d, PAVING = 0xd6ceba, DRY = 0xb9a58a;
-const WATER = 0x7caeb0, POOL = 0x9aa4ae;   // the pool floor is bare concrete: empty, it reads as empty
-const LEAF = [new THREE.Color(0x48664c), new THREE.Color(0xa99e7a)];
-const LEAF_LIGHT = [new THREE.Color(0x78865a), new THREE.Color(0xc3b48c)];
-const GRASS = [new THREE.Color(0x8c9c72), new THREE.Color(0xc9b994)];
-const FADED = new THREE.Color(0xe3dfd2), FADE = 0.16;
+const INK = 0x23232e, WALL = 0xf7f1e5, PIPE = 0x3c8fa9, JOINT = 0x3663d9, CRACK = 0x5d5142;
+const WOOD = 0xa4673e, GLASS = 0x86b6d2, FRAME = 0x233846, ROOF = 0x263a45, PAVING = 0xd9cfb9, DRY = 0xb9a58a;
+const WATER = 0x24b7cc, POOL = 0x9aa4ae;
+const LEAF = [new THREE.Color(0x26764c), new THREE.Color(0xa99e7a)];
+const LEAF_LIGHT = [new THREE.Color(0x65a54b), new THREE.Color(0xc3b48c)];
+const GRASS = [new THREE.Color(0x72a851), new THREE.Color(0xc9b994)];
+const FADED = new THREE.Color(0xdbe5ed), FADE = 0.12;
 const REPAIRED_TINT = new THREE.Color(0x7ba782);
 const LAMP = new THREE.Color(0xffc977), WHITE = new THREE.Color(0xffffff);                                      // the windows at night
 const GLYPH = { solid: "✓", cracked: "!", broken: "✕", repaired: "✓" };
@@ -110,9 +110,10 @@ const LAWN_TOP = 0.46;
 const glassPanes = [];   // every window, to light them up on a good evening
 function pane(w, h, d, x, y, z) {
   const m = box(w, h, d, GLASS, x, y, z);
-  m.material.roughness = .14;
-  m.material.metalness = .38;
-  m.material.envMapIntensity = 1.6;
+  m.material.map = finishes?.glass || null;
+  m.material.roughness = .09;
+  m.material.metalness = .48;
+  m.material.envMapIntensity = 1.8;
   m.castShadow = false;
   glassPanes.push(m);
   return m;
@@ -191,7 +192,10 @@ function plumbing() {
   // The pool: water is cash flowing in. Lower when it is cracked, gone (a puddle by the pool) when broken.
   const cx = 2.9, cz = 2.9, rim = (w, d, x, z) => box(w, 0.12, d, PAVING, x, LAWN_TOP + 0.06, z);
   const water = box(2.55, 0.05, 1.35, WATER, cx, LAWN_TOP + 0.085, cz);
-  water.material.roughness = .18; water.material.metalness = .28; water.material.envMapIntensity = 1.4;
+  water.material.map = finishes?.water || null;
+  water.material.bumpMap = finishes?.water || null;
+  water.material.bumpScale = .035;
+  water.material.roughness = .1; water.material.metalness = .3; water.material.envMapIntensity = 1.6;
   water.castShadow = false;
   water.userData.water = true;
   const puddle = mesh(new THREE.CircleGeometry(0.5, 20), WATER, 4.55, LAWN_TOP + 0.005, 3.0);
@@ -218,7 +222,10 @@ function garden() {
   const leaf = (r, x, y, z, light) => { const m = ball(r, 0, x, y, z); m.userData.leaf = light ? LEAF_LIGHT : LEAF; return m; };
   // A round tree (or a bush) that sways from its foot and shrinks as the garden dries.
   const tree = (x, z, size = 1) => {
-    const g = group("canopy", rod(0.05 * size, WOOD, [0, 0, 0], [0, 0.8 * size, 0]), leaf(0.42 * size, 0, 1.0 * size, 0), leaf(0.26 * size, 0.18 * size, 0.78 * size, 0.12 * size, true));
+    const g = group("canopy", rod(0.045 * size, WOOD, [0, 0, 0], [0, 1.05 * size, 0]),
+      rod(.025 * size, WOOD, [0, .5 * size, 0], [-.23 * size, .95 * size, .1 * size]),
+      leaf(.38 * size, 0, 1.15 * size, 0), leaf(.29 * size, -.23 * size, .92 * size, .1 * size),
+      leaf(.31 * size, .22 * size, .95 * size, .06 * size, true), leaf(.25 * size, .07 * size, .98 * size, -.22 * size));
     g.position.set(x, LAWN_TOP, z);
     g.userData.sway = rand() * 6;
     return g;
@@ -312,9 +319,31 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     g.fillStyle = "#ded0b1"; g.fillRect(0, 0, s, s);
     for (let i = 0; i < 160; i++) { g.fillStyle = `rgba(80,53,27,${between(.04, .2)})`; g.fillRect(rand() * s, 0, between(.3, 1.2), s); }
   });
+  const glass = drawn(256, (g, s) => {
+    const sky = g.createLinearGradient(0, 0, s * .2, s);
+    sky.addColorStop(0, "#f1faff"); sky.addColorStop(.38, "#9ec4da"); sky.addColorStop(.62, "#658a9d"); sky.addColorStop(1, "#2c4755");
+    g.fillStyle = sky; g.fillRect(0, 0, s, s);
+    g.strokeStyle = "rgba(255,255,255,.32)"; g.lineWidth = 13;
+    g.beginPath(); g.moveTo(s * .15, 0); g.lineTo(s * .8, s); g.stroke();
+    g.strokeStyle = "rgba(255,255,255,.13)"; g.lineWidth = 4;
+    g.beginPath(); g.moveTo(s * .32, 0); g.lineTo(s * .97, s); g.stroke();
+  });
+  const waterSurface = drawn(256, (g, s) => {
+    g.fillStyle = "#b7e8ef"; g.fillRect(0, 0, s, s);
+    for (let row = -2; row < 16; row++) {
+      g.beginPath(); g.lineWidth = 1.3; g.strokeStyle = "rgba(255,255,255,.65)";
+      for (let x = 0; x <= s; x += 3) {
+        const y = row * 21 + Math.sin(x * .045 + row * 1.7) * 7 + Math.sin(x * .08 - row) * 3;
+        if (x === 0) g.moveTo(x, y); else g.lineTo(x, y);
+      }
+      g.stroke();
+    }
+  });
+  waterSurface.wrapS = waterSurface.wrapT = THREE.RepeatWrapping;
+  waterSurface.repeat.set(2, 2);
   for (const texture of [stone, wood]) { texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(2, 2); }
-  finishes = { stone, wood };
-  const renderer = new THREE.WebGLRenderer({ antialias: true });   // throws without WebGL
+  finishes = { stone, wood, glass, water: waterSurface };
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   let ratio = Math.min(window.devicePixelRatio || 1, 1.75);       // sharper only costs battery on a full screen
   renderer.setPixelRatio(ratio);
   renderer.shadowMap.enabled = true;
@@ -328,11 +357,11 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   host.appendChild(canvas);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xf4f1e9);
+  renderer.setClearColor(0xeaf2ff, 0);
   // A compact studio reflection map adds readable highlights to the glass and water.
   const studio = drawn(256, (g, s) => {
     const fill = g.createLinearGradient(0, 0, 0, s);
-    fill.addColorStop(0, "#d2dcd9"); fill.addColorStop(.48, "#fff9e9"); fill.addColorStop(.52, "#bcbcad"); fill.addColorStop(1, "#646d60");
+    fill.addColorStop(0, "#4a83c7"); fill.addColorStop(.4, "#bcdcf0"); fill.addColorStop(.49, "#fff4d8"); fill.addColorStop(.55, "#a1b59b"); fill.addColorStop(1, "#3c6054");
     g.fillStyle = fill; g.fillRect(0, 0, s, s);
     g.fillStyle = "#fffdf3"; g.fillRect(s * .12, s * .25, s * .16, s * .2);
     g.fillStyle = "#e7e7da"; g.fillRect(s * .65, s * .2, s * .22, s * .25);
@@ -349,25 +378,25 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   const hemi = new THREE.HemisphereLight(0xffffff, 0xc9cbd8, 1.6);
   scene.add(hemi);
   const sun = new THREE.DirectionalLight(0xffffff, 1.6);   // the key light, from the camera's side so the front reads
-  sun.position.set(6, 11, 8);
+  sun.position.set(-5, 10, 8);
   sun.castShadow = true;
   sun.shadow.mapSize.set(innerWidth > 860 ? 2048 : 1024, innerWidth > 860 ? 2048 : 1024);
   Object.assign(sun.shadow.camera, { left: -10, right: 10, top: 10, bottom: -10, near: 1, far: 50 });
   sun.shadow.bias = -0.0006;
-  sun.shadow.normalBias = 0.02;
+  sun.shadow.normalBias = 0.012;
   sun.shadow.radius = 3;
   scene.add(sun);
   const rim = new THREE.DirectionalLight(0xffffff, 0.5);   // the evening light from behind, along the edges
-  rim.position.copy(SUN_DIR).multiplyScalar(30);
+  rim.position.set(7, 6, -8);
   scene.add(rim);
 
   // The land: a wide field around the plinth, hills and trees far off.
   const field = mesh(new THREE.CircleGeometry(220, 64), 0x78ab62);
   field.material.dispose();
-  field.material = new THREE.ShadowMaterial({ color: 0x28332c, opacity: .12 });
+  field.material = new THREE.ShadowMaterial({ color: 0x152c50, opacity: .23 });
   field.rotation.x = -Math.PI / 2; field.position.y = -0.02; field.castShadow = false;
   scene.add(field);
-  const contact = glowTexture("rgba(45,47,35,.28)", "rgba(45,47,35,.12)");
+  const contact = glowTexture("rgba(18,35,60,.4)", "rgba(18,35,60,.16)");
   const contactPlane = new THREE.Mesh(new THREE.PlaneGeometry(16, 12), new THREE.MeshBasicMaterial({ map: contact, transparent: true, depthWrite: false }));
   contactPlane.rotation.x = -Math.PI / 2; contactPlane.position.y = -.01;
   scene.add(contactPlane);
@@ -532,14 +561,14 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     sky.uniforms.sunColor.value.copy(mixed.sun);
     sky.uniforms.sunPower.value = .1;
     scene.fog.color.set(0xf4f1e9);
-    sun.color.set(0xffefd3); sun.intensity = 3;
-    rim.color.set(0xe2eee9); rim.intensity = 1.3;
-    hemi.color.set(0xf0f2e9); hemi.groundColor.set(0x9a9d89); hemi.intensity = 1.15;
-    renderer.toneMappingExposure = 1;
+    sun.color.set(0xffe5b5); sun.intensity = 4;
+    rim.color.set(0xc4e3ff); rim.intensity = 1.6;
+    hemi.color.set(0xc8e3ff); hemi.groundColor.set(0x63745a); hemi.intensity = .7;
+    renderer.toneMappingExposure = 1.08;
     for (const cloud of clouds) cloud.material.color.copy(mixed.shade).lerp(mixed.cloud, 0.45 + 0.55 * cloud.userData.shade);
     rainAmount = 0; // Diagnosis is carried by labelled states, rather than punishing a low score with a storm.
     // Lights on inside: a home that is looked after, at golden hour.
-    for (const pane of windows) pane.material.emissive.copy(LAMP).multiplyScalar(.035 + Math.max(0, h - .45) * .12);
+    for (const pane of windows) pane.material.emissive.copy(LAMP).multiplyScalar(.015 + Math.max(0, h - .45) * .04);
   }
 
   // Always drawing now (the clouds drift), but only while the tab is visible: the browser pauses it otherwise.
@@ -620,7 +649,10 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     }
     let i = 0;
     for (const name in parts) parts[name].pin.position.y = parts[name].pinY + Math.sin(clock * 1.8 + i++) * 0.07;
-    if (water) water.material.emissive.setRGB(0.04, 0.1, 0.16).multiplyScalar(1.2 + Math.sin(clock * 2.2));
+    if (water && water.visible) {
+      waterSurface.offset.set(clock * .007, Math.sin(clock * .18) * .025);
+      water.material.emissive.setRGB(.005, .035, .05);
+    }
     const flying = health > 0.45;
     for (const bird of birds) {
       bird.visible = flying;
@@ -731,10 +763,10 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
       part.whole.visible = Boolean(state);
       if (!state) { part.state = null; continue; }
       const faded = Boolean(focus) && focus !== name;
-      const healing = !first && state === "repaired" && (part.state === "cracked" || part.state === "broken");
+      const healing = !first && state === "repaired" && part.state !== "repaired";
       if (healing) {
         // Keep the old cracks on screen for the heal to close them.
-        part.crk.visible = true;
+        part.crk.visible = part.state === "cracked" || part.state === "broken";
         part.dmg.visible = part.state === "broken";
         part.halo.userData.w ??= part.halo.scale.x; part.halo.userData.h ??= part.halo.scale.y;
         part.heal = { start: null };
@@ -790,7 +822,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     removeEventListener("pointermove", follow);
     scene.traverse((node) => { if (node.geometry) node.geometry.dispose(); if (node.material) node.material.dispose(); });
     Object.values(pins).forEach((texture) => texture.dispose());
-    [glow, puff, sparkTexture, stone, wood, contact].forEach((texture) => texture.dispose());
+    [glow, puff, sparkTexture, stone, wood, glass, waterSurface, contact].forEach((texture) => texture.dispose());
     environment.dispose();
     renderer.dispose();
     canvas.remove();

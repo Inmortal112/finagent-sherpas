@@ -2,6 +2,13 @@
 
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 
+## 2026-11-16 — feat/stage-architectural-review · segunda revisión — Codex
+- **Hecho:** tras valorar Raúl que quedaba apagado: azul/violeta, sol lateral, sombras más profundas, cristal con reflejos, agua con ondas y vegetación más llena.
+- **Estado:** `VOICE_ENGINE=mock bash check.sh`: 171 tests; ocho páginas; sintaxis JS correcta; revisión en escritorio y móvil.
+- **Decisiones:** entrada con pregunta sugerida de cada caso y, si existe, edad de agotamiento ya suministrada por el plan. Navegación nombra conceptos financieros. Sin proyecciones nuevas ni narraciones modificadas.
+- **Para Samuel y David:** misma rama local; sin publicación hasta aprobación de Raúl. Backend, contrato y voz sin cambios; iPhone real pendiente.
+- **Siguiente:** valoración visual de la segunda versión y aprobación para compartir en GitHub.
+
 ## 2026-11-16 — feat/stage-architectural-review — Codex
 - **Hecho:** propuesta local sobre PR #60: casa protagonista, materiales y luz, identidad visual y separación entre explorar, simular y completar. Detalle en `02-DOCS/ftd/stage-architectural-review.md`.
 - **Estado:** `VOICE_ENGINE=mock bash check.sh`: 171 tests; ocho páginas de familias generadas; pruebas de escritorio y móvil. Sin llamadas nuevas de voz ni modelos reales.

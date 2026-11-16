@@ -7,8 +7,9 @@ this local review is intentionally not shared yet.
 ## What the family experiences
 
 The home is visible immediately, with larger framing and quieter camera motion. Warm plaster, timber details,
-glazing, paving, contact shadows and studio reflections give the team's existing modern home more depth.
-The same cream, forest-green and muted amber palette carries through the cards, labels and controls.
+glazing, paving, contact shadows and reflections give the team's existing modern home more depth.
+The revised blue and violet palette follows the project's Sherpas-inspired colors, with warm architecture,
+directional sunlight, darker roofs, sky reflections, animated water ripples and fuller foliage.
 Desktop keeps the explanation alongside the home; mobile keeps the home above the scrolling explanation.
 Each part still responds to the family's actual plan. The opening explicitly calls the home an illustration.
 
@@ -17,6 +18,31 @@ Each part still responds to the family's actual plan. The opening explicitly cal
 ![Previewing one change](../review-assets/architectural/desktop-preview.jpg)
 
 ![Mobile opening](../review-assets/architectural/mobile-home.jpg)
+
+## Second visual review: daylight and a reason to explore
+
+Raúl found the first cream/green version too muted. The second review restores contrast and color separation:
+warm key light from the front left, cool fill from behind, stronger ground shadows, blue reflected glazing,
+charcoal roofs, timber slats, local water textures with slow motion and additional foliage clusters.
+The background is a blue CSS gradient behind a transparent canvas; no new external media is loaded.
+
+The opening presents a suggested question from `intro.visual.data.worries`, followed, when available,
+by the existing `timeline.events` savings-run-out age. This makes the score's limitation visible early:
+Samantha scores 82 but her current plan runs out at 73. These are supplied facts, not a fresh projection or
+a claim that the family said the suggested question. The opening score is shown directly, without counting
+through intermediate values. Narrated source text remains unchanged.
+
+Navigation now names the financial concepts (Protection, Debt, Cash flow, Emergency fund, Investments),
+and each focused view explicitly labels the concept alongside the house part. Preview feedback also works
+when improving a part whose starting state is already solid; it never flashes nonexistent cracks.
+
+![Investments explained through the garden](../review-assets/architectural/desktop-garden-v2.jpg)
+
+[First visual review, for comparison](../review-assets/architectural/desktop-home-v1.jpg).
+
+Second review checks: `check.sh` still passes 171 tests; all eight pages generated; JavaScript syntax checks
+pass; desktop 1280×800 and mobile 390×844 checked. Samantha's step preview shows 84, explicitly labelled as
+an individual preview, with zero completed steps. Physical iPhone and live voice/model rehearsal remain pending.
 
 ## Explore, preview, complete
 

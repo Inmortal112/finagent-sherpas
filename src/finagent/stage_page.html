@@ -402,7 +402,7 @@ __ARCHITECTURAL_CSS__
       </div>
       <div class="band" id="heroBand"><i></i><span></span></div>
       <div class="opts" id="opts"></div>
-      <p class="lede">Your life. Your plans.<br>A home to help you see what matters.</p>
+      <p class="lede"><span class="hero-question-label">A question worth exploring</span><strong id="heroQuestion">What matters most to your family?</strong><span class="hero-plan-fact" id="heroPlanFact" hidden></span></p>
       <button class="pill primary" id="enter">Step inside your home <span aria-hidden="true">↓</span></button>
       <span class="mono hint">Explore · understand · take your first step</span>
     </div>
@@ -601,10 +601,14 @@ function build() {
 
   document.title = `${P.client_name} · Under One Roof`;
   $("heroName").textContent = P.client_name;
+  $("heroQuestion").textContent = data.worries?.[0] || "What matters most to your family?";
+  const runsOut = timeline?.events?.find((event) => event.kind === "savings_run_out" && Number.isFinite(event.age));
+  $("heroPlanFact").hidden = !runsOut;
+  $("heroPlanFact").textContent = runsOut ? `On today's plan, savings run out at age ${runsOut.age}.` : "";
   $("heroBand").dataset.colour = data.colour || "";
   $("heroBand").querySelector("span").textContent = `Sherpas calls that ${data.band}`;
   const score = Number(fact("score").value);
-  countTo($("heroScore"), score);
+  $("heroScore").textContent = score;
   requestAnimationFrame(() => { $("ringValue").style.strokeDashoffset = 326.7 * (1 - score / 100); });
 
   document.body.classList.toggle("simple", MODE === "simple");
@@ -758,7 +762,8 @@ function build() {
   });
   $("legend").innerHTML = "";
   PARTS.filter((p) => baseStates[p]).forEach((p) => {
-    const b = el("button", "", `<i></i>${p[0].toUpperCase() + p.slice(1)} <em>${PART_OF[p]}</em>`);
+    const b = el("button", "", `<i></i>${PART_OF[p]}`);
+    b.setAttribute("aria-label", `${PART_OF[p]}: the ${p}`);
     b.dataset.part = p;
     b.addEventListener("click", () => goToPart(p));
     $("legend").append(b);
@@ -991,7 +996,7 @@ function paint() {
   $("house").style.setProperty("--lush", lush);
   if (house3d) house3d.update({ states, focus, lush, health: healthOf(score == null ? base : score) });
   if (houseSound) houseSound.setWeather(healthOf(score == null ? base : score));
-  $("whenTag").textContent = tag;
+  $("whenTag").textContent = focus ? `${tag} · ${PART_OF[focus]}` : tag;
   $("whenTitle").textContent = title;
   showScore(score);
   $("chipDelta").textContent = delta;
