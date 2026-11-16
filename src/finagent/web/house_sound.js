@@ -5,6 +5,7 @@
 //   const sound = create({ voice, enabled })  voice: the page's <audio> for the narration; enabled: the sound switch
 //   sound.setWeather(health)   0 = a low score (rain) ... 1 = a high score (birds). Same scale as the 3D sky
 //   sound.repaired()           a step was done: a soft chime and a couple of birds
+//   sound.previewed()          the family previews a change: a quieter, quicker sparkle (not the "done" chime)
 //   sound.setEnabled(on)       the page's sound button (voice and background go on and off together)
 //
 // Browsers only let a page make sound after a tap, so nothing plays until the first one. It goes quiet while the
@@ -13,15 +14,16 @@
 // Levels, as the gain of each sound (1 = full scale; the narration plays at full scale). Measured in the browser on
 // 2026-11-16 against a real narration: the loudest rain is about 30 dB below the voice (its loudest drops 21 to
 // 25 dB under the voice's peaks), and about 39 dB below while the voice speaks; the chime peaks about 20 dB under
-// the voice's peaks.
+// the voice's peaks, the preview sparkle about 23 dB under them; those two are not lowered while the voice speaks.
 const RAIN_MAX = 0.022;     // rain at the lowest score
 const BIRD_LEVEL = 0.012;   // one chirp
-const CHIME_LEVEL = 0.035;  // the "done" chime
+const CHIME_LEVEL = 0.035;  // the "done" chime (never ducked: it answers a tap, so it must always be heard)
+const SPARKLE_LEVEL = 0.03; // the "preview" sparkle, softer than the chime (never ducked either)
 const DUCKED = 0.35;        // background level while the voice speaks
 const FADE_S = 1.2;         // how long the background takes to come back after the voice
 const RAIN_UNTIL = 0.6;     // no rain from this health up (about a score of 61)
 const BIRDS_FROM = 0.55;    // birds from this health up
-const NOOP = { setWeather() {}, repaired() {}, setEnabled() {} };
+const NOOP = { setWeather() {}, repaired() {}, previewed() {}, setEnabled() {} };
 
 export function create({ voice = null, enabled = true } = {}) {
   const Context = window.AudioContext || window.webkitAudioContext;
@@ -91,9 +93,13 @@ export function create({ voice = null, enabled = true } = {}) {
     },
     repaired() {
       if (!ctx || !on) return;
-      chime(ctx, bed, CHIME_LEVEL);
+      chime(ctx, master, CHIME_LEVEL);
       setTimeout(() => chirp(ctx, bed, BIRD_LEVEL), 700);
       setTimeout(() => chirp(ctx, bed, BIRD_LEVEL * 0.8), 1500);
+    },
+    previewed() {
+      if (!ctx || !on) return;
+      sparkle(ctx, master, SPARKLE_LEVEL);
     },
     setEnabled(value) {
       on = Boolean(value);
@@ -183,8 +189,23 @@ function chirp(ctx, out, level) {
   }
 }
 
+// The "preview" sparkle: four quick, high notes going up (E, G, B, E), short and airy. It says "look", while the
+// chime says "done": faster, higher, quieter and shorter, so the two are never confused.
+export function sparkle(ctx, out, level) {
+  [659.25, 783.99, 987.77, 1318.51].forEach((frequency, i) => {
+    const t = ctx.currentTime + 0.02 + i * 0.055;
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = "sine"; osc.frequency.value = frequency;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(level * (1 - 0.15 * i), t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+    osc.connect(gain).connect(out);
+    osc.start(t); osc.stop(t + 0.55);
+  });
+}
+
 // The "done" chime: three soft bell notes going up (C, E, G), each fading out slowly.
-function chime(ctx, out, level) {
+export function chime(ctx, out, level) {
   [523.25, 659.25, 783.99].forEach((frequency, i) => {
     const t = ctx.currentTime + 0.02 + i * 0.12;
     const osc = ctx.createOscillator(), gain = ctx.createGain();

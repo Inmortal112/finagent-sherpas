@@ -3,6 +3,14 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 17:30 — feat/voice-preview-sound — Claude Code
+- **Hecho:** «Preview this change» suena (brillo suave de 4 notas, distinto del «ding» de «completed»). El «ding» y
+  el brillo ya no bajan mientras habla la voz (antes quedaba tapado).
+- **Estado:** `bash check.sh` pasa. Probado en el navegador: preview suena, «Back to my plan» no, completed da el «ding».
+- **Para Raúl:** 1 línea en `stage_page.html`, en el clic de `[data-preview]`: `houseSound.previewed()` al entrar en
+  la vista previa (no al salir). Si chocas, consérvala.
+- **Siguiente:** oírlo en el iPhone; botón «Send to …» de la nota para la pareja.
+
 ## 2026-11-16 17:00 — feat/voice-rain-drops — Claude Code
 - **Hecho:** fusionado el PR #66 de Raúl (rediseño + cámaras; check.sh en verde). Probado en el iPhone de David:
   fluido. La lluvia no sonaba a lluvia: rehecha con gotas (golpecitos, «plics», estéreo) en `web/house_sound.js`.

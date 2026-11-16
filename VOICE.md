@@ -164,13 +164,15 @@ the visitor and which step they chose.
 
 Under the voice, the home has its own quiet sound (`src/finagent/web/house_sound.js`): soft rain while the score is
 low, fading out as it climbs (made of drops, not hiss: hundreds of tiny ticks a second, a clearer "plink" now and
-then, different drops in each ear), a bird now and then once the plan is healthy, and a short chime when the family marks
-a step as done. It follows the same scale as the 3D sky, so the picture and the sound change together.
+then, different drops in each ear), a bird now and then once the plan is healthy, a short chime when the family marks
+a step as done, and a quicker, softer sparkle when they only preview a change (so "look" and "done" never sound
+the same). It follows the same scale as the 3D sky, so the picture and the sound change together.
 
 - **Always far below the voice.** Measured in the browser against a real narration (2026-11-16): the loudest rain
   is about 30 dB below the voice, the chime peaks about 20 dB under the voice's peaks.
-- **Ducking:** while the narration or an answer plays, the background drops about 9 dB more, and comes back slowly
-  when the voice stops.
+- **Ducking:** while the narration or an answer plays, the rain and the birds drop about 9 dB more, and come back
+  slowly when the voice stops. The chime and the sparkle answer a tap, so they are never lowered (sparkle about 23 dB
+  under the voice's peaks).
 - The page's sound button turns voice and background off together. Nothing plays before the first tap (browsers
   require it) or while the tab is hidden. Works in both modes and with the 2D or 3D home.
 - Made with the Web Audio API: no sound files, nothing to download or license. Levels are constants at the top of

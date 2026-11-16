@@ -743,6 +743,7 @@ function build() {
   root.querySelectorAll("[data-done]").forEach((b) => b.addEventListener("click", () => markDone(b.dataset.done, !doneSteps.has(b.dataset.done))));
   root.querySelectorAll("[data-preview]").forEach((b) => b.addEventListener("click", () => {
     previewStep = previewStep === b.dataset.preview ? null : b.dataset.preview;
+    if (previewStep && houseSound && houseSound.previewed) houseSound.previewed();
     showDone(); paint();
   }));
   $("doneReset").addEventListener("click", () => { [...doneSteps].forEach((id) => markDone(id, false)); });
