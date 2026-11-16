@@ -624,6 +624,9 @@ const spanishReady = import(SITE + "web/spanish.js")
 // Another way of explaining the same scenes ("numbers first"): a second track of words and voice, and each adult
 // keeps their own choice (web/styles.js, src/finagent/styles.py). In English only: Spanish holds the story.
 let styles = null;
+// The way of explaining on the page now, for the answers to follow it (null: this page has one way only).
+const styleNow = () => (styles ? styles.current : null);
+const styleLabel = (name) => ((styles && styles.list.find((s) => s.name === name)) || { label: name }).label.toLowerCase();
 const stylesReady = import(SITE + "web/styles.js")
   .then(({ create }) => create({ scenes: () => P.scenes, household: () => P.client_name, onChange: () => { stopVoice(); narrate(active, 0); } }))
   .then((made) => (styles = made)).catch(() => null);
@@ -1408,7 +1411,7 @@ async function tellWorry(text) {
   out.innerHTML = '<span class="dots"><i></i><i></i><i></i></span>';
   try {
     const response = await fetch(api.base + "/worry", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ family: api.family, worry: text, session_id: api.session, person, mode: MODE }) });
+      body: JSON.stringify({ family: api.family, worry: text, session_id: api.session, person, mode: MODE, style: styleNow() }) });
     const turn = await response.json();
     if (!response.ok) throw new Error(typeof turn.detail === "string" ? turn.detail : "");
     setSession(turn.session_id);
@@ -1484,7 +1487,7 @@ async function showNote() {
       ? esc(note.decision.plain_title || note.decision.title)
         + (note.decision.plain_title && note.decision.plain_title !== note.decision.title ? ` <span class="small">(Sherpas: ${esc(note.decision.title)})</span>` : "")
       : "None yet.";
-    show(head + `<p>${note.person ? esc(note.person) + " · " : ""}${esc(note.mode || MODE)} mode</p>
+    show(head + `<p>${note.person ? esc(note.person) + " · " : ""}${esc(note.mode || MODE)} mode${note.style ? " · " + esc(styleLabel(note.style)) : ""}</p>
       <h4>What worries them</h4>${list(note.worries)}
       <h4>What they asked</h4>${list(note.questions)}
       <h4>Asked most about</h4><p>${note.asked_most_about.length ? esc(note.asked_most_about.map((p) => "the " + p).join(", ")) : "Nothing yet."}</p>
@@ -1599,6 +1602,7 @@ async function ask(question, recording) {
     if (recording) form.append("file", recording, recordingName(recording)); else form.append("question", question);
     form.append("mode", MODE);
     if (person) form.append("person", person);
+    if (styleNow()) form.append("style", styleNow());
     form.append("pace_ms", "45");
     const response = await fetch(api.base + "/ask/stream", { method: "POST", body: form });
     if (!response.ok) {

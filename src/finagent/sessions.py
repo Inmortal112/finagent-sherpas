@@ -50,21 +50,24 @@ def load(session_id: str) -> dict | None:
 
 
 def start(family: str, session_id: str | None = None, person: str | None = None,
-          mode: str | None = None) -> dict:
+          mode: str | None = None, style: str | None = None) -> dict:
     """The stored session, or a new one for `family` (with a new id when `session_id` is missing or not valid).
 
-    `person` (who is using it) and `mode` ("simple" / "complete") are remembered when given.
+    `person` (who is using it), `mode` ("simple" / "complete") and `style` (how they want it explained:
+    "story" / "numbers") are remembered when given.
     """
     session = load(session_id) if session_id else None
     if not session or session["family"] != family:
         session = {"session_id": session_id if is_valid(session_id) and not session else new_id(),
                    "family": family, "started": _now(), "turns": [], "decision": None}
-    for key, default in (("person", None), ("mode", None), ("worries", []), ("follow_up", None)):
+    for key, default in (("person", None), ("mode", None), ("style", None), ("worries", []), ("follow_up", None)):
         session.setdefault(key, default)
     if person:
         session["person"] = person
     if mode:
         session["mode"] = mode
+    if style:
+        session["style"] = style
     return session
 
 
@@ -162,6 +165,7 @@ def advisor_note(session: dict) -> dict:
         "family": session["family"],
         "person": session.get("person"),
         "mode": session.get("mode"),
+        "style": session.get("style"),
         "started": session["started"],
         "worries": [worry["text"] for worry in session.get("worries", [])],
         "questions": [turn["question"] for turn in turns if turn.get("kind") != "worry"],
