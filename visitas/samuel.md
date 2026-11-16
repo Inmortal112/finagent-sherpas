@@ -1,5 +1,14 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-17 — feat/deploy-dockerfile — Claude Code
+- **Hecho:** el `Dockerfile` genera las 8 páginas con voz edge (`VOICE_ENGINE=edge … run --all`), no una sola con
+  mock. Línea en `BACKEND.md`. Ficha `despliegue-dockerfile.md`.
+- **Estado:** `./check.sh` pasa (218). Simulado sin `.env` y con caché vacía: 8 páginas, 204 mp3 reales, 1 min 15 s.
+  `docker build` sin probar (no hay Docker aquí): lo comprobará Render.
+- **Decisiones:** edge y no Matilda en la imagen: gratis, sin claves en el build y sin tocar el tope de ElevenLabs.
+- **Para David:** si quieres Matilda en el enlace público, habría que subir su audio o generarlo en Render (gasta).
+- **Siguiente:** crear el Web Service en Render (runtime Docker) y poner el enlace en `SUBMISSION.md`.
+
 ## 2026-11-16 11:40 — feat/stage-house-3d-default — Claude Code
 - **Hecho:** la casa 3D nueva (PR #59: casa moderna, cielo según la puntuación, reparación animada) sale **por defecto**
   en el modo completo. `?house=2d` la apaga. Fichas `stage-casa-que-mejora.md` y `stage-casa-3d.md` actualizadas.

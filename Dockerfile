@@ -13,8 +13,10 @@ COPY src src
 COPY cases cases
 COPY narrations narrations
 
-# The page of the stage, built without audio: narration audio is made by the voice stage with its own keys.
-RUN VOICE_ENGINE=mock python -m finagent.run
+# Every family in both modes (out/families/<family>/<mode>/), narrated with the free edge voice: no key is
+# needed, only network during the build. If edge cannot be reached the voice stage falls back to silent mock
+# audio, so check the build log for the mp3 count.
+RUN VOICE_ENGINE=edge python -m finagent.run --all
 
 # Hosts such as Render, Fly or Railway set PORT. Keys come from the host's environment, never from the image.
 CMD ["sh", "-c", "uvicorn finagent.server:app --host 0.0.0.0 --port ${PORT}"]
