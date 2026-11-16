@@ -112,11 +112,17 @@ for x,y,h in [(-8.85,2.8,4.15),(-8.45,-4.05,3.32),(8.65,4.86,4.2),(1.15,6.32,3.7
 meta=[];binary=bytearray()
 for (p,state,m),buf in batches.items():
  meta.append([p,state,m,len(buf)//point.size]);binary.extend(buf)
-with gzip.open(os.path.join(out,'villa.bin.gz'),'wb',compresslevel=7) as f:f.write(binary)
+# Stored as columns of byte differences (byte 0 of every record, then byte 1, ...): the same data gzips to less
+# than half. coastal-home.js puts the records back together (records()).
+columns=bytearray()
+for c in range(point.size):
+ column=binary[c::point.size]
+ columns.extend(column[:1]);columns.extend((b-a)&255 for a,b in zip(column,column[1:]))
+with gzip.open(os.path.join(out,'villa.cols.gz'),'wb',compresslevel=9) as f:f.write(columns)
 # Bake real cutouts of the linked Blender plant meshes for the interactive garden.
 atlas=bpy.data.scenes.new('Foliage cutouts');atlas.world=bpy.data.worlds.new('Soft daylight');atlas.world.color=(.62,.68,.74)
 atlas.render.engine='CYCLES';atlas.cycles.samples=8;atlas.render.film_transparent=True;atlas.cycles.transparent_max_bounces=3
-atlas.render.resolution_x=384;atlas.render.resolution_y=384;atlas.render.resolution_percentage=100;atlas.render.image_settings.file_format='PNG'
+atlas.render.resolution_x=384;atlas.render.resolution_y=384;atlas.render.resolution_percentage=100;atlas.render.image_settings.file_format='WEBP';atlas.render.image_settings.color_mode='RGBA';atlas.render.image_settings.quality=85
 camera=bpy.data.cameras.new('Plant elevation');eye=bpy.data.objects.new('Plant elevation',camera);atlas.collection.objects.link(eye);atlas.camera=eye;camera.type='ORTHO'
 ld=bpy.data.lights.new('Key','SUN');ld.energy=3.5;light=bpy.data.objects.new('Key',ld);atlas.collection.objects.link(light);light.rotation_euler=(.55,-.64,-.3)
 for i,name in enumerate(types):
@@ -125,6 +131,6 @@ for i,name in enumerate(types):
  size=max(hi-lo, max(abs(v.co.x) for v in ob.data.vertices)*2)*1.04;camera.ortho_scale=size
  eye.location=(0,-24,(lo+hi)/2);eye.rotation_euler=(math.pi/2,0,0)
  treesizes.append([round(size,4),round((lo+hi)/2,4)])
- atlas.render.filepath=os.path.join(out,'plant-%s.png'%i);bpy.ops.render.render(scene=atlas.name,write_still=True);bpy.data.objects.remove(ob,do_unlink=True)
+ atlas.render.filepath=os.path.join(out,'plant-%s.webp'%i);bpy.ops.render.render(scene=atlas.name,write_still=True);bpy.data.objects.remove(ob,do_unlink=True)
 with open(os.path.join(out,'villa.json'),'w') as f:json.dump({'batches':meta,'plants':plants,'sizes':treesizes},f,separators=(',',':'))
 
