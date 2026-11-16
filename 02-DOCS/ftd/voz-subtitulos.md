@@ -29,7 +29,11 @@ gente que oye mal o está en un sitio con ruido). Queda muy bien en el vídeo.
 - [x] Tests sin red (8): alineación, cifras, estimación, edge y ElevenLabs falsos.
 - [x] En el navegador (Michael, edge): «Hello,» → «Michael.» → «want» → … al ritmo de la voz; se apaga al parar.
 - [ ] Verlo en el iPhone de David.
-- [ ] Probar la ruta `with-timestamps` real de ElevenLabs (al regenerar con Matilda).
+- [x] Ruta `with-timestamps` real de ElevenLabs probada (16 nov): las 4 familias regeneradas con Matilda, 92 escenas
+  con sus tiempos reales.
+- [x] **Cifras largas mal leídas por el modelo rápido** («$1,166,000», «$19,900», «$1,000,000»; detectado con
+  Whisper). Arreglo: `speech_text.spell_big_numbers` (solo ElevenLabs) las manda en letras. Vuelto a transcribir: bien.
+  Gasto total de la cuenta de David: ~21.500 caracteres (13.786 + 605 de prueba + 7.142 de las 32 escenas rehechas).
 - [x] `bash check.sh` pasa.
 
 ## Para Raúl

@@ -110,6 +110,12 @@ Rules are plain regular expressions (no LLM): they change how a number is *said*
 | `401(k)s`, `529 plan`, `IRA`, `NAV` | "four-oh-one-K plans", "five-twenty-nine plan", "I-R-A", "net asset value" |
 | `VTI`, `VOO`, `UPRO`, `SPDR` | "V-T-I", "V-double-O", "U-P-R-O", "Spider" |
 
+**Long figures in words, for ElevenLabs only.** Its fast model misread some long amounts written as digits: on
+2026-11-16, transcribing Matilda's audio back with Whisper, `$1,166,000` and `$19,900` came out as other amounts.
+`spell_big_numbers` now sends every number that has a thousands comma in words ("one million one hundred sixty-six
+thousand dollars"); checked again with Whisper, all figures are heard right. The value never changes, and the page
+still shows the digits (the captions light `$1,166,000` while the words are said).
+
 The acronym table (`SPOKEN_TERMS`) was checked by transcribing the audio back with Whisper: each entry is what a
 listener actually understood. Tested over all 312 texts of the four cases: no number changes, no markdown left.
 To hear the rules, `scripts/voice_listen_test.py` writes `out/listen/before.mp3` and `after.mp3` (free, edge-tts).

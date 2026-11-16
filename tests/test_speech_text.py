@@ -91,3 +91,42 @@ def test_no_markdown_left_in_the_real_cases():
 def test_every_spoken_term_is_used_by_a_rule():
     for term in SPOKEN_TERMS:
         assert to_speech(f"the {term} here") != f"the {term} here", term
+
+
+# --- big numbers in words (ElevenLabs) ----------------------------------------------------------------------------
+from finagent.speech_text import number_in_words, spell_big_numbers  # noqa: E402
+
+
+def test_numbers_in_words():
+    assert number_in_words(0) == "zero" and number_in_words(13) == "thirteen" and number_in_words(101) == "one hundred one"
+    assert number_in_words(19900) == "nineteen thousand nine hundred"
+    assert number_in_words(1166000) == "one million one hundred sixty-six thousand"
+    assert number_in_words(2371901) == "two million three hundred seventy-one thousand nine hundred one"
+
+
+def test_big_figures_are_spelled_and_small_ones_left_alone():
+    said = spell_big_numbers("Your cover is $200,000, which is $1,000,000 short. In 2027, at 24.9%, your score is 52.")
+    assert said == ("Your cover is two hundred thousand dollars, which is one million dollars short. "
+                    "In 2027, at 24.9%, your score is 52.")
+    assert spell_big_numbers("minus $8,336 and 1,200 units") == "minus eight thousand three hundred thirty-six dollars and one thousand two hundred units"
+    assert spell_big_numbers("$1,234.50") == "one thousand two hundred thirty-four dollars and fifty cents"
+
+
+def test_spelling_keeps_every_value():
+    """Words back to digits give the same numbers: nothing is rounded or lost."""
+    units = {w: i for i, w in enumerate("zero one two three four five six seven eight nine ten eleven twelve thirteen "
+                                        "fourteen fifteen sixteen seventeen eighteen nineteen".split())}
+    tens = {w: 10 * i for i, w in enumerate("_ _ twenty thirty forty fifty sixty seventy eighty ninety".split())}
+
+    def back(words: str) -> int:
+        total = group = 0
+        for word in words.replace("-", " ").split():
+            if word in units: group += units[word]
+            elif word in tens: group += tens[word]
+            elif word == "hundred": group *= 100
+            else:
+                total += group * {"thousand": 10**3, "million": 10**6, "billion": 10**9}[word]; group = 0
+        return total + group
+
+    for n in (1000, 1001, 16530, 19900, 110015, 999999, 1000000, 1166000, 2371901, 20000000, 1234567890):
+        assert back(number_in_words(n)) == n

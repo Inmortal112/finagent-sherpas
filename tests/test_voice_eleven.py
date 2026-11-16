@@ -55,7 +55,8 @@ def test_direct_route_writes_audio_and_measures_it(eleven, tmp_path):
     assert request.get_header("Xi-api-key") == "test-key"
     bodies = [json.loads(call.data) for call in calls]
     assert {body["model_id"] for body in bodies} == {"eleven_flash_v2_5"}
-    assert "$1,200 a year" in " ".join(body["text"] for body in bodies)  # the spoken copy, not narration
+    # The spoken copy, not narration; and for ElevenLabs the long figure goes in words.
+    assert "one thousand two hundred dollars a year" in " ".join(body["text"] for body in bodies)
     for scene in after.scenes:
         assert (tmp_path / "out" / scene.audio_path).read_bytes() == ONE_SECOND_MP3
         assert scene.duration_s == 1.0
