@@ -2,6 +2,13 @@
 
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 
+## 2026-11-16 — feat/stage-architectural-review · recorridos y encuadres — Codex
+- **Hecho:** cinco encuadres diferenciados: cubierta aérea, muros frontales, piscina cercana, cimientos bajos y jardín lateral. Órbita por ángulos, pequeño alejamiento y elevación en tránsito, llegada suave y más próxima al detalle.
+- **Navegación:** botones y selección de parte desplazan de forma controlada y cancelable; mantienen el destino durante el viaje para no pasar por cámaras intermedias. Activación móvil corregida al llegar debajo de la escena fija.
+- **Verificado:** 171 tests; cinco partes en móvil, cubierta/cimientos en 1280×800, vuelta atrás y cambio de tamaño. 3D activo, puntuación original 82 y sin desborde horizontal. Capturas en la ficha de revisión.
+- **Para Samuel y David:** sin cambios de narración, contrato, hechos, clima ni significado de los estados/acciones. Sigue el respaldo para equipos lentos y movimiento reducido.
+- **Siguiente:** revisión de Raúl y prueba de movimiento en iPhone. Sigue exclusivamente local hasta aprobar publicación.
+
 ## 2026-11-16 — feat/stage-architectural-review · diseño de toda la web — Codex
 - **Hecho:** extendida la revisión a portada, puntuación, capítulos numerados, navegación con progreso, proyecciones, propuestas, elección de paso y panel de preguntas. Azul noche, tarjetas claras y acentos iris; se mantienen Poppins y los colores del proyecto.
 - **Escena:** cordilleras en tres capas, bosque mixto agrupado, plantación y flores; luz direccional y cámara más baja. Corregido el dato de color de las flores que activó temporalmente el respaldo 2D.

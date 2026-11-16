@@ -46,6 +46,31 @@ an individual preview, with zero completed steps. Physical iPhone and live voice
 
 ## Explore, preview, complete
 
+### Eighth review: distinct camera destinations and continuous routes
+
+Each part now has a specific shot rather than five small variations on the overview: the roof from above,
+the walls from a lower front/right angle, plumbing close over the pool, foundations low from the front/left,
+and the garden from the left. Detail views deliberately crop unrelated areas while retaining the active part
+and its state marker. Overview framing and the original cloud descent remain unchanged.
+
+Camera transitions interpolate yaw and pitch along the shortest orbit, with a small pull-back and elevated
+arc before settling closer. Quintic easing gives a smooth departure and arrival; duration grows from 1.55 s
+with angular distance. Retargeting begins at the current pose. Existing slow-device fallbacks remain.
+
+Chapter buttons and house-part navigation now use an interruptible 0.85–1.4 s scroll. The requested chapter
+stays selected during the move, so passing intermediate sections does not repeatedly retarget the camera.
+Wheel, touch, pointer and keyboard input cancel the move; reduced motion uses an immediate change. Mobile
+activation follows the content below the sticky scene, fixing the previous-button selection after arrival.
+
+Verified in-browser: all five destinations in the narrow viewport, roof and foundations at 1280×800, backward
+navigation and responsive resize. The 3D canvas remains active, original score stays 82 and there is no
+horizontal overflow. `check.sh`: 171 tests pass. Physical iPhone motion/performance still needs review.
+No financial, narration, weather, completion or backend changes. Local review only.
+
+![Roof detail](../review-assets/architectural/camera-v8-roof-desktop.jpg)
+![Low foundations view](../review-assets/architectural/camera-v8-foundations-desktop.jpg)
+![Pool detail on mobile](../review-assets/architectural/camera-v8-plumbing-mobile.jpg)
+
 ### Seventh review: a consistent design across the whole website
 
 The new treatment extends beyond the house: midnight-blue opening, translucent score panel, a pale-green

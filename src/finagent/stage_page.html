@@ -822,11 +822,13 @@ function countTo(node, target, from = 0) {
 }
 
 /* ================= scroll drives the home ================= */
+let chapterMotion = 0, navigationChapter = null;
 function update() {
   const vh = innerHeight, narrow = innerWidth <= 860;
-  const probe = narrow ? Math.min(vh * .62, document.querySelector(".stage").getBoundingClientRect().bottom + 24) : vh * 0.5;
+  const probe = narrow ? Math.min(vh - 48, document.querySelector(".stage").getBoundingClientRect().bottom + 40) : vh * 0.5;
   let index = 0;
   chapters.forEach((c, i) => { if (c.node.getBoundingClientRect().top <= probe) index = i; });
+  if (navigationChapter) { const requested = chapters.indexOf(navigationChapter); if (requested >= 0) index = requested; }
   const journeyTop = $("journey").getBoundingClientRect().top;
   $("bar").classList.toggle("light", journeyTop < 60);
 
@@ -1083,10 +1085,29 @@ function changeChapter(direction) {
   scrollChapter(next);
 }
 function scrollChapter(next, immediate = false) {
+  cancelChapterMotion();
   const narrow = innerWidth <= 860;
   const top = next.node.getBoundingClientRect().top + scrollY - (narrow ? document.querySelector(".stage").getBoundingClientRect().height + 16 : 100);
-  scrollTo({ top, behavior: immediate || matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+  if (immediate || matchMedia("(prefers-reduced-motion: reduce)").matches) { scrollTo({ top, behavior: "instant" }); return; }
+  const from = scrollY, destination = Math.max(0, Math.min(top, document.documentElement.scrollHeight-innerHeight));
+  const duration = Math.min(1400, 850 + Math.abs(destination-from)*.08);
+  navigationChapter = next;
+  update();
+  let started = null;
+  const travel = (time) => {
+    if (started == null) started = time;
+    const t = Math.min(1,(time-started)/duration), eased=t*t*t*(10+t*(-15+6*t));
+    scrollTo({top:from+(destination-from)*eased,behavior:"instant"});
+    if(t<1) chapterMotion=requestAnimationFrame(travel);
+    else { chapterMotion=0;navigationChapter=null;update(); }
+  };
+  chapterMotion=requestAnimationFrame(travel);
 }
+function cancelChapterMotion() {
+  if(chapterMotion) cancelAnimationFrame(chapterMotion);
+  chapterMotion=0;navigationChapter=null;
+}
+for(const event of ["wheel","touchstart","pointerdown","keydown"]) addEventListener(event,cancelChapterMotion,{passive:true});
 $("chapterBack").addEventListener("click", () => changeChapter(-1));
 $("chapterNext").addEventListener("click", () => changeChapter(1));
 

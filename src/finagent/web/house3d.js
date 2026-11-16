@@ -44,16 +44,16 @@ const SUN_DIR = new THREE.Vector3(-0.32, 0.075, -1).normalize();   // low, behin
 // looks from ("from": right, up, front) and the room that must fit on the screen around that point.
 const VIEWS = {
   home: { at: [0, 1.65, 0.2], from: [0.62, 0.26, 0.76], halfWidth: 6.0, halfHeight: 3.9, depth: 1.0 },
-  roof: { at: [0, 1.5, .1], from: [.57, .56, .70], halfWidth: 6.3, halfHeight: 4.15, depth: 1 },
-  walls: { at: [0, 1.5, .2], from: [.48, .38, .79], halfWidth: 6.3, halfHeight: 4.1, depth: 1 },
-  plumbing: { at: [.2, 1.5, .3], from: [.64, .48, .65], halfWidth: 6.25, halfHeight: 4.1, depth: 1 },
-  foundations: { at: [0, 1.5, .2], from: [.57, .36, .74], halfWidth: 6.3, halfHeight: 4.1, depth: 1 },
-  garden: { at: [-.2, 1.5, .3], from: [.42, .48, .78], halfWidth: 6.3, halfHeight: 4.1, depth: 1 },
+  roof: { at: [-.5, 3.1, -.5], from: [-.48, .86, .58], halfWidth: 4.5, halfHeight: 3.0, depth: .7 },
+  walls: { at: [.2, 1.9, .8], from: [.85, .19, .7], halfWidth: 4.7, halfHeight: 3.0, depth: .8 },
+  plumbing: { at: [1.9, .8, 2.3], from: [.55, .85, .7], halfWidth: 3.6, halfHeight: 2.6, depth: .7 },
+  foundations: { at: [0, .4, .8], from: [-.65, .16, .85], halfWidth: 5.8, halfHeight: 2.9, depth: .8 },
+  garden: { at: [-2.2, 1.1, .3], from: [-.85, .48, .6], halfWidth: 4.6, halfHeight: 3.1, depth: .8 },
 };
 // High above the clouds, looking at the sun: where the visit starts (setIntro(0)).
 const INTRO = { position: new THREE.Vector3(12, 46, 52), at: new THREE.Vector3(-26, 30, -120) };
 const FOV = 32;
-const GLIDE_MS = 1250;
+const GLIDE_MS = 1550;
 const HEAL_MS = 1400;
 const SLOW_FRAME_MS = 45;    // a glide that averages worse than this (about 22 frames a second) is a jerky one
 const HOPELESS_FRAME_MS = 150;
@@ -726,11 +726,16 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
       const g = time - glide.last;
       if (g > 0 && g < 500) { glide.spent += g; glide.frames += 1; }   // a longer gap is a hidden tab, not a slow phone
       glide.last = time;
-      const t = Math.min(1, (time - glide.start) / GLIDE_MS);
-      const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;   // starts and stops gently
+      const t = Math.min(1, (time - glide.start) / glide.duration);
+      const eased = t*t*t*(10+t*(-15+6*t));
+      // Orbit around the subject instead of cutting a straight chord through the building.
+      // A slight pull-back and lift make the journey visible before settling into the detail.
+      const arc = Math.pow(Math.sin(Math.PI * eased), 2);
+      const yaw = glide.yaw + glide.turn * eased;
+      const pitch = glide.pitch + (glide.toPitch - glide.pitch) * eased + .07 * arc;
       now.at.lerpVectors(glide.from.at, glide.to.at, eased);
-      now.from.lerpVectors(glide.from.from, glide.to.from, eased).normalize();
-      now.distance = glide.from.distance + (glide.to.distance - glide.from.distance) * eased;
+      now.from.set(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch));
+      now.distance = glide.from.distance + (glide.to.distance - glide.from.distance) * eased + 1.3 * arc;
       if (t >= 1) { const done = glide; glide = null; if (judge(done)) return; }
     }
     place();
@@ -862,7 +867,11 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     if (name === view && placed) return;
     view = name;
     if (!placed || still) { glide = null; now = pose(name); placed = true; return; }
-    glide = { from: { at: now.at.clone(), from: now.from.clone(), distance: now.distance }, to: pose(name), start: null, last: 0, spent: 0, frames: 0 };
+    const to=pose(name),yaw=Math.atan2(now.from.x,now.from.z);
+    const turn=THREE.MathUtils.euclideanModulo(Math.atan2(to.from.x,to.from.z)-yaw+Math.PI,Math.PI*2)-Math.PI;
+    glide = { from: { at: now.at.clone(), from: now.from.clone(), distance: now.distance }, to,
+      yaw, turn, pitch:Math.asin(now.from.y),toPitch:Math.asin(to.from.y),
+      duration:GLIDE_MS+Math.abs(turn)*220,start: null, last: 0, spent: 0, frames: 0 };
   }
   function resize() {
     const w = host.clientWidth, h = host.clientHeight;
