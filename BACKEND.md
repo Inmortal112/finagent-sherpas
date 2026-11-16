@@ -23,6 +23,7 @@ A phone's microphone only works over https, so use the `share.sh` link for hold-
 
 To host it for longer, the `Dockerfile` runs the same server on any host that takes a container (Render, Fly,
 Railway): set `TEAM_KEY`, `LLM_PROXY_URL` and the voice keys in the host's settings, never in the image.
+The image builds every family in both modes with the free edge voice (`run --all`), so the build needs network.
 Sessions are files in `data/sessions/`, so a host without a disk forgets them on restart.
 
 ## Routes
