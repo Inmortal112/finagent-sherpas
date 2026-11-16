@@ -46,6 +46,27 @@ an individual preview, with zero completed steps. Physical iPhone and live voice
 
 ## Explore, preview, complete
 
+### Fifth review: the original descent through clouds
+
+At Raúl's explicit request, the original cloud-to-home camera path replaces the fourth review's added
+orbit/dolly arrival. `INTRO` uses the team's original camera position and look-at target; the original high
+cloud deck (26 puffs) is restored above the landscape. Opening scroll progress drives `setIntro(0..1)` over
+85% of the hero height, so the camera begins above the clouds, passes through them, and settles at the home.
+There is no extra arrival turn competing with that descent.
+
+The contained renderer and local handoff stills remain, keeping the scene out of the greeting, score and
+explanation. The button plays a smooth 2.2-second descent from the current scroll position; wheel, touch,
+pointer or keyboard input cancels the automatic scroll. Manual scrolling retains direct, reversible control.
+Reduced-motion preferences use an immediate scroll and the existing SVG fallback.
+
+![Above the clouds](../review-assets/architectural/clouds-start-v5.jpg)
+
+![Arrival at the family plan](../review-assets/architectural/clouds-end-v5.jpg)
+
+Validation: `check.sh` passes 171 tests; generated page and scene JavaScript parse. Browser: opening starts at
+scroll 0 above the clouds; desktop and 390×844 mobile checks reach the journey at top 0 with the canvas inside `sceneViewport` and
+the original score 82 unchanged. Physical iPhone performance remains a release check.
+
 ### Fourth review: landscape, score card and a contained camera journey
 
 Raúl asked to restore the landscape and motion that made the team's original feel alive, and to fix the

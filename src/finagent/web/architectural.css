@@ -234,3 +234,4 @@ body:not(.h3d) .hero-score-card { margin-inline: auto; }
   .chapter.years .card { top: calc(max(52svh, 390px) + .7rem); }
   .chat { top: calc(max(52svh, 390px) - .5rem); }
 }
+body.h3d .hero .hint { display: block; font-size: .6rem; }

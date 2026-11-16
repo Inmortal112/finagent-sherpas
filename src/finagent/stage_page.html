@@ -403,7 +403,7 @@ __ARCHITECTURAL_CSS__
       <div class="opts" id="opts"></div>
       <p class="lede"><span class="hero-question-label">A question worth exploring</span><strong id="heroQuestion">What matters most to your family?</strong><span class="hero-plan-fact" id="heroPlanFact" hidden></span></p>
       <button class="pill primary" id="enter">Step inside your home <span aria-hidden="true">↓</span></button>
-      <span class="mono hint">Explore · understand · take your first step</span>
+      <span class="mono hint">Scroll to descend through the clouds</span>
     </div>
     <div class="hero-visual" id="heroViewport" aria-label="Your plan's home and landscape"></div>
     <span class="illustration-note">An illustration of your financial plan</span>
@@ -951,6 +951,10 @@ function showScore(score) {
 function frame3d() {
   if (!house3d) return;
   const host = $("house3d"), opening = $("heroViewport"), scene = $("sceneViewport");
+  // Original cloud-to-home route: the opening's scroll distance controls the whole descent.
+  const hero = $("hero").getBoundingClientRect();
+  const descent = Math.min(1, Math.max(0, -hero.top / Math.max(1, hero.height * .85)));
+  house3d.setIntro(descent);
   const keep = (box, image) => {
     let poster = box.querySelector(".home-poster");
     if (!poster) { poster = document.createElement("img"); poster.className = "home-poster"; poster.alt = ""; box.appendChild(poster); }
@@ -971,13 +975,11 @@ function frame3d() {
       if (!target.querySelector(".home-poster")) keep(target, snapshot);
     }
     target.appendChild(host);
-    house3d.setTravel(target === scene ? 1 : 0, true);
+    house3d.setTravel(0);
     if (!matchMedia("(prefers-reduced-motion: reduce)").matches) host.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 350, easing: "ease-out" });
   }
-  house3d.setIntro(1);
   house3d.setFrame(null);
-  const progress = Math.min(1, Math.max(0, -opening.getBoundingClientRect().top / Math.max(1, opening.clientHeight * .8)));
-  house3d.setTravel(target === scene ? 1 : progress);
+  house3d.setTravel(0);
 }
 
 function paint() {
@@ -1083,8 +1085,25 @@ $("chapterNext").addEventListener("click", () => changeChapter(1));
 $("enter").addEventListener("click", () => {
   entered = true;
   if (active >= 0) narrate(active, 900);
-  $("journey").scrollIntoView();
+  descendIntoHome();
 });
+
+let introMotion = 0;
+function cancelDescent() { if (introMotion) cancelAnimationFrame(introMotion); introMotion = 0; }
+function descendIntoHome() {
+  cancelDescent();
+  const from = scrollY, destination = $("journey").getBoundingClientRect().top + scrollY;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { scrollTo({ top: destination, behavior: "instant" }); return; }
+  let start = null;
+  const frame = (time) => {
+    if (start == null) start = time;
+    const p = Math.min(1, (time - start) / 2200), eased = p * p * (3 - 2 * p);
+    scrollTo({ top: from + (destination - from) * eased, behavior: "instant" });
+    introMotion = p < 1 ? requestAnimationFrame(frame) : 0;
+  };
+  introMotion = requestAnimationFrame(frame);
+}
+for (const event of ["wheel", "touchstart", "pointerdown", "keydown"]) addEventListener(event, cancelDescent, { passive: true });
 
 /* ================= the backend: questions, the chosen step, other families ================= */
 const api = { base: null, family: WHERE ? WHERE[2] : null, session: null, ready: null };

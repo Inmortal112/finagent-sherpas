@@ -2,6 +2,13 @@
 
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 
+## 2026-11-16 — feat/stage-architectural-review · bajada original desde nubes — Codex
+- **Hecho:** restaurada, a petición de Raúl, la trayectoria original `INTRO` y la capa alta de 26 nubes; el scroll baja hasta la casa. Sustituye el giro de llegada añadido en la cuarta revisión.
+- **Decisiones:** se mantiene la contención para no atravesar textos. El botón reproduce la bajada en 2,2 s; cualquier entrada manual la interrumpe. No cambia la puntuación ni marca pasos hechos.
+- **Estado:** `check.sh`: 171 tests; JS correcto; comprobado inicio sobre nubes y llegada al plan con nota original 82.
+- **Para Samuel y David:** se conserva vuestra transición original, mejor encajada en el diseño de revisión. Sin cambios de contrato, backend ni voz.
+- **Siguiente:** revisión visual de Raúl y prueba en iPhone real. Sigue sin publicar en GitHub.
+
 ## 2026-11-16 — feat/stage-architectural-review · paisaje, cámara y cabecera — Codex
 - **Hecho:** recuperados terreno, montañas, árboles y pájaros articulados; tarjeta de puntuación nueva, centrada y con contexto. El clima sigue vuestra puntuación original.
 - **Decisiones:** eliminado el lienzo fijo que atravesaba la página. Un único renderizador vive en cajas reales; conserva una imagen local al salir y anima giro/acercamiento al entrar. Continúa el movimiento de agua, nubes y jardín.

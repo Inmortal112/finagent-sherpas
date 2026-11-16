@@ -440,6 +440,8 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
 
   // A restrained cloud layer, using the team's locally drawn puffs.
   for (let i = 0; i < 8; i++) addCloud(-24 + i * 7, 5 + (i % 3) * 2, -18 - (i % 2) * 8, 8 + (i % 3) * 3, .15);
+  // The original high cloud deck. The camera starts above it and passes through it on descent.
+  for (let i = 0; i < 26; i++) addCloud(between(-60, 60), between(26, 38), between(-70, 40), between(14, 26), between(.25, .6));
 
   // Rain: short streaks falling around the home. It only shows on a low score.
   const DROPS = 180;
