@@ -1,0 +1,111 @@
+{
+  "scenes": {
+    "intro": {
+      "from": "6f73a852ff3bd0c6",
+      "es": "Daniel y Emily, bienvenidos. Están haciendo malabares con la universidad de Oliver y Sophia y con jubilarse a principios de los sesenta. Su puntuación es 52 de 100, que Sherpas llama vulnerable. Les quedan unos $15,032 al año, y cada una de esas necesidades tira de ese dinero. Sherpas no las clasifica: ese orden lo deciden ustedes juntos."
+    },
+    "pillar_savings_and_cash_flow": {
+      "from": "05a55a7f403decee",
+      "es": "Sus tuberías, sus ahorros y su flujo de efectivo, están agrietados. Les quedan unos $15,032 al año, un margen ajustado. Y hoy no entra nada en sus cuentas de jubilación."
+    },
+    "pillar_debt": {
+      "from": "3e7e63ae89318f69",
+      "es": "Sus paredes, sus deudas, son sólidas. La hipoteca es grande, pero ustedes cumplen con ella. La que hay que vigilar es la tarjeta de $18,000 al 24.9%, su deuda más cara con diferencia."
+    },
+    "pillar_investments": {
+      "from": "810f2eadefd2bcd4",
+      "es": "Su jardín, sus inversiones, está agrietado. Sus dos cuentas de jubilación tienen $250,000, pero no entra nada nuevo, y lo que construyan antes de jubilarse importa mucho."
+    },
+    "pillar_liquidity_and_emergency_fund": {
+      "from": "cb2e9df26303d7b6",
+      "es": "Sus cimientos, su fondo de emergencia, están marcados como sólidos, pero el colchón en sí es fino: $19,000, muy por debajo de los 8 a 9 meses de gastos esenciales recomendados. Si se detuviera un sueldo, esto es lo primero en lo que se apoyarían."
+    },
+    "pillar_insurance_and_protection": {
+      "from": "9c17af0ef3a0ddc5",
+      "es": "Su techo, su seguro, está roto. No tienen póliza paraguas, y sus dos pólizas de vida están muy por debajo de lo recomendado. Con Oliver y Sophia en casa, esta es la parte de su hogar más expuesta."
+    },
+    "person_daniel": {
+      "from": "bc1b7e9a3607b898",
+      "es": "Daniel, esta es tu parte del hogar. Tú aportas $160,000 al año, y la tarjeta de crédito y un préstamo estudiantil están a tu nombre. Tu cobertura de vida es de $250,000, que está $1,350,000 por debajo del mínimo recomendado."
+    },
+    "person_emily": {
+      "from": "653217a15bab4d9a",
+      "es": "Emily, esta es tu parte del hogar. Tú aportas $120,000 al año, y los ahorros, el fondo universitario y la cuenta de corretaje están a tu nombre. Tu cobertura de vida es de $200,000, que está $1,000,000 por debajo del mínimo recomendado."
+    },
+    "move_1": {
+      "from": "d6966a2a9980afad",
+      "es": "El primer paso: agregar más seguro de vida, unos $1,166,000 más de cobertura para la familia. Lleva su puntuación de 52 a 57."
+    },
+    "move_2": {
+      "from": "59d452fa6b6bde01",
+      "es": "El segundo paso: agregar $1M de seguro paraguas, cobertura extra por encima de su seguro de hogar y auto. Su puntuación pasa de 52 a 56."
+    },
+    "move_3": {
+      "from": "7355b82f300921ee",
+      "es": "El tercer paso: poner los $15,032 que les quedan cada año en ahorros para la jubilación en vez de dejarlos parados. Su puntuación pasa de 52 a 55."
+    },
+    "all_moves": {
+      "from": "4e943e80519bfb22",
+      "es": "Hagan los dos primeros juntos, la cobertura de vida y el seguro paraguas, y su techo se reconstruye. Su puntuación pasa de 52 a 60."
+    },
+    "timeline": {
+      "from": "a90d2a1014879acf",
+      "es": "Ahora, los años que vienen. Daniel planea jubilarse a los 62 y Emily a los 60. Con el plan de hoy, su dinero alcanza, con unos $260,272 restantes al final. Pero depende de sus ahorros para cerca de la mitad de lo que van a gastar, así que lo que construyan antes de jubilarse importa mucho."
+    }
+  },
+  "simple": {
+    "intro": {
+      "from": "fc2d83ce338920c7",
+      "es": "Hola Daniel y Emily. Están a punto de ver su puntuación de salud financiera: 52 de 100. Esa puntuación se llama vulnerable."
+    },
+    "pillar_savings_and_cash_flow": {
+      "from": "addae301d4e622c1",
+      "es": "Sus tuberías están agrietadas. Ahorros y flujo de efectivo sacan 16 de 30 puntos, y dejan poco margen para sorpresas."
+    },
+    "pillar_debt": {
+      "from": "60cf5f0fe20f900e",
+      "es": "Sus paredes son sólidas. La deuda saca 15 de 20 puntos, así que la carga es pesada pero manejable."
+    },
+    "pillar_investments": {
+      "from": "bfa16f7ead1084e8",
+      "es": "Su jardín está agrietado. Las inversiones sacan 8 de 15 puntos, y la mayor parte de su patrimonio está en su casa."
+    },
+    "pillar_liquidity_and_emergency_fund": {
+      "from": "546e928ba532ea37",
+      "es": "Sus cimientos son sólidos. El fondo de emergencia saca 13 de 15 puntos."
+    },
+    "pillar_insurance_and_protection": {
+      "from": "32b4283db82079a5",
+      "es": "Su techo está roto. Seguros y protección sacan 0 de 20 puntos, y dejan a su familia expuesta a un reclamo grande."
+    },
+    "person_daniel": {
+      "from": "fed084fb773c00d8",
+      "es": "Daniel, tu cobertura de vida está $1,350,000 por debajo de lo que tu familia necesitaría si ya no estuvieras."
+    },
+    "person_emily": {
+      "from": "0e1d2502912e3f87",
+      "es": "Emily, tu cobertura de vida está $1,000,000 por debajo de lo que tu familia necesitaría si ya no estuvieras."
+    },
+    "move_1": {
+      "from": "141f7c96858f5b65",
+      "es": "El plan agrega más cobertura de vida. Repara su techo y sube su puntuación a 57 de 100."
+    },
+    "move_2": {
+      "from": "9979acb0e7858421",
+      "es": "El plan agrega cobertura paraguas, protección extra para reclamos grandes en su contra. Repara su techo y sube su puntuación a 56 de 100."
+    },
+    "move_3": {
+      "from": "6aec87e447c69721",
+      "es": "El plan envía más dinero disponible a los ahorros. Repara sus tuberías y sube su puntuación a 55 de 100."
+    },
+    "all_moves": {
+      "from": "a900e957a6929cee",
+      "es": "Más cobertura de vida y cobertura paraguas juntas suben su puntuación a 60 de 100."
+    },
+    "timeline": {
+      "from": "8b73c8e54fc04eaa",
+      "es": "Ustedes dos planean jubilarse a principios de sus sesenta años, y sus ahorros duran hasta el final con $260,272 restantes."
+    }
+  },
+  "model": "deepseek-flash"
+}

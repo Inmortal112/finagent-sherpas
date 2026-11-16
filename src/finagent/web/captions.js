@@ -20,9 +20,12 @@ export function create({ voice, scenes = [], root = document } = {}) {
   const timings = new Map();   // words file address -> Promise of its words (or null)
   let spans = [], words = [], current = -1, frame = 0, playing = "";
 
+  // audio/<scene>.mp3 is the narration as written on the page; audio/es/<scene>.mp3 its Spanish track, whose text
+  // is the line web/spanish.js puts under the paragraph (p[data-es]).
   const sceneOf = (src) => {
-    const match = /\/audio\/([^/?#]+)\.mp3(?:[?#].*)?$/.exec(src || "");
-    return match ? scenes.find((scene) => scene.id === decodeURIComponent(match[1])) : null;
+    const match = /\/audio\/(es\/)?([^/?#]+)\.mp3(?:[?#].*)?$/.exec(src || "");
+    const scene = match ? scenes.find((item) => item.id === decodeURIComponent(match[2])) : null;
+    return scene ? { id: scene.id, narration: scene.narration, spanish: Boolean(match[1]) } : null;
   };
   const load = (src) => {
     const address = src.replace(/\.mp3(?:[?#].*)?$/, ".words.json");
@@ -36,9 +39,9 @@ export function create({ voice, scenes = [], root = document } = {}) {
   function wrap(scene, list) {
     const found = [];
     root.querySelectorAll("p").forEach((p) => {
-      if (p.textContent !== scene.narration) return;
+      if (scene.spanish ? p.dataset.es !== scene.id : (p.dataset.es || p.textContent !== scene.narration)) return;
       if (!p.dataset.captions) {
-        const text = scene.narration, pieces = document.createDocumentFragment();
+        const text = p.textContent, pieces = document.createDocumentFragment();
         let at = 0;
         list.forEach(([start, end]) => {
           if (start > at) pieces.append(text.slice(at, start));

@@ -1,0 +1,87 @@
+{
+  "scenes": {
+    "intro": {
+      "from": "f90b331eec224378",
+      "es": "Hola, Samantha. Tu puntuación es 82 de 100, y Sherpas la considera sólida. Y aun así, con el plan de hoy, tus ahorros se agotan a los 73 años. Vamos a recorrer tu casa, parte por parte, y ver de dónde viene esa brecha."
+    },
+    "pillar_savings_and_cash_flow": {
+      "from": "1b024b6193683446",
+      "es": "Tus tuberías, tus ahorros, están firmes. Ahorras 24% de tus ingresos, un buen hábito. Pero nada de eso va todavía a una cuenta de retiro ni a un fondo para la universidad, y cada año salen cerca de $6,418 más de los que entran."
+    },
+    "pillar_debt": {
+      "from": "d3fda45dddf9f93a",
+      "es": "Tus paredes, tus deudas, están firmes. No debes nada, y tu casa está totalmente pagada. Eso deja tus ingresos libres para la universidad y para el retiro."
+    },
+    "pillar_investments": {
+      "from": "6f77a09251d34cb7",
+      "es": "Tu jardín, tus inversiones, tiene grietas. Cerca del 65% de lo que tienes es tu casa, y una casa no es dinero que puedas gastar fácilmente. Tus ahorros invertidos también dependen un poco más de las acciones de lo que planeaste."
+    },
+    "pillar_liquidity_and_emergency_fund": {
+      "from": "5d8d00c4dea8ddf0",
+      "es": "Tus cimientos, tu fondo de emergencia, están firmes: $80,000, más que los 5 a 6 meses de gastos esenciales que sugerimos. Pero una vez pagadas las vacaciones y el pago de la universidad de Ethan, solo quedan $750 por encima de ese colchón. Hoy está bien, con poco margen."
+    },
+    "pillar_insurance_and_protection": {
+      "from": "34390b4f1502ac35",
+      "es": "Tu techo, tu seguro, está firme. Tus $2,000,000 de seguro de vida protegen a Ethan y Ava si tus ingresos llegaran a detenerse. Algo que revisar: tu casa y tu auto aparecen sin seguro en los datos, así que vale la pena confirmar esa cobertura."
+    },
+    "move_1": {
+      "from": "c8561129d3dadb6d",
+      "es": "El primer paso es el más simple: asegúrate de que tu casa tenga seguro. Cierra una brecha en tu cobertura y sube tu puntuación de 82 a 84."
+    },
+    "move_2": {
+      "from": "9ca51a556b8241c7",
+      "es": "El segundo paso: cerca del 39% de tus inversiones están en un solo fondo. Bajarlo al 25% reparte el riesgo. Tu puntuación va de 82 a 83."
+    },
+    "move_3": {
+      "from": "bdcb5b9521862577",
+      "es": "El tercer paso es pequeño: pasa tus inversiones de 85% en acciones a 80%, la mezcla que buscas. Tu puntuación va de 82 a 83."
+    },
+    "timeline": {
+      "from": "620a0cc4f0715820",
+      "es": "Ahora los años que vienen. Piensas retirarte a los 65. Con el plan de hoy, tus ahorros se agotan a los 73, y parte de lo que pensabas gastar quedaría sin pagar. Esa es la verdadera pregunta de tu plan: no cuánto ahorras, sino a dónde van esos ahorros."
+    }
+  },
+  "simple": {
+    "intro": {
+      "from": "b0430dd928a682a6",
+      "es": "Samantha, este es tu plan de dinero mostrado como tu casa. Tu puntuación es 82 de 100, que es fuerte."
+    },
+    "pillar_savings_and_cash_flow": {
+      "from": "3d6b92e756b13a73",
+      "es": "Tus tuberías son los ahorros y el flujo de efectivo, sólidas con 22 de 30 puntos. Ahorras bien, pero la universidad y el retiro tiran del mismo dinero."
+    },
+    "pillar_debt": {
+      "from": "9259d2ae4d43eba7",
+      "es": "Tus paredes son la deuda, y son sólidas con 20 de 20 puntos. Sin deuda, tu ingreso es libre, pero tu colchón de efectivo es delgado."
+    },
+    "pillar_investments": {
+      "from": "fa566412511f1b37",
+      "es": "Tu jardín son las inversiones, agrietado con 10 de 15 puntos. La mayor parte de tu dinero está en tu casa, que no es fácil de gastar en la universidad o en los años posteriores."
+    },
+    "pillar_liquidity_and_emergency_fund": {
+      "from": "659333531d079ce5",
+      "es": "Tus cimientos son tu fondo de emergencia, sólidos con 15 de 15 puntos. Tienes efectivo para cubrir sorpresas, aunque tus metas cercanas lo hacen más ajustado."
+    },
+    "pillar_insurance_and_protection": {
+      "from": "3980ebf9ea30e96f",
+      "es": "Tu techo es el seguro y la protección, sólido con 14 de 20 puntos. Tu cobertura de vida está en su lugar, pero tu cobertura de casa aún necesita confirmarse."
+    },
+    "move_1": {
+      "from": "cc7696b32775ba3a",
+      "es": "Este paso añade un seguro de casa para tu vivienda y repara tu techo, lo que sube tu puntuación a 84 de 100."
+    },
+    "move_2": {
+      "from": "046b5813f1d7ad04",
+      "es": "Este paso reparte el dinero que tienes en un solo fondo y repara tu jardín, lo que sube tu puntuación a 83 de 100."
+    },
+    "move_3": {
+      "from": "a42ba5e16e422500",
+      "es": "Este paso mueve tus inversiones un poco más seguras y repara tu jardín, lo que sube tu puntuación a 83 de 100."
+    },
+    "timeline": {
+      "from": "f94fd5d4edfd3b01",
+      "es": "Mirando hacia adelante, con este plan tus ahorros se agotan a los 73 años, después de que dejes de trabajar."
+    }
+  },
+  "model": "deepseek-flash"
+}

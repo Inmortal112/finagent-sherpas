@@ -1,0 +1,87 @@
+{
+  "scenes": {
+    "intro": {
+      "from": "3c6643264fc0cf2f",
+      "es": "Hola, Michael. Quieres dos cosas: comprar una casa en 2027 y jubilarte a los 58. Tu puntuación es 26 de 100, que Sherpas llama crítica. Suena difícil, pero empiezas con fuerza: ahorras $43,000 al año. El problema es que los mismos dólares tienen que hacer demasiadas tareas a la vez."
+    },
+    "pillar_savings_and_cash_flow": {
+      "from": "1276387729f184d6",
+      "es": "Tus tuberías, tus ahorros y tu flujo de efectivo están rotos. Ahorras bien, pero cada año salen unos $8,336 más de los que entran. La jubilación, la casa y tu colchón de efectivo se sostienen con el mismo ingreso."
+    },
+    "pillar_debt": {
+      "from": "65b143ba2dd11c3a",
+      "es": "Tus paredes, tus deudas, están sólidas. Lo que debes es manejable. La que hay que vigilar es una tarjeta de crédito de $3,500 al 20%: pequeña, pero tu deuda más cara."
+    },
+    "pillar_investments": {
+      "from": "a3063c724cf9cfd3",
+      "es": "Tu jardín, tus inversiones, tiene grietas. Tienes $145,000 invertidos, pero hay menos en acciones de lo que pide el plan de crecimiento que elegiste. A los 37, esa diferencia te puede costar años de crecimiento."
+    },
+    "pillar_liquidity_and_emergency_fund": {
+      "from": "0f5c00ea9513922c",
+      "es": "Tus cimientos, tu fondo de emergencia, están rotos. Tienes $30,000 apartados, $16,530 por debajo del colchón mínimo que sugerimos. Y la compra de la casa en enero de 2027 agotaría ese efectivo."
+    },
+    "pillar_insurance_and_protection": {
+      "from": "415afe7abbb43ccb",
+      "es": "Tu techo, tu seguro, está roto. Tu cobertura de vida está $720,000 por debajo de lo recomendado, y no tienes una póliza paraguas. Si algo saliera mal, los ahorros que estás construyendo quedarían expuestos."
+    },
+    "move_1": {
+      "from": "11e77774ed0ba62a",
+      "es": "El paso más fácil es el seguro paraguas: $1M de cobertura extra por si alguien hace un reclamo grande contra ti. Lleva tu puntuación de 26 a 31."
+    },
+    "move_2": {
+      "from": "01589e69c2ae35fd",
+      "es": "El paso más grande es sobre más adelante: planea sacar menos de tus ahorros cada año una vez que te jubiles, para que duren más. Por sí solo, lleva tu puntuación de 26 a 62, el mayor salto de los tres."
+    },
+    "move_3": {
+      "from": "be38f87a65d9b04b",
+      "es": "El tercer paso: pon más de tu dinero invertido en acciones, más cerca de la mezcla de crecimiento que elegiste, moviendo alrededor de $19,900. Lleva tu puntuación de 26 a 31."
+    },
+    "timeline": {
+      "from": "448432120aa51027",
+      "es": "Ahora los años que vienen. Planeas jubilarte a los 58. Con el plan de hoy, tus ahorros se agotan a los 85, seis años antes de que el plan termine a los 91. Después de eso dependerías principalmente del Seguro Social. Esa disyuntiva es la que debes hablar a fondo con tu asesor."
+    }
+  },
+  "simple": {
+    "intro": {
+      "from": "761c6f726710293c",
+      "es": "Michael, tu puntuación de salud financiera es 26 de 100. Recorramos tu casa cuarto por cuarto para ver qué está fuerte y qué necesita trabajo."
+    },
+    "pillar_savings_and_cash_flow": {
+      "from": "a018f7c32240a1ac",
+      "es": "Tus tuberías son los ahorros y el flujo de efectivo, y están rotas. Su puntuación es 0 de 25, así que hay poco efectivo extra cada mes."
+    },
+    "pillar_debt": {
+      "from": "9c6b22d24dab6a1b",
+      "es": "Tus paredes son la deuda, y son sólidas. Su puntuación es 8 de 10. Tus deudas son pequeñas comparadas con tus ingresos."
+    },
+    "pillar_investments": {
+      "from": "3ece743cd55ff8b2",
+      "es": "Tu jardín son las inversiones, y está agrietado. Su puntuación es 11 de 25. La mayor parte de tu dinero está ahí, así que importa."
+    },
+    "pillar_liquidity_and_emergency_fund": {
+      "from": "8a542ebfdcd0599d",
+      "es": "Tus cimientos son tu fondo de emergencia y efectivo, y están rotos. Su puntuación es 4 de 20. Tienes menos guardado de lo que es seguro."
+    },
+    "pillar_insurance_and_protection": {
+      "from": "951300976d6323f6",
+      "es": "Tu techo es el seguro y la protección, y está roto. Su puntuación es 4 de 20. Tienes poca cobertura si algo sale mal."
+    },
+    "move_1": {
+      "from": "62081ef099cce98c",
+      "es": "Tu plan añade cobertura paraguas, que te protege si alguien te demanda. Repara tu techo y sube tu puntuación a 31 de 100."
+    },
+    "move_2": {
+      "from": "6887efac64c331fe",
+      "es": "Tu plan saca menos dinero de los ahorros cada año. Esto repara tus tuberías y sube la puntuación a 62 de 100."
+    },
+    "move_3": {
+      "from": "5d3ae2c43718ecd8",
+      "es": "Tu plan mueve más de tu dinero a largo plazo a acciones. Esto repara tu jardín y sube la puntuación a 31 de 100."
+    },
+    "timeline": {
+      "from": "fe926730b28d9b11",
+      "es": "Tus ahorros se acaban a los 85 años con este plan. Tus deudas se pagan en el camino, pero los gastos posteriores quedan sin pagar."
+    }
+  },
+  "model": "deepseek-flash"
+}
