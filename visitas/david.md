@@ -3,6 +3,13 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 23:40 — feat/voice-rain-scale — Claude Code
+- **Hecho:** el sonido sigue la escala nueva de la casa (`healthOf = score / 100`, PR #76). En `web/house_sound.js`:
+  lluvia al máximo hasta 0,26 y nada desde 0,38; pájaros desde 0,45. Son los umbrales de `house3d.js`.
+- **Por qué:** con la escala nueva la lluvia de Michael (26) se quedaba al 57 % y los Johnson (52) oían lluvia sin verla.
+- **Estado:** `bash check.sh` pasa. Sin escuchar todavía en el navegador ni en el iPhone.
+- **Para Raúl:** si cambias `healthOf` o los umbrales de lluvia/pájaros de `house3d.js` (0,38 y 0,45), avisa: van a juego.
+
 ## 2026-11-16 23:00 — feat/voice-spanish — Claude Code
 - **Hecho:** «Listen in: English | Español»: segunda pista de audio en español con su texto y subtítulos
   (`spanish.py`, `narrations/es/`, `web/spanish.js`). 92 narraciones traducidas con las mismas cifras (comprobado).
