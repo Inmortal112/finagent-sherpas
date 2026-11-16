@@ -15,7 +15,11 @@ Opened as a plain file the page works too, except for what needs the backend (qu
 
 ## What the family does
 
-1. **The score**: who they are (in a couple, each adult picks their name) and how to be guided, simply or in full.
+1. **The opening screen** (`web/welcome.js`): who is here (couples only), how much detail (*Simply* / *In full*) and
+   how to explain it (*As a story* / *Numbers first*, in the full mode). One tap each, with a choice already made.
+   It is shown once per household and browser; *Change*, in the top bar, opens it again from any chapter, and
+   switching the detail returns to the chapter being read. `?welcome=1` forces it and `?welcome=0` leaves it out
+   (recordings, automated screenshots). The same choices stay on the cover, as before.
 2. **The home today**: the five parts of the plan in their state, who lives there, and one question first:
    *what worries you most about money?* The home turns to the part of the plan that answers it.
 3. **Scroll**: a walk through the five parts, the years of the plan as it stands (the garden follows savings and
@@ -43,6 +47,7 @@ Opened as a plain file the page works too, except for what needs the backend (qu
 | The steps on the home | with the 3D home, a numbered mark on the part each step repairs and a card beside it with *Preview this change* and *I've completed this step* (`buildHomeActions` in `stage_page.html`); with the SVG they stay in the text |
 | Scroll | a sticky stage and tall chapters; the chapter crossing the middle of the screen is the state (`update()`) |
 | The years | a 340vh chapter with a sticky card: scroll progress picks the year; `--lush` (0 to 1) dries the garden |
+| Ways of explaining | `web/styles.js` swaps each narration and its audio in place from `styles.json` (see `VOICE.md`); the choice is kept per adult, and `/ask/stream` and `/worry` send it as `style` |
 | Voice | one `Audio` player for narration (`audio_path`) and answers (`audio_url`); `data-sound` buttons mute it |
 | Backend | `/families`, `/presentation`, `/ask/stream`, `/worry`, `/decision`, `/reminders`, `/follow-up`, `/advisor-note`, `/history` (see `BACKEND.md`) |
 | Memory | the session id, the person and the sound choice stay in the browser, so a reload brings the visit back |

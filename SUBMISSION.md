@@ -23,8 +23,9 @@ fund, the roof is their protection, the walls are their debt, the plumbing is th
 is what they are growing for the future. Each part is solid, cracked or broken depending on its pillar score, so
 one look tells them what is fine and what needs work.
 
-The family opens it from a link on their phone, with nothing to install. They pick who they are and how they want to
-be guided, and say what worries them most; the home turns to the part of the plan that answers it. A calm voice
+The family opens it from a link on their phone, with nothing to install. Three taps first: who is here, how much
+detail they want and how they like things explained. Then they say what worries them most, and the home turns to the
+part of the plan that answers it. A calm voice
 walks them through the five parts and then through the years ahead. **They can stop it at any moment and ask**,
 typing or tapping to talk, and the answer uses only the figures of their own plan. Each step Sherpas recommends is a
 repair, and its buttons sit on the home itself, on the part it fixes: they can preview it and watch that part heal
@@ -39,7 +40,10 @@ got in the way, and a short note for their advisor with what worried them, what 
   fine, until the years move forward to age 73 and her garden dries up. That is the problem a good score can hide.
 - **Anyone can follow it.** Each person chooses a mode: *Simply* (a flat 2D home, short sentences, big buttons, the
   voice leads) for people who rarely use apps, or *In full* (a 3D home they can turn around with a finger, and every
-  figure). Each word lights up as
+  figure). People do not all take in a plan the same way, so each person also chooses how it is told: *As a
+  story* (the plan as their home) or *Numbers first* (the figure, then what it means), in the tour and in the
+  answers to their own questions. None of it is locked: they can change it from any chapter and stay where they
+  were. Each word lights up as
   the voice says it, for anyone who hears badly or reads along. In a couple, each adult sees their own part, and
   the one who went through the plan can send the other a fifteen-second voice note with the step they chose. The
   children are not left out: the home explains itself to them by name, in their own words and with no figures.

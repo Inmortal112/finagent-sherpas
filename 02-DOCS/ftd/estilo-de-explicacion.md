@@ -1,9 +1,25 @@
 ---
 created: 2026-11-16
-status: proposal
-branch: docs/explanation-style-plan
+status: done
+branch: feat/brain-explanation-style, feat/voice-explanation-style, feat/stage-opening-screen, feat/brain-ask-style
 ---
-# FTD — Cada persona elige cómo se lo explican (plan, sin código todavía)
+# FTD — Cada persona elige cómo se lo explican
+
+## Hecho (17 nov) — Samuel y Raúl dijeron sí; las cuatro fases, por David
+- **Decisiones tomadas** (las recomendadas abajo): dos métodos, **As a story** (la narración de hoy) y **Numbers
+  first**; solo en «In full», así que el orden es **persona → detalle → método**; `/ask` sigue el método.
+- **Fase 1:** `narrator --style numbers`, clave `numbers` en las cuatro `narrations/*.json` (46 escenas, 10.602
+  caracteres). Las 46 leídas contra sus hechos; **seis retocadas a mano** (Johnson `all_moves` y `timeline`; Samantha
+  `pillar_insurance_and_protection`, `move_1` y `timeline`; Weah `pillar_insurance_and_protection`).
+- **Fase 2:** `styles.py` + `web/styles.js`: `styles/numbers/audio/` y `styles.json` junto a cada página completa. El
+  texto, el audio y los subtítulos cambian sin recargar. Se guarda por persona. `captions.js` no hizo falta tocarlo.
+- **Fase 3:** `web/welcome.js`: pantalla de inicio (una vez por familia y navegador), botón «Change» en la barra, y al
+  cambiar de modo se vuelve al mismo capítulo (`#ch-<id>`). `?welcome=1` la fuerza, `?welcome=0` la quita.
+- **Fase 4:** `/ask`, `/ask/stream` y `/worry` aceptan `style`; la sesión lo recuerda y sale en la nota del asesor.
+- **No hecho:** el método en español (con «Español» suena la historia y el interruptor dice «English only»), el audio
+  con Matilda (hoy solo voz gratuita) y la prueba en iPhone real.
+
+Lo que sigue es el plan original, tal como se aprobó.
 
 - Propone: David (`daviid-sc`). **Lo deciden los tres.** Toca las tres etapas, así que nada se programa hasta el sí.
 - Este PR solo trae este plan. El código iría en ramas `feat/*-explanation-style-*`.
@@ -114,9 +130,9 @@ como el del español) y sin pantalla de inicio.
 - **Sin probar en iPhone:** la pantalla de inicio y el cambio de pista.
 
 ## Checklist
-- [ ] Los tres dicen sí o no, y contestan las tres decisiones abiertas.
-- [ ] Fase 1 · [ ] Fase 2 · [ ] Fase 3 · [ ] Fase 4 (opcional)
-- [ ] `bash check.sh` pasa en cada PR.
+- [x] Los tres dicen sí o no, y contestan las tres decisiones abiertas.
+- [x] Fase 1 · [x] Fase 2 · [x] Fase 3 · [x] Fase 4
+- [x] `bash check.sh` pasa en cada PR.
 
 ## Para Samuel y Raúl
 - **Samuel:** ¿te encaja el método como un párrafo más del aviso (`--style`)? ¿Y los dos métodos propuestos?

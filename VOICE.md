@@ -197,6 +197,25 @@ underneath, lit word by word like the English.
 - The pipeline writes `audio/es/<scene>.mp3`, its word timings and `es.json` next to each page; the page side is
   `web/spanish.js`. No translations or no voice: no switch, and the English page is the same.
 
+## Two ways of explaining
+
+Not everyone takes in a plan the same way, so each person chooses how it is told: *As a story* (the narration of the
+tour: the plan as their home) or *Numbers first* (the figure first, then what it means for them). Same scenes, same
+facts, other words and their own audio. It works like the Spanish track: a second track inside the same page.
+
+- **Written once, kept in the repo** (`narrations/<family>.json`, key `numbers`): `python -m finagent.narrator --all
+  --style numbers`, with the cheap text model. Each text passes the same check as the tour (`narrator.check`): only
+  figures from its own scene's facts. 46 scenes, about 10,600 characters. All 46 were read against their facts; six
+  were edited by hand.
+- **Spoken by the same engine as the tour**: `src/finagent/styles.py` writes `styles/numbers/audio/<scene>.mp3`, the
+  word timings and `styles.json` next to each full page. Free voice by default, so the public link has it.
+- **Switched without a reload** (`web/styles.js`): the paragraph, the audio and the captions change in place, and
+  the person stays in the chapter. The choice is kept per adult (`uor-style-<household>-<person>` in the browser).
+- **The answers follow it**: `/ask`, `/ask/stream` and `/worry` take `style`; the session remembers it and the
+  advisor's note shows it (`ask.STYLES`).
+- **Limits:** the full mode only (*Simply* has one way, 28 words a scene) and English only: with *Español* on, the
+  story plays and the switch says "English only". Not recorded with the ElevenLabs voice yet.
+
 ## The home explained to the children
 
 Nobody explains the plan to the children. The home does, by name, in about thirty seconds:
@@ -253,9 +272,10 @@ badly, a noisy room, or anyone who follows better with both.
 | `src/finagent/speech_text.py` | `to_speech`: written text → spoken text |
 | `src/finagent/partner_note.py` | the voice note for the other half of a couple |
 | `src/finagent/spanish.py`, `web/spanish.js`, `narrations/es/` | the Spanish track: checked translations, spoken copy, audio |
+| `src/finagent/styles.py`, `web/styles.js`, `narrations/` (key `numbers`) | the second way of explaining: its audio track and the switch |
 | `src/finagent/kids_note.py` | the home explained to the children |
 | `src/finagent/welcome_back.py` | what the home says aloud when the family comes back |
 | `src/finagent/captions.py`, `web/captions.js` | when each word is said, and lighting it on the page |
-| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py`, `test_partner_note.py`, `test_captions.py`, `test_welcome_back.py`, `test_kids_note.py`, `test_spanish.py` | all HTTP faked, nothing spent |
+| `tests/test_speech_text.py`, `test_voice_eleven.py`, `test_voice_speak.py`, `test_voice_stt.py`, `test_partner_note.py`, `test_captions.py`, `test_welcome_back.py`, `test_kids_note.py`, `test_spanish.py`, `test_styles.py` | all HTTP faked, nothing spent |
 
 Design notes (Spanish, for the team): `02-DOCS/ftd/voz-*.md`.
