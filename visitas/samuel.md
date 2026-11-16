@@ -1,5 +1,15 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-17 — chore/repo-cleanup — Claude Code
+- **Hecho:** limpieza para la entrega. Borrado `examples/voice/` (ejemplo Node de Sherpas, sin uso) y 3 capturas
+  duplicadas. Movidos a `02-DOCS/ideas/`: `ideas.md`, `idea-david.md`, `idea-raul.md`, `nota-idea.md` y
+  `escalabilidad.md`. `BRIEF.md` → `02-DOCS/brief.md` (imágenes en `02-DOCS/brief-assets/`). Enlaces corregidos.
+- **Render:** https://finagent-sherpas.onrender.com funciona: 8 páginas, audio edge real, `/ask` responde con voz.
+  Enlace ya en `SUBMISSION.md` (falta el del vídeo).
+- **Estado:** `./check.sh` pasa (219). 0 enlaces rotos en los `.md`. Ficha `limpieza-repo.md`.
+- **Para David y Raúl:** vuestros `idea-*.md` están ahora en `02-DOCS/ideas/`; el contenido no ha cambiado.
+- **Siguiente:** grabar el vídeo de 2 min y poner su enlace en `SUBMISSION.md`.
+
 ## 2026-11-17 — feat/deploy-dockerfile — Claude Code
 - **Hecho:** el `Dockerfile` genera las 8 páginas con voz edge (`VOICE_ENGINE=edge … run --all`), no una sola con
   mock. Línea en `BACKEND.md`. Ficha `despliegue-dockerfile.md`.
