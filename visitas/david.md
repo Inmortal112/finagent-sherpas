@@ -3,6 +3,14 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 20:15 — feat/voice-eleven-numbers — Claude Code
+- **Hecho:** las 4 familias regeneradas con Matilda (ElevenLabs) en el ordenador de David, con tiempos reales para
+  los subtítulos. Detectado con Whisper que el modelo rápido leía mal cifras largas («$1,166,000», «$19,900»):
+  `speech_text.spell_big_numbers` se las manda en letras (solo a ElevenLabs). Comprobado de nuevo: todas bien.
+- **Estado:** `bash check.sh` pasa. `out/` no está en git: el audio de Matilda solo existe en local (y en la caché).
+- **Para Samuel:** si cambias una narración, al regenerar solo se paga esa escena. Con edge (por defecto) nada cambia.
+- **Siguiente:** probar en iPhone subtítulos, botón de pareja y vuelta del día 3; enlace fijo del MVP el miércoles.
+
 ## 2026-11-16 19:30 — feat/voice-welcome-back — Claude Code
 - **Hecho:** la vuelta del día 3 habla: «Welcome back, Emily. A few days ago you chose…» (`welcome_back.py`,
   `GET /reminders/{session}.mp3`). Frases fijas, sin modelo; audio guardado por texto. Ficha `voz-vuelta-dia-3.md`.

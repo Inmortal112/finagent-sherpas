@@ -137,3 +137,56 @@ def _tidy(text: str) -> str:
     text = re.sub(r",\s*,", ",", text)
     text = re.sub(r"([.!?:;]),", r"\1", text)
     return text.strip()
+
+
+# --- Big numbers in words (for ElevenLabs) ------------------------------------------------------------------------
+# ElevenLabs' fast model sometimes misreads a long figure: on 2026-11-16, transcribing its audio back with Whisper,
+# "$1,166,000" and "$19,900" came out as other amounts. Spelled in words they cannot be misread. Only numbers
+# written with a thousands comma are spelled; the value never changes. The free Edge voices read digits correctly.
+_ONES = ("zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen "
+         "seventeen eighteen nineteen").split()
+_TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
+_SCALES = ("", " thousand", " million", " billion", " trillion")
+_COMMA_NUMBER = re.compile(r"(\$)?(?<![\d,.])(\d{1,3}(?:,\d{3})+)(?:\.(\d{2})(?!\d))?(?!\d|,\d)")
+
+
+def _below_thousand(n: int) -> str:
+    words = []
+    if n >= 100:
+        words.append(f"{_ONES[n // 100]} hundred")
+        n %= 100
+    if n >= 20:
+        words.append(_TENS[n // 10] + (f"-{_ONES[n % 10]}" if n % 10 else ""))
+    elif n or not words:
+        words.append(_ONES[n])
+    return " ".join(words)
+
+
+def number_in_words(n: int) -> str:
+    """1166000 -> "one million one hundred sixty-six thousand" (American English, no "and")."""
+    if n == 0:
+        return "zero"
+    groups, scale = [], 0
+    while n:
+        n, group = divmod(n, 1000)
+        if group:
+            groups.append(_below_thousand(group) + _SCALES[scale])
+        scale += 1
+    return " ".join(reversed(groups))
+
+
+def spell_big_numbers(text: str) -> str:
+    """"$1,166,000" -> "one million one hundred sixty-six thousand dollars"; "2,500" -> "two thousand five hundred"."""
+    def spell(match: re.Match) -> str:
+        dollars, digits, cents = match.groups()
+        if len(digits.replace(",", "")) > 15:
+            return match.group(0)
+        words = number_in_words(int(digits.replace(",", "")))
+        if dollars:
+            words += " dollars"
+            if cents and int(cents):
+                words += f" and {number_in_words(int(cents))} cents"
+        elif cents:
+            words += " point " + " ".join(_ONES[int(d)] for d in cents)
+        return words
+    return _COMMA_NUMBER.sub(spell, text)

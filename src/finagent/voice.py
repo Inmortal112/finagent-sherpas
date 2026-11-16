@@ -26,7 +26,7 @@ from pathlib import Path
 
 from contracts.schemas import Presentation, Scene
 from finagent import captions
-from finagent.speech_text import to_speech
+from finagent.speech_text import spell_big_numbers, to_speech
 
 log = logging.getLogger(__name__)
 
@@ -95,7 +95,7 @@ async def speak_async(text: str, language: str = "en") -> SpokenAudio:
     if engine == "eleven":
         from finagent import voice_eleven
         try:
-            audio = (await voice_eleven.synthesize_all({"answer": spoken}, 1))["answer"]
+            audio = (await voice_eleven.synthesize_all({"answer": spell_big_numbers(spoken)}, 1))["answer"]
             return SpokenAudio(audio, round(voice_eleven.mp3_duration_s(audio), 1), "eleven")
         except Exception as exc:
             log.warning("ElevenLabs failed (%s: %s); falling back to edge-tts", type(exc).__name__, exc)
@@ -173,7 +173,8 @@ def _mock_all(scenes: list[Scene]) -> None:
 async def _eleven_all(scenes: list[Scene], out_dir: Path, language: str) -> None:
     from finagent import voice_eleven
 
-    texts = {scene.id: to_speech(scene.narration, language) for scene in scenes}
+    # Long figures go in words: the fast model misreads some of them as digits (see speech_text.spell_big_numbers).
+    texts = {scene.id: spell_big_numbers(to_speech(scene.narration, language)) for scene in scenes}
     audios = await voice_eleven.synthesize_all(texts, MAX_PARALLEL_REQUESTS)
     audio_dir = out_dir / AUDIO_DIR
     audio_dir.mkdir(parents=True, exist_ok=True)

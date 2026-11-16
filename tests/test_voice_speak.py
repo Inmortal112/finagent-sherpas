@@ -35,7 +35,7 @@ def engines(monkeypatch, tmp_path):
 def test_eleven_speaks_the_spoken_copy(engines):
     spoken = voice.speak(ANSWER)
     assert spoken.engine == "eleven" and spoken.audio == ONE_SECOND_MP3 and spoken.duration_s == 1.0
-    assert engines["eleven"] == ["[FICTIONAL EXAMPLE] Your roof needs $1,200 a year."]
+    assert engines["eleven"] == ["[FICTIONAL EXAMPLE] Your roof needs one thousand two hundred dollars a year."]
 
 
 def test_same_answer_twice_is_paid_once(engines):
