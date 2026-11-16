@@ -1,6 +1,6 @@
 // The family's architectural home in 3D. Full mode loads it by default (see stage_page.html); the drawn
-// home (the SVG) stays as the fallback. Bevelled architecture, local textures and studio reflections: no models,
-// no image files.
+// home (the SVG) stays as the fallback. The home itself is the Blender villa in coast/, built by coastal-home.js;
+// this file is the camera, the weather, the marks on each part and the healing.
 //
 //   const home = mount(host, { onFail, onPick, onAnchors })   -> throws when the browser has no WebGL
 //        onAnchors({ part: { x, y, shown } }): where each part's mark is on the picture, in the host's pixels,
@@ -20,15 +20,8 @@
 import { loadCoast, coastalHome } from "./coastal-home.js";
 import * as THREE from "./vendor/three.module.min.js";
 
-const INK = 0x23232e, WALL = 0xf7f1e5, PIPE = 0x3c8fa9, JOINT = 0x3663d9, CRACK = 0x5d5142;
-const WOOD = 0xa4673e, GLASS = 0x86b6d2, FRAME = 0x233846, ROOF = 0x263a45, PAVING = 0xd9cfb9, DRY = 0xb9a58a;
-const WATER = 0x24b7cc, POOL = 0x9aa4ae;
-const LEAF = [new THREE.Color(0x26764c), new THREE.Color(0xa99e7a)];
-const LEAF_LIGHT = [new THREE.Color(0x65a54b), new THREE.Color(0xc3b48c)];
-const GRASS = [new THREE.Color(0x72a851), new THREE.Color(0xc9b994)];
 const FADED = new THREE.Color(0xdbe5ed), FADE = 0.12;
 const REPAIRED_TINT = new THREE.Color(0x7ba782);
-const LAMP = new THREE.Color(0xffc977), WHITE = new THREE.Color(0xffffff);                                      // the windows at night
 const GLYPH = { solid: "✓", cracked: "!", broken: "✕", repaired: "✓" };
 const STATE_COLOR = { solid: "#4565d6", cracked: "#c9871f", broken: "#d6455d", repaired: "#774be5" };  // if the page has no --solid…
 
@@ -54,7 +47,6 @@ const VIEWS = {
   garden: { at: [-2.2, .8, 3.6], from: [-.85, .48, .6], halfWidth: 4.6, halfHeight: 3.1, depth: .8 },
 };
 // High above the clouds, looking at the sun: where the visit starts (setIntro(0)).
-const INTRO = { position: new THREE.Vector3(12, 46, 52), at: new THREE.Vector3(-26, 30, -120) };
 const FOV = 32;
 const GLIDE_MS = 1550;
 const HEAL_MS = 1400;
@@ -66,219 +58,21 @@ let seed = 7;
 const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
 const between = (a, b) => a + (b - a) * rand();
 
-let finishes = null;
 function mesh(geometry, color, x = 0, y = 0, z = 0) {
-  const finish = color === WALL || color === PAVING ? finishes?.stone : color === WOOD ? finishes?.wood : color === ROOF ? finishes?.roof : null;
-  const m = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color, roughness: .82, metalness: .02,
-    ...(finish ? { map: finish, bumpMap: finish, bumpScale: color === ROOF ? .012 : .025 } : {}) }));
+  const m = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color, roughness: .82, metalness: .02 }));
   m.position.set(x, y, z);
   m.castShadow = m.receiveShadow = true;
-  m.userData.color = new THREE.Color(color);   // its own colour, before fading or drying
+  m.userData.color = new THREE.Color(color);   // its own colour, before fading
   return m;
 }
-const box = (w, h, d, color, x, y, z) => {
-  // Tiny chamfers catch the light along the architecture's edges, without heavy postprocessing.
-  const b = Math.min(.025, w * .07, h * .07, d * .07);
-  if (Math.min(w, h, d) < .12) return mesh(new THREE.BoxGeometry(w, h, d), color, x, y, z);
-  const shape = new THREE.Shape();
-  shape.moveTo(-w / 2 + b, -h / 2 + b); shape.lineTo(w / 2 - b, -h / 2 + b);
-  shape.lineTo(w / 2 - b, h / 2 - b); shape.lineTo(-w / 2 + b, h / 2 - b); shape.closePath();
-  const geometry = new THREE.ExtrudeGeometry(shape, { depth: d - 2 * b, bevelEnabled: true, bevelSize: b, bevelThickness: b, bevelSegments: 2, steps: 1 });
-  geometry.translate(0, 0, -(d - 2 * b) / 2);
-  return mesh(geometry, color, x, y, z);
-};
-const ball = (r, color, x, y, z) => mesh(new THREE.IcosahedronGeometry(r, 2), color, x, y, z);
-// A pipe, a trunk or a stroke from one point to another.
-function rod(r, color, from, to) {
-  const a = new THREE.Vector3(...from), b = new THREE.Vector3(...to);
-  const m = mesh(new THREE.CylinderGeometry(r, r, a.distanceTo(b), 8), color);
-  m.position.copy(a).add(b).multiplyScalar(0.5);
-  m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize());
-  return m;
-}
-// A crack: a broken line through these points.
-const crack = (points, color = CRACK, r = 0.028) => points.slice(1).map((p, i) => rod(r, color, points[i], p));
 function group(name, ...children) {
   const g = new THREE.Group();
   g.name = name;
   g.add(...children.flat());
   return g;
 }
-// A point on the right-hand slope of the roof: t goes from the eaves (0) to the ridge (1), z along the home.
-const onSlope = (t, z, lift = 0.03) => [2.5 - 2.5 * t + lift * 0.56, 2.8 + 1.7 * t + lift * 0.83, z];
+const LAWN_TOP = 0.46;   // the ground the healing ring runs over
 
-// A modern home on a plinth: white volumes, a cantilevered upper floor, flat dark roofs, wide glazing with black
-// frames, a pool and round trees on the lawn. The plinth's top (the lawn) is at y = 0.46; the front faces +z.
-const LAWN_TOP = 0.46;
-const glassPanes = [];   // every window, to light them up on a good evening
-function pane(w, h, d, x, y, z) {
-  const m = box(w, h, d, GLASS, x, y, z);
-  m.material.map = finishes?.glass || null;
-  m.material.roughness = .09;
-  m.material.metalness = .48;
-  m.material.envMapIntensity = 1.8;
-  m.castShadow = false;
-  glassPanes.push(m);
-  return m;
-}
-const frame = (w, h, d, x, y, z) => box(w, h, d, FRAME, x, y, z);
-
-// Every part: its body, what shows when it is cracked ("crk"), what is added when it is broken ("dmg"),
-// where its mark goes ("pin") and where its glow sits ("halo": centre and size). "onState" is for a part
-// whose body itself changes with its state (the pool's water).
-function foundations() {
-  const z = 4.015, x = 5.015;
-  return {
-    body: [box(10, 0.4, 8, PAVING, 0, 0.2, 0), box(10.1, 0.07, 8.1, FRAME, 0, 0.09, 0),
-      box(3.6, 0.03, 2.1, PAVING, -0.9, LAWN_TOP + 0.015, 2.05), box(1.3, 0.03, 1.0, PAVING, -0.9, LAWN_TOP + 0.015, 3.5),
-      ...[-2.1, -.9, .3].map((x) => box(.012, .006, 2.08, 0xb4ae9d, x, LAWN_TOP + .034, 2.05)),
-      ...[1.4, 2.1, 2.8].map((z) => box(3.58, .006, .012, 0xb4ae9d, -.9, LAWN_TOP + .034, z)),
-      box(1.5, .12, .5, PAVING, -.9, .24, 4.15), box(1.7, .1, .55, PAVING, -.9, .1, 4.5)],
-    crk: [...crack([[-2.2, 0.39, z], [-2.0, 0.27, z], [-2.15, 0.14, z], [-1.95, 0.02, z]]), ...crack([[x, 0.39, -1.0], [x, 0.24, -1.2], [x, 0.1, -0.95]])],
-    dmg: [box(0.9, 0.22, 0.05, 0x7d808c, 2.6, 0.25, z + 0.01), ...crack([[0.5, 0.39, z], [0.72, 0.22, z], [0.6, 0.02, z]], CRACK, 0.034),
-      ...crack([[x, 0.39, 1.5], [x, 0.2, 1.8], [x, 0.05, 1.6]], CRACK, 0.034)],
-    pin: [-3.4, 0.24, 4.2], halo: [0, 0.3, 0, 12, 2.4],
-  };
-}
-
-function walls() {
-  const front = 0.83, upper = 1.21, wing = 1.71;
-  const mullions = [-2.9, -1.9, -0.9, 0.1, 1.1].map((x) => frame(0.05, 1.3, 0.07, x, 1.15, front + 0.02));
-  const ribbon = [-3.2, -2.0, -0.8, 0.4].map((x) => frame(0.05, 0.75, 0.07, x, 2.85, upper + 0.02));
-  return {
-    body: [
-      box(5.0, 1.6, 3.2, WALL, -0.9, LAWN_TOP + 0.8, -0.8),                                   // the ground floor
-      pane(4.2, 1.3, 0.05, -0.9, 1.15, front), ...mullions, frame(4.25, 0.07, 0.08, -0.9, 1.8, front + 0.02), frame(4.25, 0.07, 0.08, -0.9, 0.5, front + 0.02),
-      box(6.4, 1.5, 3.6, WALL, -0.5, 2.81, -0.6),                                              // the upper floor, reaching out over the glass
-      pane(3.6, 0.75, 0.05, -1.4, 2.85, upper), ...ribbon, frame(3.65, 0.06, 0.08, -1.4, 3.24, upper + 0.02), frame(3.65, 0.06, 0.08, -1.4, 2.46, upper + 0.02),
-      pane(0.9, 1.1, 0.05, 1.6, 2.8, upper), frame(0.05, 1.1, 0.07, 1.6, 2.8, upper + 0.02),
-      pane(0.05, 0.7, 1.8, 2.72, 2.85, -0.8),
-      box(2.6, 0.1, 1.2, WALL, -2.4, 2.07, 1.8), box(2.6, 0.45, 0.03, 0xbcd6ea, -2.4, 2.35, 2.39),   // a terrace with a glass rail
-      box(2.8, 1.3, 2.8, WALL, 3.3, LAWN_TOP + 0.65, 0.3),                                      // the side wing
-      pane(1.9, 1.0, 0.05, 3.3, 1.02, wing), frame(2.0, 0.06, 0.08, 3.3, 1.55, wing + 0.02), frame(0.05, 1.0, 0.07, 3.3, 1.02, wing + 0.02),
-      ...Array.from({ length: 13 }, (_, i) => box(.045, 1.24, .065, WOOD, .72 + i * .065, 2.83, upper + .045)),
-      ...Array.from({ length: 18 }, (_, i) => box(.045, 1.14, .065, WOOD, 2.0 + i * .055, 1.08, wing + .045)),
-      box(1.9, .035, .035, 0xc9ad7f, 3.3, 1.5, wing + .1),
-      // Shaded entry and quiet terrace furniture give scale without cluttering the five parts.
-      box(.65, .2, .7, WOOD, -1.7, .66, 2.02), box(.68, .1, .72, 0xe5dfcf, -1.7, .81, 2.02), box(.68, .38, .12, WOOD, -1.7, 1, 1.72),
-      box(.65, .2, .7, WOOD, -.5, .66, 2.02), box(.68, .1, .72, 0xe5dfcf, -.5, .81, 2.02), box(.68, .38, .12, WOOD, -.5, 1, 1.72),
-      box(.4, .34, .45, FRAME, -1.1, .68, 2.8),
-    ],
-    crk: [...crack([[0.72, 3.5, upper + 0.01], [0.86, 3.2, upper + 0.01], [0.72, 2.95, upper + 0.01], [0.9, 2.6, upper + 0.01], [0.78, 2.2, upper + 0.01]]),
-      ...crack([[2.1, 1.72, wing + 0.01], [2.24, 1.4, wing + 0.01], [2.1, 1.1, wing + 0.01], [2.22, 0.7, wing + 0.01]])],
-    dmg: [box(0.95, 0.7, 0.06, 0x9fb3c8, -2.6, 2.85, upper + 0.02),
-      ...crack([[-3.0, 3.12, upper + 0.06], [-2.6, 2.85, upper + 0.06], [-2.2, 3.15, upper + 0.06]], 0xffffff, 0.018),
-      ...crack([[-2.95, 2.55, upper + 0.06], [-2.6, 2.85, upper + 0.06], [-2.25, 2.55, upper + 0.06]], 0xffffff, 0.018),
-      box(0.6, 0.3, 0.04, 0xc9b2a6, 2.3, 3.3, upper + 0.01),
-      ...crack([[2.715, 3.5, 0.2], [2.715, 3.1, -0.2], [2.715, 2.8, 0.15], [2.715, 2.3, -0.25]], CRACK, 0.034)],
-    pin: [-0.4, 3.05, 1.45], halo: [-0.2, 2.0, 0, 9.5, 5.2],
-  };
-}
-
-function roof() {
-  const y = 3.585, parapet = (w, d, x, z) => box(w, 0.14, d, WALL, x, 3.63, z);
-  return {
-    body: [box(6.1, 0.05, 3.3, ROOF, -0.5, y, -0.6),
-      parapet(6.4, 0.12, -0.5, 1.14), parapet(6.4, 0.12, -0.5, -2.34), parapet(0.12, 3.6, -3.64, -0.6), parapet(0.12, 3.6, 2.64, -0.6),
-      box(0.26, 0.5, 0.26, ROOF, 0.7, 3.85, -1.5), box(0.22, 0.4, 0.22, ROOF, 1.15, 3.8, -1.7),
-      box(2.6, 0.05, 2.6, ROOF, 3.3, 1.8, 0.3)],
-    crk: [...crack([[-2.8, y + 0.03, -1.6], [-2.3, y + 0.03, -1.0], [-2.5, y + 0.03, -0.4], [-2.0, y + 0.03, 0.3]], 0xc8ccd6),
-      ...crack([[2.4, 1.83, -0.6], [2.9, 1.83, -0.2], [2.7, 1.83, 0.5]], 0xc8ccd6)],
-    dmg: [box(1.1, 0.02, 0.9, 0x0c0d10, 0.0, y + 0.03, -0.2),
-      rod(0.035, WOOD, [-0.45, y + 0.06, -0.55], [0.4, y + 0.06, 0.15]), rod(0.035, WOOD, [-0.4, y + 0.06, 0.15], [0.35, y + 0.06, -0.6]),
-      ...crack([[1.2, y + 0.03, -2.0], [1.6, y + 0.03, -1.4], [1.4, y + 0.03, -0.8]], 0xc8ccd6)],
-    pin: [-0.5, 4.15, 0.3], halo: [-0.5, 3.7, -0.5, 8.2, 3.4],
-  };
-}
-
-function plumbing() {
-  // The pool: water is cash flowing in. Lower when it is cracked, gone (a puddle by the pool) when broken.
-  const cx = 2.9, cz = 2.9, rim = (w, d, x, z) => box(w, 0.12, d, PAVING, x, LAWN_TOP + 0.06, z);
-  const water = box(2.55, 0.05, 1.35, WATER, cx, LAWN_TOP + 0.085, cz);
-  water.material.map = finishes?.water || null;
-  water.material.bumpMap = finishes?.water || null;
-  water.material.bumpScale = .035;
-  water.material.roughness = .1; water.material.metalness = .3; water.material.envMapIntensity = 1.6;
-  water.castShadow = false;
-  water.userData.water = true;
-  const puddle = mesh(new THREE.CircleGeometry(0.5, 20), WATER, 4.55, LAWN_TOP + 0.005, 3.0);
-  puddle.rotation.x = -Math.PI / 2;
-  return {
-    body: [box(2.55, 0.02, 1.35, POOL, cx, LAWN_TOP + 0.012, cz), water,
-      rim(2.85, 0.15, cx, cz + 0.75), rim(2.85, 0.15, cx, cz - 0.75), rim(0.15, 1.5, cx - 1.35, cz), rim(0.15, 1.5, cx + 1.35, cz),
-      rod(0.05, PIPE, [3.6, LAWN_TOP + 0.05, 1.72], [3.6, LAWN_TOP + 0.05, 2.15]), rod(0.05, PIPE, [3.6, LAWN_TOP + 0.05, 1.73], [3.6, 0.9, 1.73]),
-      ball(0.08, JOINT, 3.6, 0.9, 1.75)],
-    crk: [...crack([[2.3, LAWN_TOP + 0.12, cz + 0.83], [2.42, LAWN_TOP + 0.06, cz + 0.83], [2.32, LAWN_TOP, cz + 0.83]])],
-    dmg: [puddle, ...crack([[3.3, LAWN_TOP + 0.12, cz - 0.83], [3.45, LAWN_TOP + 0.05, cz - 0.83], [3.35, LAWN_TOP, cz - 0.83]]),
-      rod(0.03, INK, [3.53, 0.75, 1.8], [3.67, 0.6, 1.8]), rod(0.03, INK, [3.53, 0.6, 1.8], [3.67, 0.75, 1.8])],
-    onState(state) {
-      water.visible = state !== "broken";
-      const full = state === "cracked" ? 0.45 : 1;
-      water.scale.y = full;
-      water.position.y = LAWN_TOP + 0.012 + 0.075 * full;
-    },
-    pin: [cx, 1.35, cz], halo: [cx, 0.7, cz, 3.9, 2.6],
-  };
-}
-
-function garden() {
-  const leaf = (r, x, y, z, light) => {
-    const m = ball(r, 0, x, y, z), p = m.geometry.attributes.position;
-    for (let i = 0; i < p.count; i++) {
-      const a=p.getX(i)/r,b=p.getY(i)/r,c=p.getZ(i)/r;
-      const lobe=1+.09*Math.sin(a*9+c*5)*Math.cos(b*8);
-      p.setXYZ(i,p.getX(i)*lobe,p.getY(i)*lobe,p.getZ(i)*lobe);
-    }
-    m.geometry.computeVertexNormals();
-    m.userData.leaf = light ? LEAF_LIGHT : LEAF;
-    return m;
-  };
-  // A round tree (or a bush) that sways from its foot and shrinks as the garden dries.
-  const tree = (x, z, size = 1) => {
-    const g = group("canopy", rod(0.045 * size, WOOD, [0, 0, 0], [0, 1.05 * size, 0]),
-      rod(.025 * size, WOOD, [0, .5 * size, 0], [-.23 * size, .95 * size, .1 * size]),
-      leaf(.38 * size, 0, 1.15 * size, 0), leaf(.29 * size, -.23 * size, .92 * size, .1 * size),
-      leaf(.31 * size, .22 * size, .95 * size, .06 * size, true), leaf(.25 * size, .07 * size, .98 * size, -.22 * size),
-      leaf(.19 * size, -.2 * size, 1.28 * size, -.1 * size, true), leaf(.18 * size, .2 * size, 1.18 * size, .21 * size));
-    g.position.set(x, LAWN_TOP, z);
-    g.userData.sway = rand() * 6;
-    return g;
-  };
-  const bush = (x, z, r = 0.2) => { const g = group("canopy", leaf(r, 0, r * 0.8, 0, rand() > 0.5)); g.position.set(x, LAWN_TOP, z); return g; };
-  const lawn = box(9.7, 0.06, 7.7, 0, 0, LAWN_TOP - 0.03, 0);
-  lawn.material.map = finishes?.lawn || null;
-  lawn.material.bumpMap = finishes?.lawn || null;
-  lawn.material.bumpScale = .009; lawn.material.roughness = .98;
-  lawn.userData.leaf = GRASS;
-  lawn.castShadow = false;
-  const trees = [tree(-4.4, -3.3), tree(-4.4, -1.4, 0.85), tree(-4.3, 0.9, 1.1), tree(-4.25, 3.4, 0.8), tree(4.5, -3.3, 1.1), tree(1.6, -3.4, 0.9),
-    tree(-1.9, -3.5), tree(4.6, -1.7, 0.75)];
-  const bushes = [bush(-3.9, 3.75), bush(-3.2, 3.8, 0.17), bush(-2.5, 3.75, 0.22), bush(0.6, 3.8), bush(1.2, 3.75, 0.16), bush(4.6, 1.2, 0.24), bush(4.55, 0.5, 0.18)];
-  const flower = (x, z, color) => group("flower", rod(0.015, 0x57bf93, [x, LAWN_TOP, z], [x, LAWN_TOP + 0.25, z]), ball(0.07, color, x, LAWN_TOP + 0.25, z));
-  const bloom = group("bloom", flower(-3.55, 3.5, 0xdf7afe), flower(-2.85, 3.55, 0x948df7), flower(0.9, 3.55, 0xdf7afe), flower(4.3, 0.85, 0xffd27a));
-  // Repeated planting is batched: a flowering border, rather than isolated toy flowers.
-  const petals = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.035,1),new THREE.MeshStandardMaterial({color:0xafa0de,roughness:.9}),84);
-  const stems = new THREE.InstancedMesh(new THREE.ConeGeometry(.035,.26,5),new THREE.MeshStandardMaterial({color:0x637f50,roughness:1}),84);
-  petals.userData.color=petals.material.color.clone();
-  stems.userData.color=stems.material.color.clone();
-  const plant = new THREE.Object3D();
-  for(let i=0;i<84;i++) {
-    const x=i<60?-3.9+(i%30)*.058:4.48+between(-.13,.13),z=i<60?3.55+Math.floor(i/30)*.16:-.8+(i-60)*.105;
-    const h=between(.16,.32);plant.position.set(x,LAWN_TOP+h,z);plant.scale.setScalar(between(.7,1.2));plant.updateMatrix();petals.setMatrixAt(i,plant.matrix);
-    plant.position.y=LAWN_TOP+h*.5;plant.scale.set(1,h/.26,1);plant.updateMatrix();stems.setMatrixAt(i,plant.matrix);
-  }
-  bloom.add(petals,stems);
-  return {
-    body: [lawn, ...trees, ...bushes, bloom],
-    crk: [box(1.3, 0.01, 0.8, DRY, -3.3, LAWN_TOP + 0.004, 2.3), box(0.8, 0.01, 0.6, DRY, 4.0, LAWN_TOP + 0.004, -2.6)],
-    dmg: [box(1.6, 0.01, 1.0, DRY, 1.0, LAWN_TOP + 0.004, -2.9), box(1.0, 0.01, 0.9, DRY, -4.0, LAWN_TOP + 0.004, -0.2),
-      rod(0.035, DRY, [-4.3, 1.4, 0.9], [-4.8, 1.9, 1.1]), rod(0.035, DRY, [-4.3, 1.5, 0.9], [-3.9, 2.0, 0.8])],
-    pin: [-4.3, 2.35, 0.9], halo: [-3.6, 1.2, 1.4, 5.4, 4.2],
-    canopies: [...trees, ...bushes], bloom,
-  };
-}
-
-// Soft round shapes drawn here on a small canvas: no image is downloaded.
 function drawn(size, paint) {
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = size;
@@ -346,52 +140,6 @@ function skyDome() {
 export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnchors = null } = {}) {
   const assets = await loadCoast();
   seed = 7;
-  glassPanes.length = 0;
-  // Small locally painted textures; no external images, services, or model downloads.
-  const stone = drawn(128, (g, s) => {
-    g.fillStyle = "#f3f0e8"; g.fillRect(0, 0, s, s);
-    for (let i = 0; i < 4500; i++) { const v = Math.floor(between(190, 245)); g.fillStyle = `rgba(${v},${v},${v},.2)`; g.fillRect(rand() * s, rand() * s, 1, 1); }
-  });
-  const wood = drawn(128, (g, s) => {
-    g.fillStyle = "#ded0b1"; g.fillRect(0, 0, s, s);
-    for (let i = 0; i < 160; i++) { g.fillStyle = `rgba(80,53,27,${between(.04, .2)})`; g.fillRect(rand() * s, 0, between(.3, 1.2), s); }
-  });
-  const roofTexture = drawn(256, (g, s) => {
-    g.fillStyle = "#e0e3e4"; g.fillRect(0, 0, s, s);
-    for (let i = 0; i < 10000; i++) { g.fillStyle = `rgba(70,83,93,${between(.02,.12)})`; g.fillRect(rand()*s,rand()*s,1,1); }
-    g.strokeStyle = "rgba(70,83,93,.2)"; g.lineWidth = 1;
-    for (let x = 0; x < s; x += 64) { g.beginPath(); g.moveTo(x,0); g.lineTo(x,s); g.stroke(); }
-  });
-  const grass = drawn(128, (g, s) => {
-    g.fillStyle = "#e2e5df"; g.fillRect(0,0,s,s);
-    for (let i=0;i<12000;i++) { g.strokeStyle = `rgba(55,75,48,${between(.04,.2)})`; const x=rand()*s,y=rand()*s; g.beginPath();g.moveTo(x,y);g.lineTo(x+between(-1,1),y-between(1,3));g.stroke(); }
-  });
-  grass.wrapS = grass.wrapT = THREE.RepeatWrapping; grass.repeat.set(220,220);
-  const lawnTexture = grass.clone(); lawnTexture.repeat.set(5,4); lawnTexture.needsUpdate = true;
-  const glass = drawn(256, (g, s) => {
-    const sky = g.createLinearGradient(0, 0, s * .2, s);
-    sky.addColorStop(0, "#f1faff"); sky.addColorStop(.38, "#9ec4da"); sky.addColorStop(.62, "#658a9d"); sky.addColorStop(1, "#2c4755");
-    g.fillStyle = sky; g.fillRect(0, 0, s, s);
-    g.strokeStyle = "rgba(255,255,255,.19)"; g.lineWidth = 13;
-    g.beginPath(); g.moveTo(s * .15, 0); g.lineTo(s * .8, s); g.stroke();
-    g.strokeStyle = "rgba(255,255,255,.08)"; g.lineWidth = 4;
-    g.beginPath(); g.moveTo(s * .32, 0); g.lineTo(s * .97, s); g.stroke();
-  });
-  const waterSurface = drawn(256, (g, s) => {
-    g.fillStyle = "#b7e8ef"; g.fillRect(0, 0, s, s);
-    for (let row = -2; row < 16; row++) {
-      g.beginPath(); g.lineWidth = 1.3; g.strokeStyle = "rgba(255,255,255,.65)";
-      for (let x = 0; x <= s; x += 3) {
-        const y = row * 21 + Math.sin(x * .045 + row * 1.7) * 7 + Math.sin(x * .08 - row) * 3;
-        if (x === 0) g.moveTo(x, y); else g.lineTo(x, y);
-      }
-      g.stroke();
-    }
-  });
-  waterSurface.wrapS = waterSurface.wrapT = THREE.RepeatWrapping;
-  waterSurface.repeat.set(2, 2);
-  for (const texture of [stone, wood, roofTexture]) { texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(2, 2); }
-  finishes = { stone, wood, glass, roof: roofTexture, lawn: lawnTexture, water: waterSurface };
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   let ratio = Math.min(window.devicePixelRatio || 1, 1.75);       // sharper only costs battery on a full screen
   renderer.setPixelRatio(ratio);
@@ -439,16 +187,6 @@ export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnch
   rim.position.set(7, 6, -8);
   scene.add(rim);
 
-  // The land: a wide field around the plinth, hills and trees far off.
-  const field = mesh(new THREE.CircleGeometry(220, 64), 0x78ab62);
-  field.material.map = grass; field.material.bumpMap = grass; field.material.bumpScale = .004;
-  field.material.roughness = 1;
-  field.rotation.x = -Math.PI / 2; field.position.y = -0.02; field.castShadow = false;
-  scene.add(field);
-  const contact = glowTexture("rgba(18,35,60,.4)", "rgba(18,35,60,.16)");
-  const contactPlane = new THREE.Mesh(new THREE.PlaneGeometry(16, 12), new THREE.MeshBasicMaterial({ map: contact, transparent: true, depthWrite: false }));
-  contactPlane.rotation.x = -Math.PI / 2; contactPlane.position.y = -.01;
-  scene.add(contactPlane);
   // Three continuous ridgelines: distant blue peaks, a middle valley and wooded foothills.
   // Vertex colours describe the slopes; the palette still follows the family's score.
   const scenery = [];
@@ -476,7 +214,7 @@ export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnch
     ridge.position.set(-84*Math.sin(angle),-2,-84*Math.cos(angle));
     scenery.push(ridge);
   }
-  field.visible=false;contactPlane.visible=false;scene.add(...scenery);
+  scene.add(...scenery);
   const coast = coastalHome(assets, environment.texture);
   scene.add(coast.root);
   scene.fog.near = 23; scene.fog.far = 122;
@@ -580,8 +318,7 @@ export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnch
   const glow = glowTexture();
 
   const parts = {};
-  const windows = glassPanes;
-  for (const [name, make] of Object.entries({ foundations, walls, roof, plumbing, garden })) {
+  for (const name of ["foundations", "walls", "roof", "plumbing", "garden"]) {
     const anchor = {
       foundations:[.65,.87,4.35], walls:[-.6,2.85,1.24], roof:[-.8,3.82,-.4],
       plumbing:[3.0,.85,2.85],garden:[-3.4,1.1,4.2]
@@ -596,12 +333,9 @@ export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnch
     pin.renderOrder = 10;   // on top of the home, like a label
     const whole = group(name, made.body, crk, dmg, halo, pin);
     scene.add(whole);
-    parts[name] = { whole, crk, dmg, halo, pin, canopies: made.canopies || [], bloom: made.bloom || null,
-      size: made.halo[3], state: null, heal: null, onState: made.onState || null, pinY: made.pin[1] };
+    parts[name] = { whole, crk, dmg, halo, pin, size: made.halo[3], state: null, heal: null, pinY: made.pin[1] };
   }
 
-  let water = null;
-  parts.plumbing.whole.traverse((node) => { if (node.userData.water) water = node; });
 
   // The picture follows the pointer a little, so the home feels within reach.
   const pointer = { x: 0, y: 0, nowX: 0, nowY: 0 };
@@ -715,15 +449,12 @@ export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnch
     rim.color.copy(mixed.sun); rim.intensity = .18 + .72 * h;
     hemi.color.copy(mixed.sky); hemi.groundColor.copy(mixed.ground); hemi.intensity = 1.25 + .45*h;
     renderer.toneMappingExposure = .66 + .32*h;
-    field.material.color.copy(mixed.grass).lerp(new THREE.Color(0x528561), .35);
     for (const node of scenery) {
       if (node.userData.tone === "hills") node.material.color.copy(mixed.hills).lerp(mixed.mid, .55-node.userData.layer*.2);
       if (node.userData.tone === "trees") node.material.color.copy(node.userData.color).lerp(mixed.hills, .25);
     }
     for (const cloud of clouds) cloud.material.color.copy(mixed.shade).lerp(mixed.cloud, .45 + .55 * cloud.userData.shade);
     rainAmount = Math.min(1, Math.max(0, (.38 - h) / .3));
-    // Lights on inside: a home that is looked after, at golden hour.
-    for (const pane of windows) pane.material.emissive.copy(LAMP).multiplyScalar(.015 + Math.max(0, h - .45) * .04);
   }
 
   // Always drawing now (the clouds drift), but only while the tab is visible: the browser pauses it otherwise.
@@ -803,19 +534,9 @@ export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnch
 
     for (const name in parts) heal(parts[name], time);
 
-    // Life around the home: the trees sway (more in the rain), the marks float, the water shimmers, birds fly.
-    const wind = 0.035 + 0.05 * rainAmount;
-    for (const canopy of parts.garden.canopies) {
-      if (canopy.userData.sway == null) continue;
-      canopy.rotation.z = Math.sin(clock * 1.3 + canopy.userData.sway) * wind;
-      canopy.rotation.x = Math.sin(clock * 0.9 + canopy.userData.sway * 2) * wind * 0.6;
-    }
+    // Life around the home: the marks float and birds fly.
     let i = 0;
     for (const name in parts) parts[name].pin.position.y = parts[name].pinY + Math.sin(clock * 1.8 + i++) * 0.07;
-    if (water && water.visible) {
-      waterSurface.offset.set(clock * .007, Math.sin(clock * .18) * .025);
-      water.material.emissive.setRGB(.005, .035, .05);
-    }
     const flying = health > 0.45;
     for (const bird of birds) {
       bird.visible = flying;
@@ -948,7 +669,6 @@ export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnch
         part.dmg.visible = state === "broken";
       }
       part.state = state;
-      if (part.onState) part.onState(state);
       part.halo.userData.w ??= part.halo.scale.x; part.halo.userData.h ??= part.halo.scale.y;
       part.halo.visible = state === "repaired" && !faded;
       part.pin.material.map = pins[state] || pins.solid;
@@ -956,8 +676,6 @@ export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnch
       part.pin.material.opacity = 1;
       const size = focus === name ? 0.78 : 0.62;
       part.pin.scale.set(size, size, 1);
-      part.canopies.forEach((canopy) => canopy.scale.setScalar(0.72 + 0.28 * green));
-      if (part.bloom) part.bloom.visible = green > 0.3;
       part.whole.traverse((node) => {
         if (!node.isMesh) return;
         const color = node.material.color;
@@ -1010,7 +728,7 @@ export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnch
     removeEventListener("pointermove", follow);
     scene.traverse((node) => { if (node.geometry) node.geometry.dispose(); if (node.material) node.material.dispose(); });
     Object.values(pins).forEach((texture) => texture.dispose());
-    [glow, puff, sparkTexture, stone, wood, glass, roofTexture, grass, lawnTexture, waterSurface, contact].forEach((texture) => texture.dispose());
+    [glow, puff, sparkTexture].forEach((texture) => texture.dispose());
     environment.dispose();
     renderer.dispose();
     coast.dispose();tools.remove();canvas.remove();

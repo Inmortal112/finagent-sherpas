@@ -217,7 +217,8 @@ Under the voice, the home has its own quiet sound (`src/finagent/web/house_sound
 low, fading out as it climbs (made of drops, not hiss: hundreds of tiny ticks a second, a clearer "plink" now and
 then, different drops in each ear), a bird now and then once the plan is healthy, a short chime when the family marks
 a step as done, and a quicker, softer sparkle when they only preview a change (so "look" and "done" never sound
-the same). It follows the same scale as the 3D sky, so the picture and the sound change together.
+the same). It uses the 3D home's own thresholds, so the family hears rain only while they see it fall and birds
+only while they see them fly.
 
 - **Always far below the voice.** Measured in the browser against a real narration (2026-11-16): the loudest rain
   is about 30 dB below the voice, the chime peaks about 20 dB under the voice's peaks.

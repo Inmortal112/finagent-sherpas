@@ -32,7 +32,8 @@ Los textos `narrative` de los casos (los que usarán la narración con LLM y las
 - [x] `bash check.sh` pasa.
 - [x] `voice_listen_test.py` genera `out/listen/before.mp3`, `after.mp3` y `samples.txt` (11 muestras).
 - [x] Comprobado transcribiendo el audio con Whisper (`small.en`, local): ver Evidencia.
-- [ ] `JNK` se sigue entendiendo «J and K» con todas las formas probadas (solo aparece 5 veces).
+- [x] `JNK`: con guiones o comas se entendía «J and K»; escrito «J N K» (con espacios) Whisper lo transcribe bien en
+  las cuatro frases de los casos probadas con la voz gratuita (17 nov). Sin probar con ElevenLabs.
 
 ## Evidencia (2026-11-14, Windows 11)
 - `pytest -q tests/test_speech_text.py` → 27 passed.

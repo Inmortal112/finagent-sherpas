@@ -7,14 +7,24 @@ async function fetchAsset(name) {
   return response;
 }
 
+// The geometry travels as columns of byte differences (see scripts/export_coast.py): the same data gzips to less
+// than half. This puts the 12-byte records back together.
+function records(buffer, size = 12) {
+  const columns = new Uint8Array(buffer), count = columns.length / size, out = new Uint8Array(columns.length);
+  for (let column = 0, k = 0; column < size; column++) {
+    for (let i = 0, j = column, value = 0; i < count; i++, j += size) out[j] = value = (value + columns[k++]) & 255;
+  }
+  return out.buffer;
+}
+
 // The export groups evaluated Blender surfaces by pillar, damage state and finish.
 export async function loadCoast() {
   const [manifest, packed] = await Promise.all([
     fetchAsset("villa.json").then(r => r.json()),
-    fetchAsset("villa.bin.gz").then(r => new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).arrayBuffer()),
+    fetchAsset("villa.cols.gz").then(r => new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).arrayBuffer()).then(records),
   ]);
   const loader = new THREE.TextureLoader();
-  const plants = await Promise.all(manifest.sizes.map((_, i) => loader.loadAsync(new URL("plant-" + i + ".png", directory).href)));
+  const plants = await Promise.all(manifest.sizes.map((_, i) => loader.loadAsync(new URL("plant-" + i + ".webp", directory).href)));
   return { manifest, packed, plants };
 }
 

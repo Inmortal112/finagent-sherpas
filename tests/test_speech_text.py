@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
     ("the two 401(k)s and an IRA", "the two four-oh-one-K plans and an I-R-A"),
     ("the 529 college plan", "the five-twenty-nine college plan"),
     ("Sell VTI and SCHD ETFs", "Sell V-T-I and S-C-H-D E-T-Fs"),
+    ("holdings, including JNK, are", "holdings, including J N K, are"),   # hyphens are heard as "J and K"
     ("State Street® SPDR® Portfolio", "State Street Spider Portfolio"),
 ])
 def test_rules(text, spoken):
