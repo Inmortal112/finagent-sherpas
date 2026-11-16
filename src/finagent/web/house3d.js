@@ -2,7 +2,9 @@
 // home (the SVG) stays as the fallback. Bevelled architecture, local textures and studio reflections: no models,
 // no image files.
 //
-//   const home = mount(host, { onFail, onPick })   -> throws when the browser has no WebGL
+//   const home = mount(host, { onFail, onPick, onAnchors })   -> throws when the browser has no WebGL
+//        onAnchors({ part: { x, y, shown } }): where each part's mark is on the picture, in the host's pixels,
+//        whenever it moves. The page hangs its own buttons there (a step's "Preview" and "Completed").
 //   home.update({ states, focus, lush, health })
 //        states: { roof: "solid" | "cracked" | "broken" | "repaired" | null (the family has no such part), ... }
 //        focus:  the part being talked about (the others fade), or null
@@ -341,7 +343,7 @@ function skyDome() {
   return { dome, uniforms };
 }
 
-export async function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
+export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnchors = null } = {}) {
   const assets = await loadCoast();
   seed = 7;
   glassPanes.length = 0;
@@ -835,6 +837,7 @@ export async function mount(host, { onFail = () => {}, onPick = () => {} } = {})
     }
 
     renderer.render(scene, camera);
+    if (onAnchors) reportAnchors();
     draw();
   }
 
@@ -968,6 +971,24 @@ export async function mount(host, { onFail = () => {}, onPick = () => {} } = {})
     first = false;
     aim(focus && states[focus] ? focus : "home");
     draw();
+  }
+
+  // Where each part's mark is on the picture, for the page's own buttons. Only told when something moved.
+  const anchorPoint = new THREE.Vector3();
+  let anchorKey = "";
+  function reportAnchors() {
+    const spots = {};
+    let key = "";
+    for (const name in parts) {
+      parts[name].pin.getWorldPosition(anchorPoint).project(camera);
+      const x = Math.round((anchorPoint.x * 0.5 + 0.5) * width), y = Math.round((-anchorPoint.y * 0.5 + 0.5) * height);
+      const shown = parts[name].whole.visible && anchorPoint.z < 1 && x >= 0 && x <= width && y >= 0 && y <= height;
+      spots[name] = { x, y, shown };
+      key += `${x},${y},${shown};`;
+    }
+    if (key === anchorKey) return;
+    anchorKey = key;
+    onAnchors(spots);
   }
 
   // A tap on a part of the home goes to that part, like on the drawn one.

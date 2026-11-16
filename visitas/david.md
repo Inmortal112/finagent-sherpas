@@ -3,6 +3,19 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-17 00:30 — feat/stage-actions-in-home — Claude Code
+- **Hecho:** los botones de cada paso («Preview this change», «I've completed this step», «Preview all planned changes»)
+  salen ahora **sobre la casa 3D**: un marcador numerado en la parte que repara cada paso y, al tocarlo o al llegar a
+  su capítulo, una tarjeta junto a esa parte con el nombre, la nota antes → después y los dos botones.
+- **Cómo:** `house3d.js` acepta `onAnchors` (posición en pantalla de cada parte); el resto está en `stage_page.html`
+  (`buildHomeActions`, `showHomeActions`, `placeHomeActions`) y al final de `web/architectural.css`.
+- **Decisiones:** con 3D, los botones del texto se ocultan y queda una línea que remite a la casa. En 2D y «Simply»
+  todo sigue como estaba. En móvil la tarjeta son solo los dos botones abajo (la imagen mide ~180 px).
+- **Estado:** `bash check.sh` pasa (214). Probado con Michael en escritorio (1280) y móvil (375): abrir, previsualizar,
+  marcar hecho, cerrar. Sin probar: iPhone real y dos pasos en la misma parte (Johnson, Weah, Samantha).
+- **Para Raúl:** toco tu escena (`stage_page.html`, `architectural.css`, una opción nueva en `house3d.js`). La lógica de
+  preview/hecho no cambia: solo dónde están los botones. Si no te convence, se quita borrando `body.h3d .chapter .in-home`.
+
 ## 2026-11-16 23:40 — feat/voice-rain-scale — Claude Code
 - **Hecho:** el sonido sigue la escala nueva de la casa (`healthOf = score / 100`, PR #76). En `web/house_sound.js`:
   lluvia al máximo hasta 0,26 y nada desde 0,38; pájaros desde 0,45. Son los umbrales de `house3d.js`.
