@@ -403,7 +403,7 @@ __ARCHITECTURAL_CSS__
       <div class="opts" id="opts"></div>
       <p class="lede"><span class="hero-question-label">A question worth exploring</span><strong id="heroQuestion">What matters most to your family?</strong><span class="hero-plan-fact" id="heroPlanFact" hidden></span></p>
       <button class="pill primary" id="enter">Step inside your home <span aria-hidden="true">↓</span></button>
-      <span class="mono hint">Scroll to descend through the clouds</span>
+      <span class="mono hint">Drag to rotate the home · scroll to explore your plan</span>
     </div>
     <div class="hero-visual" id="heroViewport" aria-label="Your plan's home and landscape"></div>
     <span class="illustration-note">An illustration of your financial plan</span>
@@ -931,7 +931,7 @@ async function tryHouse3d() {
     const { mount } = await import(SITE + "web/house3d.js");   // served by the backend; opened as a file this fails
     $("house3d").hidden = false;
     document.body.classList.add("h3d");
-    house3d = mount($("house3d"), { onFail: drawnHome, onPick: goToPart });
+    house3d = await mount($("house3d"), { onFail: drawnHome, onPick: goToPart });
     paint();
     frame3d();
   } catch (e) {
@@ -949,7 +949,7 @@ function stateOf(part) {
 }
 
 // A visual lighting input only. It never derives a financial result.
-const healthOf = (score) => Math.min(1, Math.max(0, (score - 25) / 60));
+const healthOf = (score) => Math.min(1, Math.max(0, score / 100));
 
 function markDone(id, done) {
   const step = scene(id);

@@ -2,6 +2,15 @@
 
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 
+## 2026-11-16 23:15 — feat/stage-coastal-home — Codex + Claude Code
+- **Hecho:** la casa 3D es ahora la villa de Blender «La cala», que se puede girar (arrastre, flechas, botones ↶ ⌂ ↷; la cámara no baja del suelo). Geometría y plantas en `web/coast/` (3,9 MB), visor en `web/coastal-home.js`, exportador en `scripts/export_coast.py`.
+- **Estados:** cada parte tiene tres versiones según su estado (sólido, agrietado, roto) y la puntuación global mueve la luz, el cielo, la lluvia y el viento. Umbrales 40/70, sin cambios.
+- **Cimientos:** encuadre más cercano; al enfocarlos, los arbustos de delante de la terraza se apartan para que se vea el muro roto.
+- **Estado:** `./check.sh` pasa (209 tests). Probado en el navegador: Michael (26) y Samantha (82), las cinco partes, giro completo, móvil 375 px y modo Simply.
+- **Origen:** el `.blend` (25 MB) no está en git; está en `~/.codex/visualizations/2026/11/16/01a1e5e3-…/La-cala-estados.blend` del PC de Raúl.
+- **Para Samuel:** `house3d.js` ya no dibuja la casa de cubos (sus funciones siguen ahí sin usarse) ni la intro entre nubes. `healthOf` pasa de `(score-25)/60` a `score/100`.
+- **Pendiente:** probar fluidez y tiempo de carga en un iPhone real.
+
 ## 2026-11-16 — feat/stage-architectural-review · publicación autorizada — Codex
 - **Hecho:** Raúl autoriza subir la revisión para que el equipo decida cómo integrarla. Rama actualizada sobre `1aa79f0` (PR #64); tarea #65 y PR [#66](https://github.com/Inmortal112/finagent-sherpas/pull/66), abierto sin merge automático.
 - **Publicación:** GitHub rechazó el push directo del usuario conectado `rgradolico-bot` (403). Rama publicada en su fork `rgradolico-bot/finagent-sherpas`; el PR apunta al `main` del equipo y permite ediciones de mantenedores.
