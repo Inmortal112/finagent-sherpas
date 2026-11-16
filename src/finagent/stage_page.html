@@ -562,6 +562,7 @@ function stopVoice() {
 function play(src, button) {
   stopVoice();
   if (!soundOn || !src) return;
+  if (spanish && spanishHere()) src = spanish.audioFor(src);
   player.src = src;
   playingButton = button || null;
   if (button) button.classList.add("playing");
@@ -613,6 +614,12 @@ async function offerPartnerNote() {
   const share = await partnerShare;
   if (share && api.session) share.offer({ base: api.base, session: api.session, person, people: scene("intro").visual.data.people || [], after: $("firstMove") });
 }
+// Listen in Spanish: a second audio track with its text under each narration (web/spanish.js, src/finagent/spanish.py).
+let spanish = null;
+const spanishHere = () => !WHERE || (WHERE[2] === api.family && WHERE[3] === MODE);   // this page's own track only
+const spanishReady = import(SITE + "web/spanish.js")
+  .then(({ create }) => create({ scenes: () => P.scenes, onChange: () => { stopVoice(); narrate(active, 0); } }))
+  .then((made) => (spanish = made)).catch(() => null);
 // Captions: each word of the narration lights up as the voice says it (web/captions.js).
 import(SITE + "web/captions.js").then(({ create }) => create({ voice: player, scenes: P.scenes })).catch(() => {});
 document.querySelectorAll("[data-sound]").forEach((b) => b.addEventListener("click", () => {
@@ -675,6 +682,7 @@ function build() {
   if (adults.length > 1) segment("I am", adults.map((p) => [p.first_name, p.first_name]), person, (name) => { person = name; store.set("uor-person-" + P.client_name, name); });
   segment("Guide me", [["simple", "Simply"], ["complete", "In full"]], MODE, (mode) => { if (mode !== MODE) switchTo(api.family, mode); });
   offerKidsNote(opts, data.people || []);
+  spanishReady.then((made) => { if (made && spanishHere()) made.mount(opts); });
 
   chapters = [];
   const root = $("chapters");

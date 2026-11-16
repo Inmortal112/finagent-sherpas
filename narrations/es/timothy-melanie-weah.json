@@ -1,0 +1,111 @@
+{
+  "scenes": {
+    "intro": {
+      "from": "0b42eda2e073f0bb",
+      "es": "Timothy y Melanie, bienvenidos. Su puntuación es 60 de 100, que Sherpas llama estable. Su jubilación va por buen camino y tienen bastante efectivo. La verdadera pregunta es a dónde debería ir ese efectivo extra. Vamos a recorrer su casa juntos."
+    },
+    "pillar_savings_and_cash_flow": {
+      "from": "a452c33e2c973be0",
+      "es": "Sus tuberías, sus ahorros, están firmes. Ahorran bien y ambos reciben el aporte completo de su empleador. Lo que todavía falta es la universidad: aún no hay nada ahorrado para Liam y Josh."
+    },
+    "pillar_debt": {
+      "from": "470596a4b814b8f2",
+      "es": "Sus paredes, sus deudas, están agrietadas. La mayor parte de lo que deben tiene tasas más bajas. La excepción es una tarjeta de crédito de $18,000 al 18%. Con el pago actual, tardarían hasta 2039 en liquidarla."
+    },
+    "pillar_investments": {
+      "from": "55b33275fff3be20",
+      "es": "Su jardín, sus inversiones, está agrietado. Tienen $150,000 en efectivo frente a $210,000 invertidos, así que una gran parte de su dinero no está preparada para crecer. Y ustedes dos se sienten cómodos con niveles de riesgo distintos, algo de lo que vale la pena hablar."
+    },
+    "pillar_liquidity_and_emergency_fund": {
+      "from": "85bef4b470d46fbd",
+      "es": "Sus cimientos, su fondo de emergencia, están sólidos: unos 16 meses de gastos esenciales, muy por encima de los 8 a 9 meses recomendados. Unos $60,223 están más allá de ese colchón. Ese es dinero que pueden poner a trabajar en las brechas de su protección."
+    },
+    "pillar_insurance_and_protection": {
+      "from": "914a555ff2638885",
+      "es": "Su techo, su seguro, está roto. Ambas pólizas de vida están muy por debajo de lo recomendado, y no tienen una póliza paraguas. Con Liam y Josh dependiendo de los dos ingresos, esta es la parte de su casa más expuesta."
+    },
+    "person_timothy": {
+      "from": "a806e318d31a4e4c",
+      "es": "Timothy, esta es tu parte de la casa. Ingresas $150,000 al año, y la tarjeta, la hipoteca y el préstamo del auto están a tu nombre. Tu cobertura de vida es de $140,000, que está $610,000 por debajo del mínimo recomendado."
+    },
+    "person_melanie": {
+      "from": "e2239f08bb2dcf18",
+      "es": "Melanie, esta es tu parte de la casa. Ingresas $120,000 al año, y la cuenta de efectivo de $150,000 está a tu nombre. Tu cobertura de vida es de $110,000, que está $490,000 por debajo del mínimo recomendado."
+    },
+    "move_1": {
+      "from": "e35dbe354eeec27e",
+      "es": "El primer paso: paguen $6,800 de la tarjeta del 18%, usando efectivo que ya tienen. Eso sube su puntuación de 60 a 62."
+    },
+    "move_2": {
+      "from": "50bef482a48ef82f",
+      "es": "El segundo paso: agreguen $235,000 de cobertura de vida. Por sí sola, la puntuación se queda en 60, pero cierra parte de la brecha que enfrentaría su familia."
+    },
+    "move_3": {
+      "from": "d56d60f1206b7c44",
+      "es": "El tercer paso: agreguen $1M de seguro paraguas, cobertura extra en caso de que alguien haga un reclamo grande contra ustedes. Por sí solo, la puntuación también se queda en 60."
+    },
+    "all_moves": {
+      "from": "2f94d696dbd87d47",
+      "es": "La clave es esta: estos pasos funcionan juntos. La tarjeta, la cobertura de vida y el seguro paraguas, si se hacen juntos, llevan su puntuación de 60 a 78. Sus paredes y su techo son las partes que cambian."
+    },
+    "timeline": {
+      "from": "ff8faa5b7bfaf776",
+      "es": "Ahora los años que vienen. Timothy planea jubilarse a los 62 y Melanie a los 60. Con el plan actual, su dinero dura hasta el final, con unos $2,371,901 sobrantes. Su jubilación está en buena forma; proteger a la familia en el camino es lo que necesita trabajo."
+    }
+  },
+  "simple": {
+    "intro": {
+      "from": "90aa2e77246d7062",
+      "es": "Hola, Timothy y Melanie. Su puntuación de salud financiera es 60 de 100, que es estable."
+    },
+    "pillar_savings_and_cash_flow": {
+      "from": "44d307a4c73e8fd2",
+      "es": "Sus tuberías están sólidas. Ahorros y flujo de efectivo obtienen 26 de 30 puntos."
+    },
+    "pillar_debt": {
+      "from": "a209e7b69d7e7a25",
+      "es": "Sus paredes son deuda y están agrietadas con 12 de 20 puntos. Una tarjeta de crédito cuesta mucho más que sus otros préstamos."
+    },
+    "pillar_investments": {
+      "from": "6c81c20cd9e48b98",
+      "es": "Su jardín está agrietado. Inversiones obtienen 8 de 15 puntos."
+    },
+    "pillar_liquidity_and_emergency_fund": {
+      "from": "d42ac837aa655692",
+      "es": "Sus cimientos están sólidos. Fondo de emergencia y efectivo obtienen 15 de 15 puntos."
+    },
+    "pillar_insurance_and_protection": {
+      "from": "0be3fcf6138c6d76",
+      "es": "Su techo está roto. Seguros y protección obtienen 7 de 20 puntos."
+    },
+    "person_timothy": {
+      "from": "120d9aea2ebb88fe",
+      "es": "Timothy, esta es tu parte del hogar. Te faltan $610,000 en seguro de vida, lo cual importa para Melanie y los niños."
+    },
+    "person_melanie": {
+      "from": "105702dce92f17a0",
+      "es": "Melanie, esta es tu parte del hogar. Te faltan $490,000 en seguro de vida, lo cual importa para Timothy y los niños."
+    },
+    "move_1": {
+      "from": "19e7d80401ce4148",
+      "es": "Su plan reduce la deuda de la tarjeta con efectivo. Esto repara sus paredes y sube su puntuación a 62 de 100."
+    },
+    "move_2": {
+      "from": "d9d5203e10302757",
+      "es": "Su plan agrega más cobertura de seguro de vida. Esto repara su techo y su puntuación se mantiene en 60 de 100."
+    },
+    "move_3": {
+      "from": "e8a617e987f3884f",
+      "es": "Su plan agrega cobertura paraguas para grandes reclamaciones de responsabilidad civil. Esto repara su techo y su puntuación se mantiene en 60 de 100."
+    },
+    "all_moves": {
+      "from": "94987fd71c45c61a",
+      "es": "Si lo hacen todo junto, reducir la deuda de la tarjeta y agregar cobertura de vida y paraguas suben su puntuación a 78 de 100."
+    },
+    "timeline": {
+      "from": "92436d118b92680f",
+      "es": "Mirando hacia el futuro, sus ahorros alcanzan hasta el final del plan. El plan deja $2,371,901 al final."
+    }
+  },
+  "model": "deepseek-flash"
+}
