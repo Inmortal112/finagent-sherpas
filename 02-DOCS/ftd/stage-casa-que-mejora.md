@@ -15,12 +15,20 @@ tarjetas flotan sobre la escena.
 
 ## Decisiones
 
-- **El scroll ya no repara solo.** Antes, al pasar por el paso N, la casa aparecía reparada hasta N. Ahora cada paso
-  tiene «I've done this»: la reparación la provoca la familia. El capítulo final sigue siendo la vista previa con todo
-  hecho («If you take every step»). Porque «mejora conforme hacen las cosas bien» exige que la mejora venga de ellos.
+- **Avanzar es hacer.** En el capítulo del paso N cuentan como hechos los pasos anteriores (1…N−1), más los que la
+  familia marque con «I've done this»; el paso N se repara al pulsarlo o al pasar al siguiente. El capítulo final
+  cuenta todos. Así la puntuación sube mientras se baja por la página (Samuel, 16 nov: «el score no va variando»,
+  porque en la primera versión solo subía con el botón).
 - **Ninguna cifra inventada.** La puntuación alcanzada es la mayor cifra de Sherpas para lo que han hecho: la de cada
   paso por separado (`score_after`) o la de todos juntos (`all_moves`) si los han hecho todos. Sherpas no puntúa
-  combinaciones parciales, así que no se suman ni se calculan.
+  combinaciones parciales, así que no se suman ni se calculan, y la cifra nunca baja (Michael: 26 → 31 → 62). En una
+  familia sin `all_moves` (Michael, Samantha), el capítulo final muestra la mejor cifra de un paso suelto.
+- **Casa moderna (Samuel, 16 nov, con una imagen de referencia de casa minimalista isométrica):** volúmenes blancos,
+  planta alta en voladizo, cubiertas planas oscuras, ventanales con perfil negro, zócalo blanco con césped, árboles
+  redondos y piscina. Partes: tejado = cubiertas; paredes = volúmenes y cristales (rotos si «broken»); fontanería =
+  piscina (agua baja si «cracked», vacía y con charco si «broken»); cimientos = zócalo; jardín = césped y árboles.
+- **Más movimiento:** cámara que orbita despacio y sigue al ratón, árboles que se mecen (más con lluvia), marcas que
+  flotan, agua que brilla, pájaros con buen tiempo, onda de luz al reparar, portada que aparece y tarjetas que entran.
 - **El «Yes, I started» del día 3 cuenta como paso hecho**: también sube la puntuación.
 - **Lo hecho se guarda en el navegador** (`localStorage`, por familia), con «Start again» para la demo. No toca el
   backend ni el contrato.
@@ -60,6 +68,9 @@ abandona el 3D y vuelve a la casa dibujada, que es lo previsto en un equipo sin 
 - Weah, móvil 390×844: paso 1 → 62; capítulo final → 78 (`all_moves`, +18). Sin errores.
 - Weah, 2D: tres pasos → 78 y paredes y tejado reparados; se conserva al recargar; «Start again» → 60 y paredes agrietadas.
 - `./check.sh` → `167 passed`, pipeline OK.
+- Segunda versión (casa moderna + avanzar es hacer): scroll por los pasos → Michael 26 → 31 → 62; Johnson 52 → 57 → 57,
+  final 60 (`all_moves`); botón en el paso 2 de Michael: 31 → 62. 2D: igual que antes. Sin errores en consola (Michael,
+  Samantha en móvil, Johnson). `./check.sh` → `167 passed`.
 - Verificación (sobre 5729f4d + cambios sin commit): `./check.sh` 167 passed; `node --check` de `house3d.js` y del
   script de la página: OK; `/healthz` 200. **HERRAMIENTA-AUSENTE:** ruff no instalado. **SUSTITUIDA:** el JavaScript no
   tiene tests; se probó con Chromium sin interfaz, que no mide el rendimiento real de un móvil. Veredicto: PASA, con

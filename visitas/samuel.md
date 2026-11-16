@@ -6,8 +6,10 @@
   atardecer dorado según la puntuación. 3D al estilo del vídeo: pantalla completa, intro desde las nubes con el scroll,
   colinas, árboles, sombras y ventanas encendidas. Ficha `stage-casa-que-mejora.md`.
 - **Estado:** `./check.sh` pasa (167). Navegador sin interfaz: 3 familias, escritorio y móvil, sin errores en consola.
-- **Decisiones:** el scroll ya no repara solo (solo el capítulo final como vista previa). Puntuación = la mayor cifra de
-  Sherpas para lo hecho (un paso o `all_moves`), nunca una suma. Sigue detrás de `?house=3d`.
+- **Decisiones:** avanzar es hacer: en el paso N cuentan como hechos los anteriores y el botón hace el actual, así
+  que la puntuación sube al bajar por la página. Puntuación = la mayor cifra de Sherpas para lo hecho (un paso o
+  `all_moves`), nunca una suma ni una bajada. Casa 3D nueva: moderna minimalista (volúmenes blancos, cubiertas planas,
+  ventanales, piscina = fontanería, zócalo = cimientos), con mucho más movimiento. Sigue detrás de `?house=3d`.
 - **Bloqueos:** falta probarlo en un iPhone real (rendimiento).
 - **Para Raúl:** he tocado `stage_page.html` (botón por paso, `achieved()`, `frame3d()`, estilos `body.h3d`) y he
   reescrito `web/house3d.js` (misma entrada más `health`, `setFrame` y `setIntro`).
