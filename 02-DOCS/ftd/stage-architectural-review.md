@@ -46,6 +46,34 @@ an individual preview, with zero completed steps. Physical iPhone and live voice
 
 ## Explore, preview, complete
 
+### Sixth review: manual-scroll reveal and atmosphere polish
+
+Raúl reported that manual scrolling never revealed the house. The previous handoff could freeze the opening
+on a mid-cloud still before the flight was complete. In addition, the hero's inherited `overflow: hidden`
+prevented its picture from sticking to the viewport.
+
+The opening now owns an additional 700-pixel scroll runway. Its picture stays pinned while descending, the
+flight completes before the picture is released, and the house remains revealed for at least a 180-pixel
+hold before the next section. Desktop keeps both columns in view; mobile pins the picture after the greeting.
+The renderer cannot transfer to the journey until the descent is complete. The hero no longer creates an
+overflow scroll container that breaks sticky positioning; the picture's own rounded box still clips its content.
+
+Manual wheel validation (without the entrance button), narrow viewport: scroll 603 → picture pinned at top 72
+while descending; scroll 814 → house fully visible at top 72, bottom 352, renderer still in the opening and
+the journey still below it. This is a visual/browser regression check, separate from the functional test suite.
+
+![House revealed using only the wheel](../review-assets/architectural/manual-reveal-mobile-v6.jpg)
+
+Atmosphere polish retains the team's original score/weather palette: a sky gradient aligned with the real
+horizon removes the hard color seam; cloud undersides gain soft shading. Grass uses fine local texture at
+world-appropriate scale, roof surfaces gain subtle grain/seams, paving retains mineral grain, and glass glints
+are reduced. Textures are generated locally, reused and disposed; no new service or asset dependency is added.
+
+![Refined environment and materials](../review-assets/architectural/ambience-v6.jpg)
+
+Validation: 171 functional tests pass, scene JavaScript parses, and the manual reveal is checked in-browser.
+Physical iPhone frame rate remains unverified.
+
 ### Fifth review: the original descent through clouds
 
 At Raúl's explicit request, the original cloud-to-home camera path replaces the fourth review's added

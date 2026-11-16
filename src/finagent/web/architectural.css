@@ -235,3 +235,13 @@ body:not(.h3d) .hero-score-card { margin-inline: auto; }
   .chat { top: calc(max(52svh, 390px) - .5rem); }
 }
 body.h3d .hero .hint { display: block; font-size: .6rem; }
+/* The cloud flight owns a scroll runway; the home is revealed before its picture can leave. */
+body.h3d .hero { min-height: calc(100svh + 700px); align-items: start; }
+body.h3d .hero-in { position: sticky; top: 104px; align-self: start; }
+body.h3d .hero-visual { position: sticky; top: 104px; align-self: start; }
+@media (max-width: 860px) {
+  body.h3d .hero { grid-template-rows: max-content 1fr max-content; }
+  body.h3d .hero-in { position: relative; top: auto; }
+  body.h3d .hero-visual { top: 72px; }
+}
+body.h3d .hero { overflow: visible; }

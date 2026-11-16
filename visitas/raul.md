@@ -2,6 +2,13 @@
 
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 
+## 2026-11-16 — feat/stage-architectural-review · scroll manual y ambiente — Codex
+- **Hecho:** corregido el fallo señalado por Raúl: la escena queda fijada durante el descenso y muestra la casa antes de liberarse. Quitado el `overflow: hidden` que anulaba el sticky. No se transfiere el lienzo con el descenso a medias.
+- **Verificado:** rueda manual, sin botón: scroll 603 con foto en y=72; scroll 814 con casa completamente visible, aún fijada. 171 tests funcionales y sintaxis JS correcta.
+- **Ambiente:** horizonte continuo, sombra suave en nubes, césped y cubierta con textura fina y reflejos del cristal más discretos; se conserva el clima según puntuación.
+- **Para Samuel y David:** solo escena y documentación de Raúl; sin nuevas dependencias ni cambios en datos, contrato o voz.
+- **Siguiente:** revisión de Raúl y prueba real de fluidez en iPhone; sigue local hasta aprobar la publicación.
+
 ## 2026-11-16 — feat/stage-architectural-review · bajada original desde nubes — Codex
 - **Hecho:** restaurada, a petición de Raúl, la trayectoria original `INTRO` y la capa alta de 26 nubes; el scroll baja hasta la casa. Sustituye el giro de llegada añadido en la cuarta revisión.
 - **Decisiones:** se mantiene la contención para no atravesar textos. El botón reproduce la bajada en 2,2 s; cualquier entrada manual la interrumpe. No cambia la puntuación ni marca pasos hechos.

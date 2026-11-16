@@ -65,9 +65,9 @@ const between = (a, b) => a + (b - a) * rand();
 
 let finishes = null;
 function mesh(geometry, color, x = 0, y = 0, z = 0) {
-  const finish = color === WALL || color === PAVING ? finishes?.stone : color === WOOD ? finishes?.wood : null;
+  const finish = color === WALL || color === PAVING ? finishes?.stone : color === WOOD ? finishes?.wood : color === ROOF ? finishes?.roof : null;
   const m = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color, roughness: .82, metalness: .02,
-    ...(finish ? { map: finish, bumpMap: finish, bumpScale: .025 } : {}) }));
+    ...(finish ? { map: finish, bumpMap: finish, bumpScale: color === ROOF ? .012 : .025 } : {}) }));
   m.position.set(x, y, z);
   m.castShadow = m.receiveShadow = true;
   m.userData.color = new THREE.Color(color);   // its own colour, before fading or drying
@@ -232,6 +232,9 @@ function garden() {
   };
   const bush = (x, z, r = 0.2) => { const g = group("canopy", leaf(r, 0, r * 0.8, 0, rand() > 0.5)); g.position.set(x, LAWN_TOP, z); return g; };
   const lawn = box(9.7, 0.06, 7.7, 0, 0, LAWN_TOP - 0.03, 0);
+  lawn.material.map = finishes?.lawn || null;
+  lawn.material.bumpMap = finishes?.lawn || null;
+  lawn.material.bumpScale = .009; lawn.material.roughness = .98;
   lawn.userData.leaf = GRASS;
   lawn.castShadow = false;
   const trees = [tree(-4.4, -3.3), tree(-4.4, -1.4, 0.85), tree(-4.3, 0.9, 1.1), tree(-4.25, 3.4, 0.8), tree(4.5, -3.3, 1.1), tree(1.6, -3.4, 0.9),
@@ -277,6 +280,13 @@ const cloudTexture = () => drawn(256, (g, s) => {
     puff.addColorStop(0, "rgba(255,255,255,.55)"); puff.addColorStop(0.6, "rgba(255,255,255,.22)"); puff.addColorStop(1, "rgba(255,255,255,0)");
     g.fillStyle = puff; g.fillRect(0, 0, s, s);
   }
+  // Tint only the existing cloud alpha: illuminated crowns and a cooler, shaded underside.
+  const shade = g.createLinearGradient(0, s * .35, 0, s * .75);
+  shade.addColorStop(0, "rgba(255,255,255,0)");
+  shade.addColorStop(1, "rgba(89,108,137,.24)");
+  g.globalCompositeOperation = "source-atop";
+  g.fillStyle = shade; g.fillRect(0,0,s,s);
+  g.globalCompositeOperation = "source-over";
 });
 
 // The sky: a dome painted from the horizon up, with the sun's glow. It always stands around the camera.
@@ -292,9 +302,9 @@ function skyDome() {
       varying vec3 vDir;
       void main() {
         vec3 d = normalize(vDir);
-        float y = clamp(d.y * 0.5 + 0.35, 0.0, 1.0);
-        vec3 c = mix(horizon, mid, smoothstep(0.0, 0.22, y));
-        c = mix(c, top, smoothstep(0.22, 0.85, y));
+        float y = max(d.y, 0.0);
+        vec3 c = mix(horizon, mid, smoothstep(0.0, 0.35, y));
+        c = mix(c, top, smoothstep(0.25, 0.95, y));
         float s = max(dot(d, sunDir), 0.0);
         c += sunColor * sunPower * (pow(s, 900.0) * 2.2 + pow(s, 40.0) * 0.45 + pow(s, 6.0) * 0.22);
         gl_FragColor = vec4(c, 1.0);
@@ -319,13 +329,25 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     g.fillStyle = "#ded0b1"; g.fillRect(0, 0, s, s);
     for (let i = 0; i < 160; i++) { g.fillStyle = `rgba(80,53,27,${between(.04, .2)})`; g.fillRect(rand() * s, 0, between(.3, 1.2), s); }
   });
+  const roofTexture = drawn(256, (g, s) => {
+    g.fillStyle = "#e0e3e4"; g.fillRect(0, 0, s, s);
+    for (let i = 0; i < 10000; i++) { g.fillStyle = `rgba(70,83,93,${between(.02,.12)})`; g.fillRect(rand()*s,rand()*s,1,1); }
+    g.strokeStyle = "rgba(70,83,93,.2)"; g.lineWidth = 1;
+    for (let x = 0; x < s; x += 64) { g.beginPath(); g.moveTo(x,0); g.lineTo(x,s); g.stroke(); }
+  });
+  const grass = drawn(128, (g, s) => {
+    g.fillStyle = "#e2e5df"; g.fillRect(0,0,s,s);
+    for (let i=0;i<12000;i++) { g.strokeStyle = `rgba(55,75,48,${between(.04,.2)})`; const x=rand()*s,y=rand()*s; g.beginPath();g.moveTo(x,y);g.lineTo(x+between(-1,1),y-between(1,3));g.stroke(); }
+  });
+  grass.wrapS = grass.wrapT = THREE.RepeatWrapping; grass.repeat.set(220,220);
+  const lawnTexture = grass.clone(); lawnTexture.repeat.set(5,4); lawnTexture.needsUpdate = true;
   const glass = drawn(256, (g, s) => {
     const sky = g.createLinearGradient(0, 0, s * .2, s);
     sky.addColorStop(0, "#f1faff"); sky.addColorStop(.38, "#9ec4da"); sky.addColorStop(.62, "#658a9d"); sky.addColorStop(1, "#2c4755");
     g.fillStyle = sky; g.fillRect(0, 0, s, s);
-    g.strokeStyle = "rgba(255,255,255,.32)"; g.lineWidth = 13;
+    g.strokeStyle = "rgba(255,255,255,.19)"; g.lineWidth = 13;
     g.beginPath(); g.moveTo(s * .15, 0); g.lineTo(s * .8, s); g.stroke();
-    g.strokeStyle = "rgba(255,255,255,.13)"; g.lineWidth = 4;
+    g.strokeStyle = "rgba(255,255,255,.08)"; g.lineWidth = 4;
     g.beginPath(); g.moveTo(s * .32, 0); g.lineTo(s * .97, s); g.stroke();
   });
   const waterSurface = drawn(256, (g, s) => {
@@ -341,8 +363,8 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
   });
   waterSurface.wrapS = waterSurface.wrapT = THREE.RepeatWrapping;
   waterSurface.repeat.set(2, 2);
-  for (const texture of [stone, wood]) { texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(2, 2); }
-  finishes = { stone, wood, glass, water: waterSurface };
+  for (const texture of [stone, wood, roofTexture]) { texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(2, 2); }
+  finishes = { stone, wood, glass, roof: roofTexture, lawn: lawnTexture, water: waterSurface };
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   let ratio = Math.min(window.devicePixelRatio || 1, 1.75);       // sharper only costs battery on a full screen
   renderer.setPixelRatio(ratio);
@@ -392,6 +414,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
 
   // The land: a wide field around the plinth, hills and trees far off.
   const field = mesh(new THREE.CircleGeometry(220, 64), 0x78ab62);
+  field.material.map = grass; field.material.bumpMap = grass; field.material.bumpScale = .004;
   field.material.roughness = 1;
   field.rotation.x = -Math.PI / 2; field.position.y = -0.02; field.castShadow = false;
   scene.add(field);
@@ -886,7 +909,7 @@ export function mount(host, { onFail = () => {}, onPick = () => {} } = {}) {
     removeEventListener("pointermove", follow);
     scene.traverse((node) => { if (node.geometry) node.geometry.dispose(); if (node.material) node.material.dispose(); });
     Object.values(pins).forEach((texture) => texture.dispose());
-    [glow, puff, sparkTexture, stone, wood, glass, waterSurface, contact].forEach((texture) => texture.dispose());
+    [glow, puff, sparkTexture, stone, wood, glass, roofTexture, grass, lawnTexture, waterSurface, contact].forEach((texture) => texture.dispose());
     environment.dispose();
     renderer.dispose();
     canvas.remove();

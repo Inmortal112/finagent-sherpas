@@ -951,9 +951,15 @@ function showScore(score) {
 function frame3d() {
   if (!house3d) return;
   const host = $("house3d"), opening = $("heroViewport"), scene = $("sceneViewport");
-  // Original cloud-to-home route: the opening's scroll distance controls the whole descent.
+  // Finish the flight while the picture is pinned, then hold the revealed home before releasing it.
   const hero = $("hero").getBoundingClientRect();
-  const descent = Math.min(1, Math.max(0, -hero.top / Math.max(1, hero.height * .85)));
+  const style = getComputedStyle($("hero")), stickyTop = innerWidth <= 860 ? 72 : 104;
+  const heroStart = hero.top + scrollY;
+  const start = innerWidth <= 860 ? heroStart + parseFloat(style.paddingTop) + $("hero").querySelector(".hero-in").offsetHeight + parseFloat(style.rowGap) - stickyTop : heroStart;
+  const noteHeight = innerWidth <= 860 ? $("hero").querySelector(".illustration-note").offsetHeight + parseFloat(style.rowGap) : 0;
+  const release = heroStart + hero.height - parseFloat(style.paddingBottom) - noteHeight - opening.clientHeight - stickyTop;
+  const end = Math.max(start + 260, release - 180);
+  const descent = Math.min(1, Math.max(0, (scrollY - start) / (end - start)));
   house3d.setIntro(descent);
   const keep = (box, image) => {
     let poster = box.querySelector(".home-poster");
@@ -966,7 +972,7 @@ function frame3d() {
     const image = house3d.snapshot();
     if (image) keep(scene, image);
   }
-  const target = sceneTop < innerHeight * (host.parentElement === opening ? .9 : 1.02) ? scene : opening;
+  const target = descent >= 1 && sceneTop < innerHeight * (host.parentElement === opening ? .9 : 1.02) ? scene : opening;
   if (host.parentElement !== target) {
     const snapshot = house3d.snapshot();
     if (snapshot) {
