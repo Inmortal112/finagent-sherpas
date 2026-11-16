@@ -3,6 +3,14 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 21:45 — feat/voice-kids — Claude Code
+- **Hecho:** la casa explicada a los niños, por su nombre y sin cifras (`kids_note.py`, `GET /kids-note`). Botón
+  «For the children · Explain it to Oliver and Sophia» en Johnson, Weah y Samantha (tono adolescente). Fusionado el #73.
+- **Estado:** `bash check.sh` pasa. Probado en el navegador; falta oírlo en iPhone.
+- **Decisiones:** sin «mom»/«dad» (los datos no dicen quién es quién); un solo audio por familia.
+- **Para Raúl:** `offerKidsNote()` en `stage_page.html` (fila `.seg` debajo de «Guide me»). Si chocas, consérvala.
+- **Siguiente:** «Listen in Spanish» (avisar a Samuel antes: toca `narrations/`).
+
 ## 2026-11-16 21:00 — feat/voice-calendar — Claude Code
 - **Hecho:** «Add to my calendar» tras elegir el primer paso: archivo `.ics` con «First step: …» mañana a las 10:00 y
   «Look at your home again» el día 3 con el enlace de vuelta (`calendar_invite.py`, `GET /calendar/{sesión}.ics`).

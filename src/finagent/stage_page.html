@@ -575,6 +575,25 @@ import(SITE + "web/house_sound.js").then(({ create }) => {   // served by the ba
   houseSound = create({ voice: player, enabled: soundOn });
   houseSound.setWeather(healthOf(achieved()));
 }).catch(() => {});
+// The home explained to the children, by name and with no figures (GET /kids-note, src/finagent/kids_note.py).
+async function offerKidsNote(opts, people) {
+  const kids = people.filter((p) => p.role === "child").map((p) => p.first_name);
+  if (!kids.length || opts.querySelector(".kids-note")) return;
+  await Promise.resolve();   // build() runs before the page starts looking for the backend (api.ready)
+  if (!(await api.ready) || !api.family || opts.querySelector(".kids-note")) return;
+  const names = kids.length === 1 ? kids[0] : `${kids.slice(0, -1).join(", ")} and ${kids[kids.length - 1]}`;
+  const box = el("div", "seg kids-note", '<span class="mono">For the children</span>');
+  const b = el("button", ""); b.textContent = `Explain it to ${names}`;
+  b.addEventListener("click", () => {
+    entered = true;
+    if (!soundOn) { soundOn = true; showSound(); }
+    if (playingButton === b) { stopVoice(); return; }
+    play(`${api.base}/kids-note/${encodeURIComponent(api.family)}.mp3`, b);
+  });
+  box.append(b);
+  opts.append(box);
+}
+
 // The chosen step in the family's own calendar: tomorrow, and the day-3 check-in (GET /calendar/{session}.ics).
 // A plain link: an iPhone opens it with "Add to Calendar", a computer downloads the file.
 function addToCalendar() {
@@ -655,6 +674,7 @@ function build() {
   };
   if (adults.length > 1) segment("I am", adults.map((p) => [p.first_name, p.first_name]), person, (name) => { person = name; store.set("uor-person-" + P.client_name, name); });
   segment("Guide me", [["simple", "Simply"], ["complete", "In full"]], MODE, (mode) => { if (mode !== MODE) switchTo(api.family, mode); });
+  offerKidsNote(opts, data.people || []);
 
   chapters = [];
   const root = $("chapters");
