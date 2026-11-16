@@ -3,6 +3,15 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-16 21:00 — feat/voice-calendar — Claude Code
+- **Hecho:** «Add to my calendar» tras elegir el primer paso: archivo `.ics` con «First step: …» mañana a las 10:00 y
+  «Look at your home again» el día 3 con el enlace de vuelta (`calendar_invite.py`, `GET /calendar/{sesión}.ics`).
+- **Estado:** `bash check.sh` pasa. Probado en el navegador (Michael, sencillo); falta abrirlo en el iPhone.
+- **Para Raúl:** `addToCalendar()` en `stage_page.html` (enlace `pill dark` dentro de `#firstMove`) y una llamada en
+  `chooseStep`. Si chocas, consérvalo.
+- **Para Samuel:** ruta nueva en `server.py`; no toco `sessions.py`. `SUBMISSION.md` lo menciona.
+- **Siguiente:** la casa explicada a los niños; escucharlo en español.
+
 ## 2026-11-16 20:15 — feat/voice-eleven-numbers — Claude Code
 - **Hecho:** las 4 familias regeneradas con Matilda (ElevenLabs) en el ordenador de David, con tiempos reales para
   los subtítulos. Detectado con Whisper que el modelo rápido leía mal cifras largas («$1,166,000», «$19,900»):

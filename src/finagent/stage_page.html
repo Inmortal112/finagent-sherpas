@@ -575,6 +575,19 @@ import(SITE + "web/house_sound.js").then(({ create }) => {   // served by the ba
   houseSound = create({ voice: player, enabled: soundOn });
   houseSound.setWeather(healthOf(achieved()));
 }).catch(() => {});
+// The chosen step in the family's own calendar: tomorrow, and the day-3 check-in (GET /calendar/{session}.ics).
+// A plain link: an iPhone opens it with "Add to Calendar", a computer downloads the file.
+function addToCalendar() {
+  const box = $("firstMove");
+  if (!api.session || !box || box.querySelector(".calendar-link")) return;
+  const tomorrow = new Date(Date.now() + 864e5), pad = (n) => String(n).padStart(2, "0");
+  const day = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}`;
+  const link = el("a", "pill dark calendar-link", "Add to my calendar");
+  link.href = `${api.base}/calendar/${encodeURIComponent(api.session)}.ics?day=${day}&mode=${MODE}`;
+  link.style.marginTop = ".8rem";
+  box.append(link);
+}
+
 // A voice note for the other half of a couple, offered once a first step is chosen (web/partner_share.js).
 const partnerShare = import(SITE + "web/partner_share.js").catch(() => null);
 async function offerPartnerNote() {
@@ -1365,6 +1378,7 @@ async function chooseStep(button) {
     if (response.ok) {
       setSession((await response.json()).session_id);
       $("chosenNote").textContent = `Chosen: ${stepName(step)}. Your advisor will see it, and we check in with you in three days.`;
+      addToCalendar();
       offerPartnerNote();
     }
   } catch (e) { /* the choice still shows on the page */ }

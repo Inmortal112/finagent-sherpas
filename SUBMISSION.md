@@ -28,7 +28,7 @@ be guided, and say what worries them most; the home turns to the part of the pla
 walks them through the five parts and then through the years ahead. **They can stop it at any moment and ask**,
 typing or tapping to talk, and the answer uses only the figures of their own plan. Each step Sherpas recommends is a
 repair: when they mark it done, that part of the home heals and the score climbs. The home can be heard too: soft
-rain while the score is low, birds once it is healthy, a chime when a step is done. It ends with one first step, a
+rain while the score is low, birds once it is healthy, a chime when a step is done. It ends with one first step, which they can put in their own calendar for tomorrow, a
 check-in a few days later that asks what got in the way, and a short note for their advisor with what worried them,
 what they asked and what they decided.
 
