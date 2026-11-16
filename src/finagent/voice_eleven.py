@@ -18,6 +18,7 @@ Spending guards (ElevenLabs bills per character):
 from __future__ import annotations
 
 import asyncio
+import base64
 import hashlib
 import json
 import logging
@@ -31,7 +32,8 @@ from pathlib import Path
 log = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[2]
-DIRECT_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}?output_format=mp3_44100_128"
+# "with-timestamps": the same audio, plus when each character is said (for the captions). Same price.
+DIRECT_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/with-timestamps?output_format=mp3_44100_128"
 DEFAULT_VOICE_ID = "XrExE9yKIg1WjnnlVkGX"  # Matilda: American, "knowledgeable, professional" (premade)
 DEFAULT_MODEL = "eleven_flash_v2_5"         # cheapest and fastest
 DEFAULT_MAX_CHARS = 6000                    # one family is about 1,000 characters
@@ -62,7 +64,8 @@ class Route:
             body = {"text": text, "model_id": self.model}
         else:
             body = {"model": self.model, "input": text, "voice": self.voice_id, "response_format": "mp3"}
-        headers = {**self.headers, "Content-Type": "application/json", "Accept": "audio/mpeg"}
+        accept = "application/json" if self.name == "direct" else "audio/mpeg"
+        headers = {**self.headers, "Content-Type": "application/json", "Accept": accept}
         return urllib.request.Request(self.url, data=json.dumps(body).encode(), headers=headers, method="POST")
 
 
@@ -148,11 +151,13 @@ async def synthesize_all(texts: dict[str, str], parallel: int) -> dict[str, byte
 
     async def fetch(scene_id: str, text: str) -> None:
         async with limit:
-            audio = await asyncio.to_thread(_post, route.request(text))
+            audio, alignment = _unpack(await asyncio.to_thread(_post, route.request(text)))
         if not audio:
             raise RuntimeError(f"ElevenLabs returned no audio for scene {scene_id!r}")
         paths[scene_id].parent.mkdir(parents=True, exist_ok=True)
         paths[scene_id].write_bytes(audio)
+        if alignment:
+            paths[scene_id].with_suffix(".json").write_text(json.dumps(alignment), encoding="utf-8")
         _count_sent(len(text))
 
     await asyncio.gather(*(fetch(scene_id, text) for scene_id, text in missing.items()))
@@ -162,6 +167,25 @@ async def synthesize_all(texts: dict[str, str], parallel: int) -> dict[str, byte
 def _post(request: urllib.request.Request) -> bytes:
     with urllib.request.urlopen(request, timeout=TIMEOUT_S) as response:
         return response.read()
+
+
+def _unpack(reply: bytes) -> tuple[bytes, dict | None]:
+    """The direct route answers JSON (audio in base64 + character timings); the proxy answers the MP3 itself."""
+    if reply[:1] != b"{":
+        return reply, None
+    data = json.loads(reply)
+    return base64.b64decode(data.get("audio_base64") or ""), data.get("alignment")
+
+
+def word_times(text: str) -> list[tuple[str, float, float]] | None:
+    """When each word of an already spoken `text` is said, or None if ElevenLabs gave no timings for it."""
+    from finagent import captions
+    try:
+        alignment = json.loads(cache_path(route_from_env(), text).with_suffix(".json").read_text(encoding="utf-8"))
+        return captions.from_characters(alignment["characters"], alignment["character_start_times_seconds"],
+                                        alignment["character_end_times_seconds"]) or None
+    except Exception:  # noqa: BLE001 - no timings: the captions are estimated instead
+        return None
 
 
 # --- Speech to text (Scribe) --------------------------------------------------------------------

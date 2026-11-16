@@ -575,6 +575,8 @@ import(SITE + "web/house_sound.js").then(({ create }) => {   // served by the ba
   houseSound = create({ voice: player, enabled: soundOn });
   houseSound.setWeather(healthOf(achieved()));
 }).catch(() => {});
+// Captions: each word of the narration lights up as the voice says it (web/captions.js).
+import(SITE + "web/captions.js").then(({ create }) => create({ voice: player, scenes: P.scenes })).catch(() => {});
 document.querySelectorAll("[data-sound]").forEach((b) => b.addEventListener("click", () => {
   soundOn = !soundOn;
   try { localStorage.setItem("uor-sound", soundOn ? "on" : "off"); } catch (e) { /* private window */ }
