@@ -1,5 +1,21 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-16 11:30 — feat/stage-house-heals — Claude Code
+- **Hecho:** la casa mejora cuando la familia hace los pasos. Cada paso tiene «I've done this»: repara su parte, la
+  puntuación sube con animación (+N) y, en 3D, las grietas se cierran con chispas y el cielo pasa de gris con lluvia a
+  atardecer dorado según la puntuación. 3D al estilo del vídeo: pantalla completa, intro desde las nubes con el scroll,
+  colinas, árboles, sombras y ventanas encendidas. Ficha `stage-casa-que-mejora.md`.
+- **Estado:** `./check.sh` pasa (167). Navegador sin interfaz: 3 familias, escritorio y móvil, sin errores en consola.
+- **Decisiones:** avanzar es hacer: en el paso N cuentan como hechos los anteriores y el botón hace el actual, así
+  que la puntuación sube al bajar por la página. Puntuación = la mayor cifra de Sherpas para lo hecho (un paso o
+  `all_moves`), nunca una suma ni una bajada. Casa 3D nueva: moderna minimalista (volúmenes blancos, cubiertas planas,
+  ventanales, piscina = fontanería, zócalo = cimientos), con mucho más movimiento. Sigue detrás de `?house=3d`.
+- **Bloqueos:** falta probarlo en un iPhone real (rendimiento).
+- **Para Raúl:** he tocado `stage_page.html` (botón por paso, `achieved()`, `frame3d()`, estilos `body.h3d`) y he
+  reescrito `web/house3d.js` (misma entrada más `health`, `setFrame` y `setIntro`).
+- **Para David:** ningún texto narrado cambia. El «Yes, I started» del día 3 ahora también sube la puntuación.
+- **Siguiente:** probarlo en el iPhone de David antes de la decisión del 17 a las 14:00.
+
 ## 2026-11-16 01:40 — feat/stage-family-worries — Claude Code
 - **Hecho:** los botones bajo «What worries you most?» son ahora tres por familia, sacados de las «Objective
   concerns» de su `persona.md` (`house.WORRIES` → `intro.visual.data.worries`). Ficha `stage-preocupaciones-familia.md`.

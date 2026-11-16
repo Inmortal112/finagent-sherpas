@@ -286,6 +286,56 @@ body:not(.muted) .chat .sound { background: #fff; color: var(--ink); border-colo
 @keyframes pulse { 50% { box-shadow: 0 0 0 9px rgba(214,69,93,.25); } }
 button:disabled { opacity: .45; cursor: default; }
 
+/* ---------- doing the steps: the home heals and the score climbs ---------- */
+.do-it { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem .9rem; margin-top: 1.2rem; }
+.do-it .small { color: var(--ink-3); font-size: .84rem; }
+.done-btn { background: var(--ink); color: #fff; padding: .7rem 1.3rem; }
+.done-btn.is-done { background: var(--grad); box-shadow: 0 10px 30px -10px rgba(119,75,229,.6); }
+.progress { margin-top: 1.2rem; padding: 1rem 1.1rem; border-radius: 16px; background: var(--mist); border: 1px solid #e3ecff; }
+.progress .row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.progress b { font-weight: 500; }
+.progress .track { height: 8px; border-radius: 4px; background: var(--line-2); margin-top: .6rem; overflow: hidden; }
+.progress .track i { display: block; height: 100%; width: 0; background: var(--grad); border-radius: 4px; transition: width .9s cubic-bezier(.2,.7,.2,1); }
+.progress button { border: 0; background: none; color: var(--ink-3); font-size: .82rem; text-decoration: underline; padding: 0; }
+.score-chip { position: relative; }
+.score-chip b.bump { animation: bump .9s cubic-bezier(.2,.7,.2,1); display: inline-block; }
+@keyframes bump { 30% { transform: scale(1.25); color: var(--violet-2); } }
+.gain { position: absolute; right: 0; top: -.2rem; font-weight: 600; font-size: 1.4rem; color: var(--violet-2); pointer-events: none;
+  animation: rise 1.8s ease-out forwards; text-shadow: 0 2px 12px rgba(255,255,255,.8); }
+@keyframes rise { 0% { opacity: 0; transform: translateY(10px) scale(.8); } 20% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-46px); } }
+.part.heal { animation: heal 1.3s ease; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes heal { 35% { transform: scale(1.05); filter: drop-shadow(0 0 16px #948df7); } }
+
+/* ---------- the home in 3D: a film behind the page (desktop) or above it (phone) ---------- */
+body.h3d { background: var(--night); }
+body.h3d #house3d { position: fixed; inset: 0; width: 100vw; height: 100svh; z-index: 0; flex: none; }
+body.h3d #house { visibility: hidden; }
+body.h3d .hero { background: linear-gradient(180deg, rgba(8,10,22,.55) 0%, rgba(8,10,22,.12) 42%, rgba(8,10,22,.06) 70%, rgba(8,10,22,.4) 100%); z-index: 6; pointer-events: none; }
+body.h3d .hero button, body.h3d .hero .seg, body.h3d .hero a { pointer-events: auto; }
+body.h3d .hero::before, body.h3d .hero::after { display: none; }
+body.h3d .hero .mono:first-child { letter-spacing: .5em; color: #fff; text-shadow: 0 1px 12px rgba(0,0,0,.35); }
+body.h3d .hero h1 { font-size: clamp(2.8rem, 8vw, 6rem); text-shadow: 0 4px 40px rgba(0,0,0,.35); }
+body.h3d .hero .lede, body.h3d .hero .hint { color: #fff; text-shadow: 0 1px 14px rgba(0,0,0,.5); }
+body.h3d .ring .track { stroke: rgba(255,255,255,.22); }
+body.h3d .ring .num span { color: #e8e9f2; }
+body.h3d .band { background: rgba(10,12,20,.3); backdrop-filter: blur(8px); }
+body.h3d .seg { background: rgba(10,12,20,.3); backdrop-filter: blur(8px); }
+body.h3d .scene { background: transparent; border-color: transparent; pointer-events: none; }
+body.h3d .scene-top, body.h3d .legend, body.h3d .toast { position: relative; z-index: 1; pointer-events: auto; }
+body.h3d .toast { position: absolute; }
+body.h3d .scene-top > div { background: rgba(255,255,255,.78); backdrop-filter: blur(12px); border-radius: 16px; padding: .55rem .9rem; }
+body.h3d .card { background: rgba(255,255,255,.9); backdrop-filter: blur(16px); border-color: rgba(255,255,255,.6); box-shadow: 0 30px 80px -30px rgba(10,12,20,.5); }
+body.h3d .chapters { position: relative; z-index: 2; }
+body.h3d .hero-in > * { animation: reveal 1.2s cubic-bezier(.2,.7,.2,1) both; }
+body.h3d .hero-in > :nth-child(2) { animation-delay: .12s; } body.h3d .hero-in > :nth-child(3) { animation-delay: .3s; }
+body.h3d .hero-in > :nth-child(4) { animation-delay: .45s; } body.h3d .hero-in > :nth-child(5) { animation-delay: .55s; }
+body.h3d .hero-in > :nth-child(6) { animation-delay: .65s; } body.h3d .hero-in > :nth-child(n+7) { animation-delay: .8s; }
+@keyframes reveal { from { opacity: 0; transform: translateY(26px); filter: blur(8px); } }
+body.h3d .chapter:not(.on) .card { transform: translateX(34px) scale(.97); }
+body.h3d .chapter .card { transition: opacity .6s, transform .7s cubic-bezier(.2,.7,.2,1); }
+.done-btn:not(.is-done) { animation: invite 2.4s ease-in-out infinite; }
+@keyframes invite { 50% { box-shadow: 0 0 0 8px rgba(148,141,247,.25); } }
+
 @media (min-width: 1100px) {
   body.chat-open main { padding-right: var(--chat-w); }
   body.chat-open .bar { right: var(--chat-w); }
@@ -316,6 +366,8 @@ button:disabled { opacity: .45; cursor: default; }
   .chat form { padding: .7rem 1rem calc(.8rem + env(safe-area-inset-bottom)); }
   .suggest { flex-wrap: nowrap; overflow-x: auto; padding: 0 1rem .6rem; scrollbar-width: none; }
   .suggest button { flex: none; }
+  body.h3d .stage { background: var(--night); }
+  body.h3d .chapters { z-index: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -482,6 +534,8 @@ let P = JSON.parse($("presentation").textContent);
 let chapters = [], active = -1, yearIndex = 0, entered = false, askFocus = null, askFocusTimer = 0;
 let baseStates = {}, moves = [], timeline = null, chosenStep = null, person = null;
 const doneParts = new Set();   // parts repaired because the family said they took the step
+const doneSteps = new Set();   // the steps the family marked "I've done this" (kept in this browser)
+let shownScore = null;
 const store = {
   get(key) { try { return localStorage.getItem(key); } catch (e) { return null; } },
   set(key, value) { try { if (value == null) localStorage.removeItem(key); else localStorage.setItem(key, value); } catch (e) { /* private window */ } },
@@ -545,6 +599,9 @@ function build() {
 
   document.body.classList.toggle("simple", MODE === "simple");
   doneParts.clear();
+  doneSteps.clear();
+  shownScore = null;
+  (store.get("uor-done-" + P.client_name) || "").split(",").filter((id) => moves.some((s) => s.id === id)).forEach((id) => doneSteps.add(id));
   const adults = (data.people || []).filter((p) => p.role !== "child");
   person = adults.length > 1 ? store.get("uor-person-" + P.client_name) : null;
   if (person && !adults.some((p) => p.first_name === person)) person = null;
@@ -633,7 +690,8 @@ function build() {
       <h2>${esc(stepName(s))}</h2>
       <details class="action"><summary>What your plan says, word for word</summary>${esc(s.title)}: ${esc(d.action)}</details>
       <div class="fromto"><b class="from">${esc(d.score_before)}</b><span>→</span><b class="to">${esc(d.score_after)}</b><span>${gain > 0 ? "your score with this step alone" : "on its own the score stays; it counts together with the others"}</span></div>
-      <p>${esc(s.narration)}</p>` });
+      <p>${esc(s.narration)}</p>
+      <div class="do-it"><button class="pill done-btn" data-done="${esc(s.id)}"></button><span class="small">Try it: watch your home change.</span></div>` });
   });
 
   // 6. every step done
@@ -645,6 +703,8 @@ function build() {
     <h2>Your home, with the plan carried out.</h2>
     ${all ? `<div class="fromto"><b class="from">${esc(all.visual.data.score_before)}</b><span>→</span><b class="to">${esc(all.visual.data.score_after)}</b><span>${esc((all.visual.data.plain_moves || all.visual.data.moves).join(" + "))}</span></div><p>${esc(all.narration)}</p>`
           : `<p>Sherpas scored each step on its own, so there is no single combined score to promise here. Each repair below shows what it changes by itself.</p>`}
+    <div class="progress"><div class="row"><span>Repairs you have done: <b id="doneCount"></b></span><button type="button" id="doneReset" hidden>Start again</button></div>
+      <div class="track"><i id="doneBar"></i></div></div>
     ${left.length ? `<p class="note">No step in this plan touches the ${esc(left.join(" or the "))} yet. That is a good question for your advisor, or for the “?” button.</p>` : ""}
     <div class="eyebrow mono" style="margin-top:1.4rem">Which one do you start with?</div>
     <div class="steps">${moves.map((s) => `<button data-step="${esc(s.id)}"><span><b>${esc(stepName(s))}</b><small>${esc(effortWords(s.visual.data.effort))} · ${esc(s.visual.data.score_before)} → ${esc(s.visual.data.score_after)}</small></span><span aria-hidden="true">→</span></button>`).join("")}</div>
@@ -662,6 +722,9 @@ function build() {
   $("worryChips").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => tellWorry(b.textContent)));
 
   root.querySelectorAll("[data-step]").forEach((b) => b.addEventListener("click", () => chooseStep(b)));
+  root.querySelectorAll("[data-done]").forEach((b) => b.addEventListener("click", () => markDone(b.dataset.done, !doneSteps.has(b.dataset.done))));
+  $("doneReset").addEventListener("click", () => { [...doneSteps].forEach((id) => markDone(id, false)); });
+  showDone();
   root.querySelectorAll(".chapter").forEach((c, i) => {
     const s = chapters[i].scene;
     if (s && s.audio_path) {
@@ -723,8 +786,10 @@ function chartSvg() {
 }
 
 function countTo(node, target, from = 0) {
-  const start = performance.now(), span = 1300;
+  let start = null;
+  const span = 1300;
   const step = (now) => {
+    if (start == null) start = now;   // the frame's own clock, so it never starts in the past
     const t = Math.min(1, (now - start) / span), eased = 1 - Math.pow(1 - t, 3);
     node.textContent = Math.round(from + (target - from) * eased);
     if (t < 1) requestAnimationFrame(step);
@@ -758,6 +823,7 @@ function update() {
     if (journeyTop < vh * 0.6) narrate(index);
   }
   paint();
+  frame3d();
 }
 
 /* ---- the home in 3D: only when asked for (?house=3d), never in the simple mode. The drawn home is the fallback. ---- */
@@ -765,7 +831,8 @@ let house3d = null;
 function drawnHome() {
   if (house3d) { house3d.dispose(); house3d = null; }
   $("house3d").hidden = true;
-  $("house").style.display = "";
+  $("house3d").style.clipPath = "";
+  document.body.classList.remove("h3d");
 }
 async function tryHouse3d() {
   // ?house=3d turns it on and ?house=2d off; it is remembered while the tab is open, so it survives a change of family.
@@ -777,21 +844,100 @@ async function tryHouse3d() {
   try {
     const { mount } = await import(SITE + "web/house3d.js");   // served by the backend; opened as a file this fails
     $("house3d").hidden = false;
+    document.body.classList.add("h3d");
     house3d = mount($("house3d"), { onFail: drawnHome, onPick: goToPart });
-    $("house").style.display = "none";
     paint();
+    frame3d();
   } catch (e) {
     console.warn("The 3D home could not start; showing the drawn one.", e);
     drawnHome();
   }
 }
 
+// A part is repaired when the family did a step that repairs it (or said so at the day-3 check-in). The last
+// chapter ("If you take every step") previews the home with every step done.
+// The steps counted as done here: the ones the family marked, and, as they scroll on, the steps they have
+// already walked past (step 3's chapter shows steps 1 and 2 done). The last chapter shows every step done.
+function doneHere() {
+  const chapter = chapters[active] || {};
+  const passed = chapter.final ? moves.length : chapter.move != null ? chapter.move : 0;
+  return moves.filter((s, i) => i < passed || doneSteps.has(s.id));
+}
 function stateOf(part) {
   if (doneParts.has(part)) return "repaired";
-  const chapter = chapters[active] || {};
-  const upTo = chapter.final ? moves.length - 1 : chapter.move != null ? chapter.move : -1;
-  for (let i = 0; i <= upTo; i++) if (moves[i].visual.data.house_part === part) return "repaired";
+  if (doneHere().some((s) => s.visual.data.house_part === part)) return "repaired";
   return baseStates[part];
+}
+
+// The score for those steps, never a figure Sherpas did not give: the best of the steps done, each scored on
+// its own, or the score of all of them together once every step is done. Sherpas does not score a part of
+// the steps together, so nothing is added up here, and the score never goes down as the family goes on.
+function achieved() {
+  const base = Number(fact("score").value), all = scene("all_moves");
+  const done = doneHere();
+  let score = base;
+  done.forEach((s) => { score = Math.max(score, Number(s.visual.data.score_after)); });
+  if (all && moves.length && done.length === moves.length) score = Math.max(score, Number(all.visual.data.score_after));
+  return score;
+}
+// The weather of the 3D home: grey and rainy at 25 or less, a clear day around 55, a golden evening from 85.
+const healthOf = (score) => Math.min(1, Math.max(0, (score - 25) / 60));
+
+function markDone(id, done) {
+  const step = scene(id);
+  if (!step) return;
+  if (done) doneSteps.add(id); else doneSteps.delete(id);
+  store.set("uor-done-" + P.client_name, [...doneSteps].join(",") || null);
+  showDone();
+  const part = step.visual.data.house_part;
+  if (done && part && !house3d) {
+    const node = $("p-" + part);
+    node.classList.remove("heal"); void node.getBoundingClientRect(); node.classList.add("heal");
+  }
+  paint();
+}
+function showDone() {
+  document.querySelectorAll("[data-done]").forEach((b) => {
+    const done = doneSteps.has(b.dataset.done);
+    b.classList.toggle("is-done", done);
+    b.textContent = done ? "Done ✓  ·  undo" : "✓ I've done this";
+    b.setAttribute("aria-pressed", String(done));
+  });
+  if (!$("doneCount")) return;
+  $("doneCount").textContent = `${doneSteps.size} of ${moves.length}`;
+  $("doneBar").style.width = (moves.length ? (100 * doneSteps.size) / moves.length : 0) + "%";
+  $("doneReset").hidden = !doneSteps.size;
+}
+
+// The score in the corner of the home: it counts up to the new figure and shows what was gained.
+function showScore(score) {
+  const node = $("chipScore");
+  if (shownScore === score) return;
+  if (shownScore == null) { node.textContent = score; shownScore = score; return; }
+  const gain = score - shownScore;
+  countTo(node, score, shownScore);
+  shownScore = score;
+  node.classList.remove("bump"); void node.offsetWidth; node.classList.add("bump");
+  if (gain > 0) {
+    const float = el("span", "gain", "+" + gain);
+    node.parentNode.append(float);
+    setTimeout(() => float.remove(), 1900);
+  }
+}
+
+// Where the 3D home sits: in the hero it fills the screen and the camera is high in the clouds; as the hero
+// scrolls away the camera comes down to the home, which settles into the scene's box.
+function frame3d() {
+  if (!house3d) return;
+  const hero = $("hero").getBoundingClientRect(), host = $("house3d").getBoundingClientRect();
+  const p = Math.min(1, Math.max(0, -hero.top / Math.max(1, hero.height * 0.85)));
+  const slot = $("house").getBoundingClientRect();
+  const mix = (a, b) => a + (b - a) * p;
+  house3d.setIntro(p);
+  house3d.setFrame({ x: mix(0, slot.left - host.left), y: mix(0, slot.top - host.top), w: mix(host.width, slot.width), h: mix(host.height, slot.height) });
+  // On a phone the home is the top of the screen and the chapters scroll under it.
+  const narrow = innerWidth <= 860, scene = $("house").closest(".scene").getBoundingClientRect();
+  $("house3d").style.clipPath = narrow ? `inset(0 0 ${Math.max(0, host.height - mix(host.height, scene.bottom))}px 0)` : "";
 }
 
 function paint() {
@@ -813,26 +959,20 @@ function paint() {
     if (part === "garden") lush = { solid: 1, repaired: 1, cracked: 0.55, broken: 0.15 }[state];
   });
 
-  let tag = chapter.tag || "", title = chapter.title || "", score = Number(fact("score").value), delta = "";
+  let tag = chapter.tag || "", title = chapter.title || "";
   if (chapter.years) {
     const pts = timeline.points, p = pts[yearIndex], max = Math.max(...pts.map((q) => q.investable_assets), 1);
     lush = Math.max(0.04, p.investable_assets / max);
     title = String(p.year);
   }
-  if (chapter.move != null) {
-    const d = chapter.scene.visual.data;
-    score = d.score_after;
-    if (d.score_after > d.score_before) delta = "+" + (d.score_after - d.score_before);
-  }
-  if (chapter.final && chapter.scene) {
-    const d = chapter.scene.visual.data;
-    score = d.score_after; delta = "+" + (d.score_after - d.score_before);
-  }
+  // The score is what the family has done so far; the last chapter shows it with every step done.
+  const base = Number(fact("score").value), score = achieved();
+  const delta = score > base ? "+" + (score - base) : "";
   $("house").style.setProperty("--lush", lush);
-  if (house3d) house3d.update({ states, focus, lush });
+  if (house3d) house3d.update({ states, focus, lush, health: healthOf(score) });
   $("whenTag").textContent = tag;
   $("whenTitle").textContent = title;
-  if ($("chipScore").textContent !== String(score)) $("chipScore").textContent = score;
+  showScore(score);
   $("chipDelta").textContent = delta;
   $("chipDelta").classList.toggle("show", Boolean(delta));
   if (!chapter.years) toast("");
@@ -949,7 +1089,7 @@ async function afterBackend() {
       const button = document.querySelector(`[data-step="${history.decision.scene_id}"]`);
       if (button) { button.classList.add("chosen"); $("chosenNote").textContent = `Chosen: ${history.decision.title}.`; }
       const step = scene(history.decision.scene_id);
-      if (step && history.follow_up && history.follow_up.done && step.visual.data.house_part) { doneParts.add(step.visual.data.house_part); paint(); }
+      if (step && history.follow_up && history.follow_up.done) { if (step.visual.data.house_part) doneParts.add(step.visual.data.house_part); markDone(step.id, true); }
     }
   } catch (e) { /* the page works without the earlier visit */ }
 }
@@ -1011,7 +1151,9 @@ async function followUp(done, box, note = null, reply = "") {
     const data = await response.json();
     if (!response.ok) throw new Error();
     const part = data.repaired_house_part;
-    if (part) { doneParts.add(part); turnHome(part); }
+    if (part) doneParts.add(part);
+    if (done && chosenStep) markDone(chosenStep.id, true);   // the score climbs too
+    if (part) turnHome(part);
     if (done) {
       box.textContent = `Well done. ${part ? `Your ${part} ${part.endsWith("s") ? "are" : "is"} repaired, and your` : "Your"} advisor will see it.`;
     } else {
