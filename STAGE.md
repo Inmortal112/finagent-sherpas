@@ -39,6 +39,8 @@ Opened as a plain file the page works too, except for what needs the backend (qu
 | Piece | Where |
 |---|---|
 | The home | one SVG, a group per part with `data-state` (solid, cracked, broken, repaired); CSS shows cracks and damage |
+| The home in 3D | `web/house3d.js` and `web/coastal-home.js` (three.js, kept in `web/vendor/`): a villa modelled in Blender (`web/coast/`), with a solid, a cracked and a broken version of each part; light, sky and rain follow the score; drag to turn it. The default in the full mode. The SVG takes over in *Simply*, without WebGL, with "reduce motion" or on a phone that cannot keep up |
+| The steps on the home | with the 3D home, a numbered mark on the part each step repairs and a card beside it with *Preview this change* and *I've completed this step* (`buildHomeActions` in `stage_page.html`); with the SVG they stay in the text |
 | Scroll | a sticky stage and tall chapters; the chapter crossing the middle of the screen is the state (`update()`) |
 | The years | a 340vh chapter with a sticky card: scroll progress picks the year; `--lush` (0 to 1) dries the garden |
 | Voice | one `Audio` player for narration (`audio_path`) and answers (`audio_url`); `data-sound` buttons mute it |

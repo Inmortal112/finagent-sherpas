@@ -42,7 +42,8 @@ It runs on a phone, from a link: nothing to install and no account to create.
 2. **Says what worries them most** about money. The home turns to the part of the plan that answers it.
 3. **Walks through the home**: the five parts, then the years ahead. Samantha scores 82, "strong", and her home
    looks fine, until the years move forward to age 73 and her garden dries up: her savings run out.
-4. **Sees the repairs**: each step of the plan fixes its part of the home.
+4. **Sees the repairs**: each step of the plan fixes its part of the home. Its buttons sit on the 3D home, on that
+   part: preview the change, or mark the step done.
 5. **Asks anything, at any moment**, typed or spoken. The answer uses only the figures of their own plan.
 6. **Chooses a first step.** A few days later the page checks in: *have you been able to start it?*
 7. **The advisor gets a short note**: what worried them, what they asked, what the plan did not cover and
@@ -62,7 +63,7 @@ a question (typed or spoken) ─▶ server ─▶ model answers from one scene's
 | Brain | [`brain.py`](src/finagent/brain.py), [`house.py`](src/finagent/house.py), [`narrator.py`](src/finagent/narrator.py) | Reads a family's `financial-health.json` and builds a `Presentation`: the facts, and one scene per part of the home, per step and for the years ahead. The narration was written once per family by a text model and saved in [`narrations/`](narrations/) |
 | Guard | [`guard.py`](src/finagent/guard.py) | Rejects any narration or answer that quotes a number that is not in the scene's facts, also when it is written in words |
 | Voice | [`voice.py`](src/finagent/voice.py), [`voice_eleven.py`](src/finagent/voice_eleven.py) | One MP3 per scene, speaks the live answers and transcribes spoken questions. Free Edge voices by default, ElevenLabs for the demo |
-| Stage | [`stage.py`](src/finagent/stage.py), [`stage_page.html`](src/finagent/stage_page.html) | One self-contained page: the home as SVG, scroll by chapters, the chat. No framework and no build step |
+| Stage | [`stage.py`](src/finagent/stage.py), [`stage_page.html`](src/finagent/stage_page.html) | One self-contained page: the home in 3D (a Blender villa drawn with three.js, kept in the repo) or as SVG in the simple mode, scroll by chapters, the chat. No framework and no build step |
 | Backend | [`server.py`](src/finagent/server.py), [`ask.py`](src/finagent/ask.py), [`sessions.py`](src/finagent/sessions.py) | FastAPI. Live questions, the conversation history, the check-in and the advisor's note. Keeps the keys |
 
 The three stages share one contract, [`contracts/schemas.py`](contracts/schemas.py): a `Presentation` is a list
