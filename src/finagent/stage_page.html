@@ -373,6 +373,7 @@ body.h3d .chapter .card { transition: opacity .6s, transform .7s cubic-bezier(.2
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition-duration: .01s !important; }
 }
+__ARCHITECTURAL_CSS__
 </style>
 </head>
 <body class="muted">
@@ -401,10 +402,11 @@ body.h3d .chapter .card { transition: opacity .6s, transform .7s cubic-bezier(.2
       </div>
       <div class="band" id="heroBand"><i></i><span></span></div>
       <div class="opts" id="opts"></div>
-      <p class="lede">A score is hard to feel. A home is not. This is your plan, as the home you live in.</p>
+      <p class="lede">Your life. Your plans.<br>A home to help you see what matters.</p>
       <button class="pill primary" id="enter">Step inside your home <span aria-hidden="true">↓</span></button>
-      <span class="mono hint">Then scroll · the voice starts with you</span>
+      <span class="mono hint">Explore · understand · take your first step</span>
     </div>
+    <span class="illustration-note">An illustration of your financial plan</span>
   </section>
 
   <div class="journey" id="journey">
@@ -412,8 +414,9 @@ body.h3d .chapter .card { transition: opacity .6s, transform .7s cubic-bezier(.2
       <div class="scene">
         <div class="scene-top">
           <div class="when mono"><span id="whenTag">Today</span><b id="whenTitle"></b></div>
-          <div class="score-chip"><b id="chipScore"></b><small> /100</small><span class="delta" id="chipDelta"></span></div>
+          <div class="score-chip"><span class="score-label" id="scoreLabel">Original plan</span><b id="chipScore"></b><small id="scoreDenominator"> /100</small><span class="delta" id="chipDelta"></span></div>
         </div>
+        <div class="scenario-caption" aria-live="polite"><span class="scenario-state" id="scenarioState">Your plan today</span><span id="scenarioDetail">The score in your original Sherpas plan.</span></div>
         <svg id="house" viewBox="0 0 640 430" role="img" aria-label="Your plan drawn as a home">
           <defs>
             <linearGradient id="gRep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#948df7"/><stop offset="1" stop-color="#4565d6"/></linearGradient>
@@ -516,6 +519,7 @@ body.h3d .chapter .card { transition: opacity .6s, transform .7s cubic-bezier(.2
 
 <script id="presentation" type="application/json">__PRESENTATION_JSON__</script>
 <script>
+__PLAN_STATE_JS__
 "use strict";
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; };
@@ -533,9 +537,8 @@ const SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 let P = JSON.parse($("presentation").textContent);
 let chapters = [], active = -1, yearIndex = 0, entered = false, askFocus = null, askFocusTimer = 0;
 let baseStates = {}, moves = [], timeline = null, chosenStep = null, person = null;
-const doneParts = new Set();   // parts repaired because the family said they took the step
 const doneSteps = new Set();   // the steps the family marked "I've done this" (kept in this browser)
-let shownScore = null;
+let shownScore = null, previewStep = null;
 const store = {
   get(key) { try { return localStorage.getItem(key); } catch (e) { return null; } },
   set(key, value) { try { if (value == null) localStorage.removeItem(key); else localStorage.setItem(key, value); } catch (e) { /* private window */ } },
@@ -605,8 +608,8 @@ function build() {
   requestAnimationFrame(() => { $("ringValue").style.strokeDashoffset = 326.7 * (1 - score / 100); });
 
   document.body.classList.toggle("simple", MODE === "simple");
-  doneParts.clear();
   doneSteps.clear();
+  previewStep = null;
   shownScore = null;
   (store.get("uor-done-" + P.client_name) || "").split(",").filter((id) => moves.some((s) => s.id === id)).forEach((id) => doneSteps.add(id));
   const adults = (data.people || []).filter((p) => p.role !== "child");
@@ -698,7 +701,8 @@ function build() {
       <details class="action"><summary>What your plan says, word for word</summary>${esc(s.title)}: ${esc(d.action)}</details>
       <div class="fromto"><b class="from">${esc(d.score_before)}</b><span>→</span><b class="to">${esc(d.score_after)}</b><span>${gain > 0 ? "your score with this step alone" : "on its own the score stays; it counts together with the others"}</span></div>
       <p>${esc(s.narration)}</p>
-      <div class="do-it"><button class="pill done-btn" data-done="${esc(s.id)}"></button><span class="small">Try it: watch your home change.</span></div>` });
+      <div class="do-it"><button class="pill preview-btn" data-preview="${esc(s.id)}" aria-pressed="false">Preview this change <span aria-hidden="true">↗</span></button><button class="pill done-btn" data-done="${esc(s.id)}"></button></div>
+      <p class="note">Preview explores the plan. Completed means you report having taken the step; it does not execute a transaction or verify a new score.</p>` });
   });
 
   // 6. every step done
@@ -707,10 +711,11 @@ function build() {
   const left = PARTS.filter((p) => baseStates[p] && baseStates[p] !== "solid" && !repairedParts.includes(p));
   add({ id: "repaired", tag: "Every step done", title: "Your home, repaired", scene: all || null, final: true, html: `
     <div class="eyebrow mono">If you take every step</div>
-    <h2>Your home, with the plan carried out.</h2>
+    <h2>A stronger home starts with one step.</h2>
     ${all ? `<div class="fromto"><b class="from">${esc(all.visual.data.score_before)}</b><span>→</span><b class="to">${esc(all.visual.data.score_after)}</b><span>${esc((all.visual.data.plain_moves || all.visual.data.moves).join(" + "))}</span></div><p>${esc(all.narration)}</p>`
           : `<p>Sherpas scored each step on its own, so there is no single combined score to promise here. Each repair below shows what it changes by itself.</p>`}
-    <div class="progress"><div class="row"><span>Repairs you have done: <b id="doneCount"></b></span><button type="button" id="doneReset" hidden>Start again</button></div>
+    <div class="do-it"><button class="pill preview-btn" data-preview="all" aria-pressed="false">Preview all planned changes <span aria-hidden="true">↗</span></button></div>
+    <div class="progress"><div class="row"><span>Steps you reported completed: <b id="doneCount"></b></span><button type="button" id="doneReset" hidden>Reset completed steps</button></div>
       <div class="track"><i id="doneBar"></i></div></div>
     ${left.length ? `<p class="note">No step in this plan touches the ${esc(left.join(" or the "))} yet. That is a good question for your advisor, or for the “?” button.</p>` : ""}
     <div class="eyebrow mono" style="margin-top:1.4rem">Which one do you start with?</div>
@@ -730,6 +735,10 @@ function build() {
 
   root.querySelectorAll("[data-step]").forEach((b) => b.addEventListener("click", () => chooseStep(b)));
   root.querySelectorAll("[data-done]").forEach((b) => b.addEventListener("click", () => markDone(b.dataset.done, !doneSteps.has(b.dataset.done))));
+  root.querySelectorAll("[data-preview]").forEach((b) => b.addEventListener("click", () => {
+    previewStep = previewStep === b.dataset.preview ? null : b.dataset.preview;
+    showDone(); paint();
+  }));
   $("doneReset").addEventListener("click", () => { [...doneSteps].forEach((id) => markDone(id, false)); });
   showDone();
   root.querySelectorAll(".chapter").forEach((c, i) => {
@@ -807,7 +816,7 @@ function countTo(node, target, from = 0) {
 /* ================= scroll drives the home ================= */
 function update() {
   const vh = innerHeight, narrow = innerWidth <= 860;
-  const probe = narrow ? vh * 0.74 : vh * 0.5;
+  const probe = narrow ? Math.min(vh * .62, document.querySelector(".stage").getBoundingClientRect().bottom + 24) : vh * 0.5;
   let index = 0;
   chapters.forEach((c, i) => { if (c.node.getBoundingClientRect().top <= probe) index = i; });
   const journeyTop = $("journey").getBoundingClientRect().top;
@@ -824,6 +833,8 @@ function update() {
   }
   if (index !== active) {
     active = index;
+    previewStep = null;
+    showDone();
     chapters.forEach((c, i) => c.node.classList.toggle("on", i === index));
     chapter.node.querySelectorAll(".track i").forEach((bar) => { bar.style.width = bar.dataset.w + "%"; });
     [...$("rail").children].forEach((b, i) => { b.classList.toggle("on", i === index); b.classList.toggle("done", i < index); });
@@ -863,38 +874,21 @@ async function tryHouse3d() {
   }
 }
 
-// A part is repaired when the family did a step that repairs it (or said so at the day-3 check-in). The last
-// chapter ("If you take every step") previews the home with every step done.
-// The steps counted as done here: the ones the family marked, and, as they scroll on, the steps they have
-// already walked past (step 3's chapter shows steps 1 and 2 done). The last chapter shows every step done.
-function doneHere() {
-  const chapter = chapters[active] || {};
-  const passed = chapter.final ? moves.length : chapter.move != null ? chapter.move : 0;
-  return moves.filter((s, i) => i < passed || doneSteps.has(s.id));
+// Scrolling explains; previewing simulates; only an explicit confirmation records completion.
+function currentScenario() {
+  return planScenario({ base: Number(fact("score").value), moves, combined: scene("all_moves"), completed: [...doneSteps], preview: previewStep });
 }
 function stateOf(part) {
-  if (doneParts.has(part)) return "repaired";
-  if (doneHere().some((s) => s.visual.data.house_part === part)) return "repaired";
-  return baseStates[part];
+  return repairState(part, baseStates[part], moves, currentScenario().selected);
 }
 
-// The score for those steps, never a figure Sherpas did not give: the best of the steps done, each scored on
-// its own, or the score of all of them together once every step is done. Sherpas does not score a part of
-// the steps together, so nothing is added up here, and the score never goes down as the family goes on.
-function achieved() {
-  const base = Number(fact("score").value), all = scene("all_moves");
-  const done = doneHere();
-  let score = base;
-  done.forEach((s) => { score = Math.max(score, Number(s.visual.data.score_after)); });
-  if (all && moves.length && done.length === moves.length) score = Math.max(score, Number(all.visual.data.score_after));
-  return score;
-}
-// The weather of the 3D home: grey and rainy at 25 or less, a clear day around 55, a golden evening from 85.
+// A visual lighting input only. It never derives a financial result.
 const healthOf = (score) => Math.min(1, Math.max(0, (score - 25) / 60));
 
 function markDone(id, done) {
   const step = scene(id);
   if (!step) return;
+  previewStep = null;
   if (done) doneSteps.add(id); else doneSteps.delete(id);
   store.set("uor-done-" + P.client_name, [...doneSteps].join(",") || null);
   showDone();
@@ -910,8 +904,13 @@ function showDone() {
   document.querySelectorAll("[data-done]").forEach((b) => {
     const done = doneSteps.has(b.dataset.done);
     b.classList.toggle("is-done", done);
-    b.textContent = done ? "Done ✓  ·  undo" : "✓ I've done this";
+    b.textContent = done ? "✓ Completed · undo" : "I've completed this step";
     b.setAttribute("aria-pressed", String(done));
+  });
+  document.querySelectorAll("[data-preview]").forEach((b) => {
+    const on = previewStep === b.dataset.preview;
+    b.setAttribute("aria-pressed", String(on));
+    b.textContent = on ? "Back to my plan ↙" : b.dataset.preview === "all" ? "Preview all planned changes ↗" : "Preview this change ↗";
   });
   if (!$("doneCount")) return;
   $("doneCount").textContent = `${doneSteps.size} of ${moves.length}`;
@@ -922,10 +921,11 @@ function showDone() {
 // The score in the corner of the home: it counts up to the new figure and shows what was gained.
 function showScore(score) {
   const node = $("chipScore");
+  if (score == null) { node.textContent = "—"; shownScore = null; return; }
   if (shownScore === score) return;
   if (shownScore == null) { node.textContent = score; shownScore = score; return; }
   const gain = score - shownScore;
-  countTo(node, score, shownScore);
+  node.textContent = score; // Switch directly to the supplied scenario, without showing intermediate scores.
   shownScore = score;
   node.classList.remove("bump"); void node.offsetWidth; node.classList.add("bump");
   if (gain > 0) {
@@ -943,16 +943,21 @@ function frame3d() {
   const p = Math.min(1, Math.max(0, -hero.top / Math.max(1, hero.height * 0.85)));
   const slot = $("house").getBoundingClientRect();
   const mix = (a, b) => a + (b - a) * p;
-  house3d.setIntro(p);
-  house3d.setFrame({ x: mix(0, slot.left - host.left), y: mix(0, slot.top - host.top), w: mix(host.width, slot.width), h: mix(host.height, slot.height) });
+  const narrow = innerWidth <= 860;
+  // Show the home immediately. The opening is a composed architectural view, not a wait in the clouds.
+  const openingY = Math.max(host.height * .52, $("hero").querySelector(".hero-in").getBoundingClientRect().bottom + 16);
+  const opening = narrow ? { x: 0, y: openingY, w: host.width, h: Math.max(180, host.height - openingY - 55) } : { x: host.width * .40, y: host.height * .12, w: host.width * .59, h: host.height * .76 };
+  house3d.setIntro(1);
+  house3d.setFrame({ x: mix(opening.x, slot.left - host.left), y: mix(opening.y, slot.top - host.top), w: mix(opening.w, slot.width), h: mix(opening.h, slot.height) });
   // On a phone the home is the top of the screen and the chapters scroll under it.
-  const narrow = innerWidth <= 860, scene = $("house").closest(".scene").getBoundingClientRect();
+  const scene = $("house").closest(".scene").getBoundingClientRect();
   $("house3d").style.clipPath = narrow ? `inset(0 0 ${Math.max(0, host.height - mix(host.height, scene.bottom))}px 0)` : "";
 }
 
 function paint() {
   const chapter = chapters[active] || {};
-  const focus = askFocus || chapter.part || null;
+  const previewPart = previewStep && previewStep !== "all" ? scene(previewStep)?.visual.data.house_part : null;
+  const focus = askFocus || (previewStep === "all" ? null : previewPart || chapter.part) || null;
   $("house").classList.toggle("focus", Boolean(focus));
   let lush = 1;
   const states = {};
@@ -976,11 +981,16 @@ function paint() {
     title = String(p.year);
   }
   // The score is what the family has done so far; the last chapter shows it with every step done.
-  const base = Number(fact("score").value), score = achieved();
-  const delta = score > base ? "+" + (score - base) : "";
+  const base = Number(fact("score").value), scenario = currentScenario(), score = scenario.score;
+  const delta = score != null && score > base ? "+" + (score - base) : "";
+  $("scoreLabel").textContent = score == null ? "No combined score" : scenario.label;
+  $("scoreDenominator").hidden = score == null;
+  $("scenarioState").textContent = scenario.isPreview ? "Exploring a possibility" : doneSteps.size ? "Based on what you reported" : "Your plan today";
+  $("scenarioDetail").textContent = scenario.detail;
+  document.body.classList.toggle("previewing", scenario.isPreview);
   $("house").style.setProperty("--lush", lush);
-  if (house3d) house3d.update({ states, focus, lush, health: healthOf(score) });
-  if (houseSound) houseSound.setWeather(healthOf(score));
+  if (house3d) house3d.update({ states, focus, lush, health: healthOf(score == null ? base : score) });
+  if (houseSound) houseSound.setWeather(healthOf(score == null ? base : score));
   $("whenTag").textContent = tag;
   $("whenTitle").textContent = title;
   showScore(score);
@@ -1100,7 +1110,7 @@ async function afterBackend() {
       const button = document.querySelector(`[data-step="${history.decision.scene_id}"]`);
       if (button) { button.classList.add("chosen"); $("chosenNote").textContent = `Chosen: ${history.decision.title}.`; }
       const step = scene(history.decision.scene_id);
-      if (step && history.follow_up && history.follow_up.done) { if (step.visual.data.house_part) doneParts.add(step.visual.data.house_part); markDone(step.id, true); }
+      if (step) chosenStep = step; // The day-3 answer records starting, not completing, the chosen step.
     }
   } catch (e) { /* the page works without the earlier visit */ }
 }
@@ -1162,11 +1172,9 @@ async function followUp(done, box, note = null, reply = "") {
     const data = await response.json();
     if (!response.ok) throw new Error();
     const part = data.repaired_house_part;
-    if (part) doneParts.add(part);
-    if (done && chosenStep) markDone(chosenStep.id, true);   // the score climbs too
     if (part) turnHome(part);
     if (done) {
-      box.textContent = `Well done. ${part ? `Your ${part} ${part.endsWith("s") ? "are" : "is"} repaired, and your` : "Your"} advisor will see it.`;
+      box.textContent = "A good start. Your advisor will see that you have begun. Mark the step completed when it is finished.";
     } else {
       box.innerHTML = `<div>${reply}</div><div class="small">Your advisor will see what got in the way, so the next talk starts there.</div>`;
     }
