@@ -9,7 +9,7 @@ import json
 import sys
 from pathlib import Path
 
-from finagent import brain, guard, spanish, stage, voice
+from finagent import brain, guard, spanish, stage, styles, voice
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CASE = ROOT / "cases" / "samantha-lewis" / "financial-health.json"
@@ -25,6 +25,8 @@ def main(diagnostic_path: Path, out_dir: Path, mode: str = "complete") -> Path:
     presentation = voice.synthesize(presentation, out_dir)
     # A second audio track in Spanish, where a checked translation exists (narrations/es/). Never fails the run.
     spanish.add_audio(presentation, diagnostic_path.parent.name, mode, out_dir)
+    # Other ways of explaining the same scenes ("numbers first"): a track the page switches to. Never fails the run.
+    styles.add_tracks(presentation, diagnostic_path.parent.name, mode, out_dir)
     (out_dir / "presentation.json").write_text(presentation.model_dump_json(indent=2), encoding="utf-8")
     return stage.render(presentation, out_dir)
 
