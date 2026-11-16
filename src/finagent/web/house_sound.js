@@ -15,14 +15,17 @@
 // 2026-11-16 against a real narration: the loudest rain is about 30 dB below the voice (its loudest drops 21 to
 // 25 dB under the voice's peaks), and about 39 dB below while the voice speaks; the chime peaks about 20 dB under
 // the voice's peaks, the preview sparkle about 23 dB under them; those two are not lowered while the voice speaks.
-const RAIN_MAX = 0.022;     // rain at the lowest score
+const RAIN_MAX = 0.022;     // the loudest rain (see RAIN_FULL)
 const BIRD_LEVEL = 0.012;   // one chirp
 const CHIME_LEVEL = 0.035;  // the "done" chime (never ducked: it answers a tap, so it must always be heard)
 const SPARKLE_LEVEL = 0.03; // the "preview" sparkle, softer than the chime (never ducked either)
 const DUCKED = 0.35;        // background level while the voice speaks
 const FADE_S = 1.2;         // how long the background takes to come back after the voice
-const RAIN_UNTIL = 0.6;     // no rain from this health up (about a score of 61)
-const BIRDS_FROM = 0.55;    // birds from this health up
+// health is score / 100 (healthOf in stage_page.html). These follow the 3D home (house3d.js), so the family hears
+// rain only while they see it, and birds only while they see them fly.
+const RAIN_UNTIL = 0.38;    // no rain from this health up: where the rain stops falling in the 3D home
+const RAIN_FULL = 0.26;     // the loudest rain from this health down (the picture keeps getting heavier below it)
+const BIRDS_FROM = 0.45;    // birds from this health up: where they start to fly in the 3D home
 const NOOP = { setWeather() {}, repaired() {}, previewed() {}, setEnabled() {} };
 
 export function create({ voice = null, enabled = true } = {}) {
@@ -69,7 +72,7 @@ export function create({ voice = null, enabled = true } = {}) {
 
   function applyWeather(seconds = 2) {
     if (!rain) return;
-    const amount = Math.max(0, (RAIN_UNTIL - health) / RAIN_UNTIL);   // 1 at the lowest score, 0 from RAIN_UNTIL
+    const amount = Math.min(1, Math.max(0, (RAIN_UNTIL - health) / (RAIN_UNTIL - RAIN_FULL)));   // 1 up to RAIN_FULL, 0 from RAIN_UNTIL
     const now = ctx.currentTime;
     rain.gain.cancelScheduledValues(now);
     rain.gain.setValueAtTime(rain.gain.value, now);

@@ -18,7 +18,7 @@ marcar un paso hecho. Pedido por David: **fondo bajito, que la voz se oiga siemp
 
 ## Decisiones
 - **Generados con Web Audio API**: sin archivos, sin licencias, gratis y con el volumen exacto.
-- Misma escala que el cielo 3D (`healthOf(score)`): lluvia hasta 0,6 (~61 puntos), pájaros desde 0,55.
+- Misma escala que el cielo 3D (`healthOf(score)`): desde el PR #76 es `score / 100`. Lluvia al máximo hasta 0,26 y nada desde 0,38 (donde deja de verse en la casa 3D); pájaros desde 0,45 (donde empiezan a volar).
 - **Niveles medidos** contra una narración real (render offline en el navegador): lluvia máxima −30 dB respecto a la
   voz; **ducking** (bajar el fondo mientras habla la voz) −9 dB más; «ding» −19 dB bajo los picos de la voz.
   Primera versión a −21 dB: se notaba demasiado y se bajó.
