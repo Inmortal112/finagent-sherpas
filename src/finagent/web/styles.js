@@ -10,6 +10,10 @@
 //   styles.pause(true)          hold the story while Spanish is on: the other styles exist in English only
 //   styles.mount(opts, after)   add the "Explain it: As a story | Numbers first" switch to the intro options
 //
+// For the opening screen (web/welcome.js), which asks before the page's own switch exists:
+//   remember(household, person, name) / remembered(household, person)   one adult's choice, kept in this browser
+//   load(url) / listOf(data)                                            another page's styles.json, as a list
+//
 // The track is made by the pipeline (src/finagent/styles.py): styles.json holds each style's text and audio per scene.
 // Switching rewrites each narration paragraph and points the scene at the other audio, so the voice, the "Hear this"
 // buttons and the captions follow without knowing about styles.
@@ -19,25 +23,41 @@ const STYLE = `
 .seg.style-switch.held button { opacity: .45; pointer-events: none; }
 `;
 
-export async function create({ scenes = () => [], household = () => "", onChange = () => {} } = {}) {
-  let data = null;
+// The choice is kept in this browser, one per adult of the household (person null: the household's own).
+const keyFor = (household, person) => KEY + household + (person ? "-" + person : "");
+export function remember(household, person, name) {
+  try { localStorage.setItem(keyFor(household, person), name); } catch (e) { /* private window */ }
+}
+// What that adult chose; someone who has not chosen yet gets the household's choice. null: nothing chosen.
+export function remembered(household, person) {
+  try { return (person && localStorage.getItem(keyFor(household, person))) || localStorage.getItem(keyFor(household, null)); } catch (e) { return null; }
+}
+
+// A page's styles.json, or null when that page has one way of explaining only.
+export async function load(url = "styles.json") {
   try {
-    const reply = await fetch("styles.json");
-    data = reply.ok ? await reply.json() : null;
-  } catch (e) { data = null; }
-  if (!data || !data.styles || !Object.keys(data.styles).length) return null;
+    const reply = await fetch(url);
+    const data = reply.ok ? await reply.json() : null;
+    return data && data.styles && Object.keys(data.styles).length ? data : null;
+  } catch (e) { return null; }
+}
+// [{ name, label, hint }], the story (the page's own narration) first.
+export function listOf(data) {
+  const story = data.default || { name: "story", label: "As a story", hint: "" };
+  return [story, ...Object.entries(data.styles).map(([name, s]) => ({ name, label: s.label || name, hint: s.hint || "" }))];
+}
+
+export async function create({ scenes = () => [], household = () => "", onChange = () => {} } = {}) {
+  const data = await load();
+  if (!data) return null;
 
   const style = document.createElement("style"); style.textContent = STYLE; document.head.append(style);
-  const story = data.default || { name: "story", label: "As a story", hint: "" };
-  const list = [story, ...Object.entries(data.styles).map(([name, s]) => ({ name, label: s.label || name, hint: s.hint || "" }))];
+  const list = listOf(data), story = list[0];
   const known = (name) => list.some((s) => s.name === name);
   const built = new WeakMap();   // scene -> the words and voice the page was built with (the story)
   let wanted = story.name, paused = false, who = null, switches = [];
 
-  const keyFor = (person) => KEY + household() + (person ? "-" + person : "");
-  const saved = (person) => {
-    try { const name = localStorage.getItem(keyFor(person)); return known(name) ? name : null; } catch (e) { return null; }
-  };
+  const saved = (person) => { const name = remembered(household(), person); return known(name) ? name : null; };
   const current = () => (paused ? story.name : wanted);
 
   // Put the words and the voice of the current style on the page. Returns whether anything changed.
@@ -74,7 +94,7 @@ export async function create({ scenes = () => [], household = () => "", onChange
   function use(name) {
     if (!known(name)) return;
     wanted = name;
-    try { localStorage.setItem(keyFor(who), name); } catch (e) { /* private window */ }
+    remember(household(), who, name);
     if (apply()) onChange(current());
   }
 
@@ -86,7 +106,7 @@ export async function create({ scenes = () => [], household = () => "", onChange
     use,
     forPerson(person) {
       who = person || null;
-      wanted = saved(who) || saved(null) || story.name;
+      wanted = saved(who) || story.name;
       if (apply()) onChange(current());
     },
     pause(on) {
