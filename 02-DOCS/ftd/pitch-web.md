@@ -38,5 +38,15 @@ precio, y el score nuevo. Cierra con por qué Sherpas lo necesita.
   instalado. **SUSTITUIDA:** no hay tests automáticos de la página; se probó con el driver CDP (no detecta fallos
   en Safari/iPhone). Veredicto: PASA.
 
+## Ampliación 17 nov (rama `feat/pitch-spanish`): pitch en español
+- [x] La web sale en español por defecto; `?lang=en` o el botón EN la pasan a inglés → recorrido completo en
+  los dos idiomas con el driver CDP: 2:00, sin errores de consola.
+- [x] Narración y respuesta en español de `narrations/es/` solo si `spanish.saved` las da por válidas (huella del
+  inglés y mismas cifras); si falta alguna, `build_pitch.py` se para.
+- [x] Tokens medidos también con la pregunta en español (4.323 a 5.232).
+- [x] Guion en español y preguntas del jurado en `02-DOCS/pitch-es.md`; afirmaciones comprobadas en el código
+  (el MCP no se usa en `src/`: corregido en el texto).
+- [x] `./check.sh` pasa (241).
+
 ## Siguiente
 Ensayar el pitch con la página proyectada y decidir si se publica en Render junto al MVP.

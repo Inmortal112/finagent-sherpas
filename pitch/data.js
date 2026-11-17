@@ -102,7 +102,46 @@ window.PITCH = {
    },
    "tokens_in": 4322,
    "tokens_out": 140,
-   "cost": 0.001465
+   "cost": 0.001465,
+   "es": {
+    "band": "crítica",
+    "pillars": [
+     "ahorro y flujo de caja",
+     "deuda",
+     "inversiones",
+     "liquidez y fondo de emergencia",
+     "seguros y protección"
+    ],
+    "chosen": [
+     "Gastar menos de tus ahorros al jubilarte"
+    ],
+    "question": "¿Todavía puedo comprar la casa en 2027?",
+    "tour": {
+     "story": [
+      "Hola, Michael. Quieres dos cosas: comprar una casa en 2027 y jubilarte a los 58. Tu puntuación es 26 de 100, que Sherpas llama crítica. Suena difícil, pero empiezas con fuerza: ahorras $43,000 al año. El problema es que los mismos dólares tienen que hacer demasiadas tareas a la vez.",
+      "Tus tuberías, tus ahorros y tu flujo de efectivo están rotos. Ahorras bien, pero cada año salen unos $8,336 más de los que entran. La jubilación, la casa y tu colchón de efectivo se sostienen con el mismo ingreso.",
+      "Tus cimientos, tu fondo de emergencia, están rotos. Tienes $30,000 apartados, $16,530 por debajo del colchón mínimo que sugerimos. Y la compra de la casa en enero de 2027 agotaría ese efectivo."
+     ],
+     "numbers": [
+      "Hola, Michael. Quieres dos cosas: comprar una casa en 2027 y jubilarte a los 58. Tu puntuación es 26 de 100, que Sherpas llama crítica. Suena difícil, pero empiezas con fuerza: ahorras $43,000 al año. El problema es que los mismos dólares tienen que hacer demasiadas tareas a la vez.",
+      "Tus tuberías, tus ahorros y tu flujo de efectivo están rotos. Ahorras bien, pero cada año salen unos $8,336 más de los que entran. La jubilación, la casa y tu colchón de efectivo se sostienen con el mismo ingreso.",
+      "Tus cimientos, tu fondo de emergencia, están rotos. Tienes $30,000 apartados, $16,530 por debajo del colchón mínimo que sugerimos. Y la compra de la casa en enero de 2027 agotaría ese efectivo."
+     ],
+     "simple": [
+      "Michael, tu puntuación de salud financiera es 26 de 100. Recorramos tu casa cuarto por cuarto para ver qué está fuerte y qué necesita trabajo.",
+      "Tus tuberías son los ahorros y el flujo de efectivo, y están rotas. Su puntuación es 0 de 25, así que hay poco efectivo extra cada mes.",
+      "Tus cimientos son tu fondo de emergencia y efectivo, y están rotos. Su puntuación es 4 de 20. Tienes menos guardado de lo que es seguro."
+     ]
+    },
+    "answer": {
+     "story": "Tus cimientos, tu fondo de emergencia, están rotos. Tienes $30,000 apartados, $16,530 por debajo del colchón mínimo que sugerimos. Y la compra de la casa en enero de 2027 agotaría ese efectivo.",
+     "numbers": "Tus cimientos, tu fondo de emergencia, están rotos. Tienes $30,000 apartados, $16,530 por debajo del colchón mínimo que sugerimos. Y la compra de la casa en enero de 2027 agotaría ese efectivo.",
+     "simple": "Tus cimientos son tu fondo de emergencia y efectivo, y están rotos. Su puntuación es 4 de 20. Tienes menos guardado de lo que es seguro."
+    },
+    "timeline": "Ahora los años que vienen. Planeas jubilarte a los 58. Con el plan de hoy, tus ahorros se agotan a los 85, seis años antes de que el plan termine a los 91. Después de eso dependerías principalmente del Seguro Social. Esa disyuntiva es la que debes hablar a fondo con tu asesor.",
+    "tokens_in": 4323,
+    "cost": 0.001465
+   }
   },
   {
    "slug": "samantha-lewis",
@@ -204,7 +243,46 @@ window.PITCH = {
    },
    "tokens_in": 4602,
    "tokens_out": 140,
-   "cost": 0.001549
+   "cost": 0.001549,
+   "es": {
+    "band": "sólida",
+    "pillars": [
+     "ahorro y flujo de caja",
+     "deuda",
+     "inversiones",
+     "liquidez y fondo de emergencia",
+     "seguros y protección"
+    ],
+    "chosen": [
+     "Cerrar un hueco en tu seguro"
+    ],
+    "question": "¿Me alcanzarán los ahorros cuando me jubile?",
+    "tour": {
+     "story": [
+      "Hola, Samantha. Tu puntuación es 82 de 100, y Sherpas la considera sólida. Y aun así, con el plan de hoy, tus ahorros se agotan a los 73 años. Vamos a recorrer tu casa, parte por parte, y ver de dónde viene esa brecha.",
+      "Tus tuberías, tus ahorros, están firmes. Ahorras 24% de tus ingresos, un buen hábito. Pero nada de eso va todavía a una cuenta de retiro ni a un fondo para la universidad, y cada año salen cerca de $6,418 más de los que entran.",
+      "Tus cimientos, tu fondo de emergencia, están firmes: $80,000, más que los 5 a 6 meses de gastos esenciales que sugerimos. Pero una vez pagadas las vacaciones y el pago de la universidad de Ethan, solo quedan $750 por encima de ese colchón. Hoy está bien, con poco margen."
+     ],
+     "numbers": [
+      "Hola, Samantha. Tu puntuación es 82 de 100, y Sherpas la considera sólida. Y aun así, con el plan de hoy, tus ahorros se agotan a los 73 años. Vamos a recorrer tu casa, parte por parte, y ver de dónde viene esa brecha.",
+      "Tus tuberías, tus ahorros, están firmes. Ahorras 24% de tus ingresos, un buen hábito. Pero nada de eso va todavía a una cuenta de retiro ni a un fondo para la universidad, y cada año salen cerca de $6,418 más de los que entran.",
+      "Tus cimientos, tu fondo de emergencia, están firmes: $80,000, más que los 5 a 6 meses de gastos esenciales que sugerimos. Pero una vez pagadas las vacaciones y el pago de la universidad de Ethan, solo quedan $750 por encima de ese colchón. Hoy está bien, con poco margen."
+     ],
+     "simple": [
+      "Samantha, este es tu plan de dinero mostrado como tu casa. Tu puntuación es 82 de 100, que es fuerte.",
+      "Tus tuberías son los ahorros y el flujo de efectivo, sólidas con 22 de 30 puntos. Ahorras bien, pero la universidad y el retiro tiran del mismo dinero.",
+      "Tus cimientos son tu fondo de emergencia, sólidos con 15 de 15 puntos. Tienes efectivo para cubrir sorpresas, aunque tus metas cercanas lo hacen más ajustado."
+     ]
+    },
+    "answer": {
+     "story": "Ahora los años que vienen. Piensas retirarte a los 65. Con el plan de hoy, tus ahorros se agotan a los 73, y parte de lo que pensabas gastar quedaría sin pagar. Esa es la verdadera pregunta de tu plan: no cuánto ahorras, sino a dónde van esos ahorros.",
+     "numbers": "Ahora los años que vienen. Piensas retirarte a los 65. Con el plan de hoy, tus ahorros se agotan a los 73, y parte de lo que pensabas gastar quedaría sin pagar. Esa es la verdadera pregunta de tu plan: no cuánto ahorras, sino a dónde van esos ahorros.",
+     "simple": "Mirando hacia adelante, con este plan tus ahorros se agotan a los 73 años, después de que dejes de trabajar."
+    },
+    "timeline": "Ahora los años que vienen. Piensas retirarte a los 65. Con el plan de hoy, tus ahorros se agotan a los 73, y parte de lo que pensabas gastar quedaría sin pagar. Esa es la verdadera pregunta de tu plan: no cuánto ahorras, sino a dónde van esos ahorros.",
+    "tokens_in": 4604,
+    "cost": 0.001549
+   }
   },
   {
    "slug": "daniel-emily-johnson",
@@ -310,7 +388,47 @@ window.PITCH = {
    },
    "tokens_in": 5235,
    "tokens_out": 140,
-   "cost": 0.001739
+   "cost": 0.001739,
+   "es": {
+    "band": "vulnerable",
+    "pillars": [
+     "ahorro y flujo de caja",
+     "deuda",
+     "inversiones",
+     "liquidez y fondo de emergencia",
+     "seguros y protección"
+    ],
+    "chosen": [
+     "Ampliar el seguro de vida",
+     "Añadir un seguro paraguas"
+    ],
+    "question": "¿Qué pasa con los niños si nos pasa algo?",
+    "tour": {
+     "story": [
+      "Daniel y Emily, bienvenidos. Están haciendo malabares con la universidad de Oliver y Sophia y con jubilarse a principios de los sesenta. Su puntuación es 52 de 100, que Sherpas llama vulnerable. Les quedan unos $15,032 al año, y cada una de esas necesidades tira de ese dinero. Sherpas no las clasifica: ese orden lo deciden ustedes juntos.",
+      "Sus tuberías, sus ahorros y su flujo de efectivo, están agrietados. Les quedan unos $15,032 al año, un margen ajustado. Y hoy no entra nada en sus cuentas de jubilación.",
+      "Sus cimientos, su fondo de emergencia, están marcados como sólidos, pero el colchón en sí es fino: $19,000, muy por debajo de los 8 a 9 meses de gastos esenciales recomendados. Si se detuviera un sueldo, esto es lo primero en lo que se apoyarían."
+     ],
+     "numbers": [
+      "Daniel y Emily, bienvenidos. Están haciendo malabares con la universidad de Oliver y Sophia y con jubilarse a principios de los sesenta. Su puntuación es 52 de 100, que Sherpas llama vulnerable. Les quedan unos $15,032 al año, y cada una de esas necesidades tira de ese dinero. Sherpas no las clasifica: ese orden lo deciden ustedes juntos.",
+      "Sus tuberías, sus ahorros y su flujo de efectivo, están agrietados. Les quedan unos $15,032 al año, un margen ajustado. Y hoy no entra nada en sus cuentas de jubilación.",
+      "Sus cimientos, su fondo de emergencia, están marcados como sólidos, pero el colchón en sí es fino: $19,000, muy por debajo de los 8 a 9 meses de gastos esenciales recomendados. Si se detuviera un sueldo, esto es lo primero en lo que se apoyarían."
+     ],
+     "simple": [
+      "Hola Daniel y Emily. Están a punto de ver su puntuación de salud financiera: 52 de 100. Esa puntuación se llama vulnerable.",
+      "Sus tuberías están agrietadas. Ahorros y flujo de efectivo sacan 16 de 30 puntos, y dejan poco margen para sorpresas.",
+      "Sus cimientos son sólidos. El fondo de emergencia saca 13 de 15 puntos."
+     ]
+    },
+    "answer": {
+     "story": "Su techo, su seguro, está roto. No tienen póliza paraguas, y sus dos pólizas de vida están muy por debajo de lo recomendado. Con Oliver y Sophia en casa, esta es la parte de su hogar más expuesta.",
+     "numbers": "Su techo, su seguro, está roto. No tienen póliza paraguas, y sus dos pólizas de vida están muy por debajo de lo recomendado. Con Oliver y Sophia en casa, esta es la parte de su hogar más expuesta.",
+     "simple": "Su techo está roto. Seguros y protección sacan 0 de 20 puntos, y dejan a su familia expuesta a un reclamo grande."
+    },
+    "timeline": "Ahora, los años que vienen. Daniel planea jubilarse a los 62 y Emily a los 60. Con el plan de hoy, su dinero alcanza, con unos $260,272 restantes al final. Pero depende de sus ahorros para cerca de la mitad de lo que van a gastar, así que lo que construyan antes de jubilarse importa mucho.",
+    "tokens_in": 5232,
+    "cost": 0.001738
+   }
   },
   {
    "slug": "timothy-melanie-weah",
@@ -418,7 +536,48 @@ window.PITCH = {
    },
    "tokens_in": 5087,
    "tokens_out": 140,
-   "cost": 0.001694
+   "cost": 0.001694,
+   "es": {
+    "band": "estable",
+    "pillars": [
+     "ahorro y flujo de caja",
+     "deuda",
+     "inversiones",
+     "liquidez y fondo de emergencia",
+     "seguros y protección"
+    ],
+    "chosen": [
+     "Pagar la tarjeta de crédito",
+     "Ampliar el seguro de vida",
+     "Añadir un seguro paraguas"
+    ],
+    "question": "¿A dónde va cada dólar?",
+    "tour": {
+     "story": [
+      "Timothy y Melanie, bienvenidos. Su puntuación es 60 de 100, que Sherpas llama estable. Su jubilación va por buen camino y tienen bastante efectivo. La verdadera pregunta es a dónde debería ir ese efectivo extra. Vamos a recorrer su casa juntos.",
+      "Sus tuberías, sus ahorros, están firmes. Ahorran bien y ambos reciben el aporte completo de su empleador. Lo que todavía falta es la universidad: aún no hay nada ahorrado para Liam y Josh.",
+      "Sus cimientos, su fondo de emergencia, están sólidos: unos 16 meses de gastos esenciales, muy por encima de los 8 a 9 meses recomendados. Unos $60,223 están más allá de ese colchón. Ese es dinero que pueden poner a trabajar en las brechas de su protección."
+     ],
+     "numbers": [
+      "Timothy y Melanie, bienvenidos. Su puntuación es 60 de 100, que Sherpas llama estable. Su jubilación va por buen camino y tienen bastante efectivo. La verdadera pregunta es a dónde debería ir ese efectivo extra. Vamos a recorrer su casa juntos.",
+      "Sus tuberías, sus ahorros, están firmes. Ahorran bien y ambos reciben el aporte completo de su empleador. Lo que todavía falta es la universidad: aún no hay nada ahorrado para Liam y Josh.",
+      "Sus cimientos, su fondo de emergencia, están sólidos: unos 16 meses de gastos esenciales, muy por encima de los 8 a 9 meses recomendados. Unos $60,223 están más allá de ese colchón. Ese es dinero que pueden poner a trabajar en las brechas de su protección."
+     ],
+     "simple": [
+      "Hola, Timothy y Melanie. Su puntuación de salud financiera es 60 de 100, que es estable.",
+      "Sus tuberías están sólidas. Ahorros y flujo de efectivo obtienen 26 de 30 puntos.",
+      "Sus cimientos están sólidos. Fondo de emergencia y efectivo obtienen 15 de 15 puntos."
+     ]
+    },
+    "answer": {
+     "story": "Sus paredes, sus deudas, están agrietadas. La mayor parte de lo que deben tiene tasas más bajas. La excepción es una tarjeta de crédito de $18,000 al 18%. Con el pago actual, tardarían hasta 2039 en liquidarla.",
+     "numbers": "Sus paredes, sus deudas, están agrietadas. La mayor parte de lo que deben tiene tasas más bajas. La excepción es una tarjeta de crédito de $18,000 al 18%. Con el pago actual, tardarían hasta 2039 en liquidarla.",
+     "simple": "Sus paredes son deuda y están agrietadas con 12 de 20 puntos. Una tarjeta de crédito cuesta mucho más que sus otros préstamos."
+    },
+    "timeline": "Ahora los años que vienen. Timothy planea jubilarse a los 62 y Melanie a los 60. Con el plan actual, su dinero dura hasta el final, con unos $2,371,901 sobrantes. Su jubilación está en buena forma; proteger a la familia en el camino es lo que necesita trabajo.",
+    "tokens_in": 5086,
+    "cost": 0.001694
+   }
   }
  ]
 };

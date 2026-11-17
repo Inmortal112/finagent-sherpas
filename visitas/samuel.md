@@ -1,5 +1,15 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-17 — feat/pitch-spanish — Claude Code
+- **Hecho:** el pitch se puede hacer en español. `pitch/index.html` sale en español por defecto (`?lang=en` o el
+  botón EN para inglés), con la narración de `narrations/es/`. Guion de 2 min y 12 preguntas del jurado
+  (backend y escalabilidad) en `02-DOCS/pitch-es.md`.
+- **Estado:** `./check.sh` pasa (241). Los dos idiomas llegan a 2:00 sin errores (Chromium por CDP).
+- **Decisiones:** en la web, la pregunta y la respuesta salen en español, pero el chat en vivo del producto responde
+  en inglés. El guion lo avisa para que nadie lo venda como bilingüe.
+- **Para David y Raúl:** leed la sección 2 de `02-DOCS/pitch-es.md` antes del Demo Day; repartíos las preguntas.
+- **Siguiente:** ensayar el pitch en español con la web y grabar el vídeo.
+
 ## 2026-11-17 — feat/pitch-web — Claude Code
 - **Hecho:** `pitch/index.html`, la web para proyectar en el pitch: 7 capítulos que se reproducen solos en 2:00
   (problema → elegir familia, modo y estilo → la casa → pregunta → el viaje del paquete en ms con su precio →
