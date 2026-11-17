@@ -112,3 +112,39 @@ def test_a_step_that_pays_part_of_a_debt_is_never_said_to_clear_it():
             built = brain.build(diagnostic, mode=mode)
             texts = {scene.id: scene.narration for scene in built.scenes}
             assert narrator.check(built, texts)[1] == {}, (case.parent.name, mode)
+
+
+@pytest.mark.parametrize("path", CASES, ids=lambda p: p.parent.name)
+def test_every_style_has_an_accepted_text_for_every_scene(path):
+    """Another way of explaining (narrator.STYLES) covers the whole full mode, with text that `guard` accepts."""
+    diagnostic = json.loads(path.read_text(encoding="utf-8"))
+    built = brain.build(diagnostic)
+    for style in narrator.STYLES:
+        saved = narrator.saved_texts(path.parent.name, style=style)
+        assert saved, f"run: python -m finagent.narrator --all --style {style}"
+        accepted, rejected = narrator.check(built, saved)
+        assert rejected == {}
+        assert set(accepted) == {s.id for s in built.scenes}, f"every scene has its {style} text"
+        assert narrator.styled(built, path.parent.name, style) == accepted
+        assert all(accepted[s.id] != s.narration for s in built.scenes), "a style says it in other words"
+
+
+def test_a_style_is_saved_apart_from_the_narration(tmp_path):
+    story = "Samantha, your home scores 82 out of 100."
+    (tmp_path / "samantha-lewis.json").write_text(json.dumps({
+        "scenes": {"intro": story},
+        "numbers": {"intro": "Your score is 82 out of 100.", "pillar_debt": "Your debt scores 9,999 points."},
+    }), encoding="utf-8")
+    template = brain.build_template(_load())
+    assert narrator.saved_texts("samantha-lewis", directory=tmp_path) == {"intro": story}
+    assert narrator.styled(template, "samantha-lewis", "numbers", directory=tmp_path) == {
+        "intro": "Your score is 82 out of 100."}, "a figure that is not in the scene's facts drops that scene's text"
+    assert narrator.apply_saved(template, "samantha-lewis", tmp_path).scenes[0].narration == story
+
+
+def test_where_each_text_is_saved():
+    assert narrator.text_key() == "scenes" and narrator.text_key("simple") == "simple"
+    assert narrator.text_key("complete", "numbers") == "numbers"
+    assert narrator.text_key("simple", "numbers") == "numbers_simple"
+    with pytest.raises(ValueError):
+        narrator.text_key("complete", "poetry")

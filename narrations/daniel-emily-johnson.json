@@ -29,5 +29,20 @@
     "move_3": "The plan sends more spare cash into savings. It repairs your plumbing and lifts your score to 55 out of 100.",
     "all_moves": "More life cover and umbrella cover together lift your score to 60 out of 100.",
     "timeline": "You both plan to retire in your early sixties, and your savings last to the end with $260,272 left."
+  },
+  "numbers": {
+    "intro": "Daniel and Emily, your financial health score is 52 out of 100, which is vulnerable. You have $280,000 a year coming in and about $15,032 left after costs, but retirement, cash, cover and college all draw on that same money.",
+    "pillar_savings_and_cash_flow": "Your savings and cash flow score 16 out of 30 points, with the plumbing cracked. You have about $15,032 a year left after costs, and $19,000 of cash is a thin cushion. A surprise would hit it first.",
+    "pillar_debt": "Your debt score is 15 out of 20 points, with the walls solid. The $18,000 card at 24.9% costs the most per dollar owed. The overall load is heavy but manageable, and a surprise cost would hurt most there.",
+    "pillar_investments": "Your investments score 8 out of 15 points, with the garden cracked. Your $14,000 cash cushion is just 1.2% of assets, and most of your wealth sits in the home. That makes it harder to reach for emergencies or retirement.",
+    "pillar_liquidity_and_emergency_fund": "Your emergency fund and cash score 13 out of 15 points, with the foundations solid. Your $19,000 of cash is $87,860 short of the recommended cushion. If a paycheck stopped, this would be tested first.",
+    "pillar_insurance_and_protection": "Your insurance and protection score 0 out of 20 points, with the roof broken. Daniel holds $250,000 of life cover and Emily $200,000, far below the recommended minimum. You have no umbrella cover, so one large claim could reach your savings and income.",
+    "person_daniel": "Daniel, your life insurance is $1,350,000 short of the recommended minimum. You hold $250,000 of cover, and your retirement account holds $150,000, on a $160,000 salary. Your card and student loan are in your name. If you were not there, Emily and the children would carry the mortgage and college costs with far less protection.",
+    "person_emily": "Emily, your life insurance is $1,000,000 short of the recommended minimum. You hold $200,000 of cover, and your retirement account holds $100,000, on a $120,000 salary. Your savings and college fund are in your name. If you were not there, Daniel and the children would have much less cover for the mortgage and school costs.",
+    "move_1": "Your financial health score goes from 52 to 57 out of 100 with this step. You would add $1,166,000 of life cover. It repairs your roof, which is broken.",
+    "move_2": "Your financial health score goes from 52 to 56 out of 100 with this step. You would put $1M of umbrella cover in place, extra protection above home and auto cover. It repairs your roof, which is broken.",
+    "move_3": "Your financial health score goes from 52 to 55 out of 100 with this step. You would send $15,032 a year of spare cash into savings for retirement. It repairs your plumbing, which is cracked.",
+    "all_moves": "Your financial health score goes from 52 to 60 out of 100 when the two protection steps are done together. One adds life cover, and the other puts umbrella cover above home and auto. That repairs your roof.",
+    "timeline": "Daniel retires at 62, Emily at 60, and your debts are paid off by 2047. On the current plan, your savings and investments last to the end, with $260,272 left."
   }
 }

@@ -7,6 +7,7 @@ demo never call the model, cost nothing and always say the same thing:
     python -m finagent.narrator --all               # the four of them
     python -m finagent.narrator --all --simple      # the simple mode (shorter, one figure at most)
     python -m finagent.narrator --all --missing     # only the scenes that have no accepted text yet
+    python -m finagent.narrator --all --style numbers   # another way of explaining the same scenes (STYLES)
 
 `brain.build` applies the saved text. A scene whose text quotes a number that is not in its
 facts falls back to the template sentence, so narration can never break the pipeline.
@@ -85,12 +86,52 @@ a part's score counts as that figure). Everyday words only, one idea per sentenc
 
 MODE_KEY = {"complete": "scenes", "simple": "simple"}  # where each mode lives in narrations/<family>.json
 
+# Other ways of explaining the same scenes, for the person who asks for one: a paragraph added to the prompt, and
+# the text saved under its own key. The narration itself is the "story" style (the plan told as the family's home).
+STYLES = {
+    "numbers": """
+Numbers first. This person asked to hear the figure before the explanation. Where the rules for the words above
+say otherwise, these win (the rules for numbers stay exactly as they are):
+- The first sentence of each scene carries its most important figure and what it measures, in the order people
+  speak ("Your debt scores 15 out of 20 points", not "15 out of 20 points is your debt score"). Then say what
+  that figure means for this family in daily life, and stop.
+- Use two or three figures in a scene when its facts hold them and they matter, each with what it measures.
+  Still never a list.
+- A step's scene opens with what the step does to the score, then says in everyday words what the family would
+  actually do and which part of the home it repairs. Never its title or planner wording (withdrawal rate, growth
+  mix, liability): "take less out of your savings each year once you retire", not "lower the withdrawal rate".
+- The home is only where to look: name the part of the home and its state once, in a few words. Build no image on
+  it: nothing about storms, leaks, shelter, cracks spreading or things growing.
+- No warm-up, no reassurance and no closing thought. Short, direct sentences, 55 words at most per scene.
+- The intro greets them by first name in two or three words and goes straight to the score.
+""",
+}
 
-def saved_texts(slug: str, mode: str = "complete", directory: Path | None = None) -> dict[str, str]:
+
+def text_key(mode: str = "complete", style: str | None = None) -> str:
+    """Where a text lives in narrations/<family>.json: each mode has its entry, and each style one per mode."""
+    if not style:
+        return MODE_KEY[mode]
+    if style not in STYLES:
+        raise ValueError(f"style must be one of {sorted(STYLES)}, not {style!r}")
+    return style if mode == "complete" else f"{style}_{mode}"
+
+
+def saved_texts(slug: str, mode: str = "complete", directory: Path | None = None,
+                style: str | None = None) -> dict[str, str]:
     path = (directory or NARRATIONS_DIR) / f"{slug}.json"
     if not path.exists():
         return {}
-    return json.loads(path.read_text(encoding="utf-8")).get(MODE_KEY[mode]) or {}
+    return json.loads(path.read_text(encoding="utf-8")).get(text_key(mode, style)) or {}
+
+
+def styled(presentation: Presentation, slug: str, style: str, mode: str = "complete",
+           directory: Path | None = None) -> dict[str, str]:
+    """The saved texts of `style` that `guard` accepts for this presentation; a scene without one keeps its narration."""
+    accepted, rejected = check(presentation, saved_texts(slug, mode, directory, style))
+    for scene_id, reason in rejected.items():
+        log.warning("Saved %s text for %s/%s rejected (%s); the narration stays", style, slug, scene_id, reason)
+    return accepted
 
 
 def apply_saved(presentation: Presentation, slug: str, directory: Path | None = None,
@@ -130,14 +171,14 @@ def check(presentation: Presentation, texts: dict[str, str]) -> tuple[dict[str, 
 
 
 def generate(presentation: Presentation, diagnostic: dict, model: str | None = None, mode: str = "complete",
-             only: set[str] | None = None) -> dict:
+             only: set[str] | None = None, style: str | None = None) -> dict:
     """Ask the model for every scene (or just `only`), retry the rejected ones once, and return what `guard` accepted."""
     model = model or os.getenv("BRAIN_MODEL") or DEFAULT_MODEL
     client = _client()
     brief = _brief(presentation, diagnostic)
     if only is not None:
         brief["scenes"] = [scene for scene in brief["scenes"] if scene["id"] in only]
-    system = SYSTEM_PROMPT + (SIMPLE_MODE if mode == "simple" else "")
+    system = SYSTEM_PROMPT + (SIMPLE_MODE if mode == "simple" else "") + (STYLES[style] if style else "")
     usage = {"prompt_tokens": 0, "completion_tokens": 0}
 
     accepted, rejected = check(presentation, _ask(client, model, brief, usage, system))
@@ -244,11 +285,19 @@ def _ask(client, model: str, brief: dict, usage: dict, system: str = SYSTEM_PROM
 
 
 def main(args: list[str]) -> int:
-    """`<family>... | --all`, plus `--simple` (the simple mode) and `--missing` (only scenes with no accepted text)."""
+    """`<family>... | --all`, plus `--simple` (the simple mode), `--style <name>` (one of STYLES) and `--missing`
+    (only the scenes with no accepted text)."""
     from finagent import brain  # here, not at the top: brain imports this module
 
     mode = "simple" if "--simple" in args else "complete"
     missing_only = "--missing" in args
+    style = None
+    if "--style" in args:
+        at = args.index("--style")
+        style = args[at + 1] if at + 1 < len(args) else ""
+        args = args[:at] + args[at + 2:]
+    key = text_key(mode, style)
+    label = f"{mode}, {style}" if style else mode
     families = [a for a in args if not a.startswith("--")]
     if "--all" in args:
         families = sorted(p.parent.name for p in (ROOT / "cases").glob("*/financial-health.json"))
@@ -259,27 +308,27 @@ def main(args: list[str]) -> int:
         template = brain.build_template(diagnostic)
         path = NARRATIONS_DIR / f"{family}.json"
         saved = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
-        already, _ = check(template, saved.get(MODE_KEY[mode]) or {}) if missing_only else ({}, {})
+        already, _ = check(template, saved.get(key) or {}) if missing_only else ({}, {})
         only = {scene.id for scene in template.scenes} - set(already)
         if not only:
-            print(f"{family} ({mode}): nothing missing")
+            print(f"{family} ({label}): nothing missing")
             continue
-        result = generate(template, diagnostic, mode=mode, only=only)
+        result = generate(template, diagnostic, mode=mode, only=only, style=style)
         texts = {**already, **result["scenes"]}
-        saved[MODE_KEY[mode]] = {scene.id: texts[scene.id] for scene in template.scenes if scene.id in texts}
-        if missing_only:
-            saved.setdefault("model", result["model"])  # a top-up keeps the name of the model that wrote most of it
+        saved[key] = {scene.id: texts[scene.id] for scene in template.scenes if scene.id in texts}
+        if missing_only or style:
+            saved.setdefault("model", result["model"])  # a top-up or a style keeps the name of the narration's model
         else:
             saved["model"] = result["model"]            # everything in this mode was rewritten
         saved.pop("template_kept", None), saved.pop("usage", None)
         path.write_text(json.dumps(saved, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         kept += len(result["template_kept"])
-        print(f"{family} ({mode}): {len(result['scenes'])} scenes written, template kept for "
+        print(f"{family} ({label}): {len(result['scenes'])} scenes written, template kept for "
               f"{result['template_kept']}, tokens {result['usage']} -> {path.relative_to(ROOT)}")
     return 1 if kept else 0
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        raise SystemExit("usage: python -m finagent.narrator <family>... | --all  [--simple] [--missing]")
+        raise SystemExit("usage: python -m finagent.narrator <family>... | --all  [--simple] [--style <name>] [--missing]")
     raise SystemExit(main(sys.argv[1:]))

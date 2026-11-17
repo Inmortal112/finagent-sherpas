@@ -29,5 +29,20 @@
     "move_3": "Your plan adds umbrella cover for big liability claims. This repairs your roof and your score stays at 60 out of 100.",
     "all_moves": "Done together, paying down the card and adding life and umbrella cover lift your score to 78 out of 100.",
     "timeline": "Looking ahead, your savings last to the end of the plan. The plan leaves $2,371,901 at the end."
+  },
+  "numbers": {
+    "intro": "Timothy and Melanie, your financial health score is 60 out of 100, a stable result. You will see each part of your home and the steps your plan already includes, then how the years ahead look.",
+    "pillar_savings_and_cash_flow": "Your plumbing is solid at 26 out of 30 points. You save $61,500 a year, 22.8% of your $270,000 income, and hold $150,800 in cash, so everyday bills and emergencies are covered. The weak spot is that $0 is in 529 college accounts, and the spare money each year is uncertain.",
+    "pillar_debt": "The $18,000 card balance at 18% is the costly part of your debt, which scores 12 out of 20 points and leaves your walls cracked. Total debt is $93,000 and payments take 13.2% of your $270,000 income, so the load is manageable. At $300 a month, the card is projected to last until September 2039.",
+    "pillar_investments": "Your investments score 8 out of 15 points, leaving the garden cracked. Your invested savings are 81.2% in stocks against a 98.0% target, so the mix is not where the plan aims. You also hold $150,000 in cash against $210,000 invested, so much of your money is not set to grow.",
+    "pillar_liquidity_and_emergency_fund": "15 out of 15 points is your emergency fund score, and your foundations are solid. Your $150,801 in accessible cash covers about 16 months of essential expenses, well above the 8 to 9 months recommended. After your $6,000 vacation payment, $60,223 sits above the reserve, available to put toward protection or education.",
+    "pillar_insurance_and_protection": "Your life cover is $610,000 short for Timothy and $490,000 short for Melanie, and your roof is broken at 7 out of 20 points. You have no umbrella policy, which is extra cover for a serious claim, so the recommended $1,000,000 is uncovered and a claim could reach the savings you are building for Liam and Josh.",
+    "person_timothy": "Timothy, your life cover is $610,000 short of the recommended minimum. You earn $150,000 a year and hold $140,000 of cover, so Melanie and the children would face that gap if your income stopped. The card and loans in your name remain part of the household picture.",
+    "person_melanie": "Melanie, your life cover is $490,000 short of the recommended minimum. You earn $120,000 a year and hold $110,000 of cover, so Timothy and the children would face that gap if your income stopped. The $150,000 cash account in your name helps, but it does not replace your income.",
+    "move_1": "This step takes your score from 60 to 62 out of 100. You would pay $6,800 toward the 18% card from cash, leaving the rest of the $18,000 balance still owed. It repairs your walls, the debt part of your home, which are cracked.",
+    "move_2": "This step leaves your score at 60 out of 100 on its own. You would add $235,000 of life cover, extra money for your family if one of you dies, which repairs your roof, the protection part of your home, which is broken.",
+    "move_3": "This step leaves your score at 60 out of 100 on its own. You would add $1M of umbrella cover, extra protection against a large claim, which repairs your roof, the protection part of your home, which is broken.",
+    "all_moves": "Done together, these steps take your score from 60 to 78 out of 100. They put money toward the costly card and add life cover for your family. They also add umbrella cover, extra protection against a large claim, and repair your walls and roof.",
+    "timeline": "Your savings and investments are projected to leave $2,371,901 at the end of the plan. Timothy plans to retire at 62 and Melanie at 60, with no debt from 2059 onward. The plan includes a $6,000 vacation each year and $45,000 of education for each child, so there is room if costs come in higher."
   }
 }
