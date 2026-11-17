@@ -146,7 +146,8 @@ body.dark .lede { color: #b9bbd0; }
 @keyframes dot { 50% { transform: translateY(-4px); opacity: .4; } }
 .composer { display: flex; gap: .5rem; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding: .35rem .35rem .35rem .9rem; background: #fff; margin-top: .6rem; }
 .composer span { flex: 1; font-size: .85rem; color: var(--ink); min-height: 1.3em; white-space: nowrap; overflow: hidden; }
-.composer span:empty::before { content: "Ask about your plan…"; color: var(--ink-4); }
+.composer span:empty::before { content: attr(data-ph); color: var(--ink-4); }
+.ctrl #lang { width: auto; padding: 0 .7rem; border-radius: 999px; font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; }
 .composer i { width: 34px; height: 34px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; }
 .step-card { border-radius: 20px; padding: .9rem; background: var(--night); color: #fff; margin-top: .6rem; animation: chIn .5s ease; }
 .step-card .mono { color: var(--violet); font-size: .6rem; }
@@ -269,6 +270,7 @@ body.dark .lede { color: #b9bbd0; }
   <nav class="segs" id="segs" aria-label="Chapters"></nav>
   <div class="clock" id="clock"><b>0:00</b> / 2:00</div>
   <div class="ctrl">
+    <button id="lang" aria-label="Language">EN</button>
     <button id="prev" aria-label="Previous chapter"><svg viewBox="0 0 14 14"><path d="M9 2 4 7l5 5" stroke="currentColor" stroke-width="1.8" fill="none"/></svg></button>
     <button id="play" aria-label="Play or pause"><svg viewBox="0 0 14 14" id="playIcon"></svg></button>
     <button id="next" aria-label="Next chapter"><svg viewBox="0 0 14 14"><path d="m5 2 5 5-5 5" stroke="currentColor" stroke-width="1.8" fill="none"/></svg></button>
@@ -462,10 +464,91 @@ body.dark .lede { color: #b9bbd0; }
 "use strict";
 const D = window.PITCH;
 const $ = (s, el = document) => el.querySelector(s);
-const fmt = n => n.toLocaleString("en-US");
+
+/* ---------------- language: Spanish by default, ?lang=en for English ---------------- */
+const LANG = new URLSearchParams(location.search).get("lang") === "en" ? "en" : "es";
+const ES = LANG === "es";
+const t = (en, es) => ES ? es : en;
+const fmt = n => ES ? n.toLocaleString("en-US").replace(/,/g, ".") : n.toLocaleString("en-US");
+const dec = (v, d) => ES ? v.toFixed(d).replace(".", ",") : v.toFixed(d);
+// A family as the page shows it, in the chosen language. The figures are the same in both.
+const loc = f => ES
+  ? { ...f, bandKey: f.band, band: f.es.band, question: f.es.question, tour: f.es.tour, answer: f.es.answer,
+      chosen: f.es.chosen, tokens_in: f.es.tokens_in, cost: f.es.cost, pillarNames: f.es.pillars }
+  : { ...f, bandKey: f.band, pillarNames: f.pillars.map(p => p.name.toLowerCase()) };
+// Fixed copy of the page: English innerHTML -> Spanish innerHTML.
+const STATIC_ES = {
+  "The problem": "El problema",
+  'Sherpas already computes<br>the <span class="grad-text">right plan</span>.': 'Sherpas ya calcula<br>el <span class="grad-text">plan correcto</span>.',
+  'And yet <span id="hookName">Samantha</span>\'s savings <b id="hookAge">run out at 73</b>.': 'Y aun así, los ahorros de <span id="hookName">Samantha</span> <b id="hookAge">se agotan a los 73</b>.',
+  "A plan that is right but not <b>felt</b> is advice nobody acts on.<br>The family nods, the PDF waits, and the advisor never hears what they decided.": "Un plan correcto que no se <b>siente</b> es un consejo que nadie sigue.<br>La familia asiente, el PDF espera y el asesor nunca sabe qué decidieron.",
+  "01 · Open the plan": "01 · Abrir el plan",
+  "Three taps.<br>No app, no account.": "Tres toques.<br>Sin app, sin cuenta.",
+  "A link on their phone. Each person says who they are, how much detail they want and how they like things explained. Nothing is locked: they can change it from any chapter.": "Un enlace en su móvil. Cada persona dice quién es, cuánto detalle quiere y cómo prefiere que se lo expliquen. Nada queda fijo: pueden cambiarlo desde cualquier capítulo.",
+  "<b>Who is here</b>: four real Sherpas families": "<b>Quién está</b>: cuatro familias reales de Sherpas",
+  "<b>Mode</b>: Simply, or In full": "<b>Modo</b>: sencillo o completo",
+  "<b>How it is told</b>: as a story, or numbers first": "<b>Cómo se cuenta</b>: como una historia o con las cifras primero",
+  "02 · Walk the plan": "02 · Recorrer el plan",
+  'Their plan,<br>drawn as <span class="grad-text">their home</span>.': 'Su plan,<br>dibujado como <span class="grad-text">su casa</span>.',
+  "Each pillar of the Sherpas diagnostic is a part of the house: solid, cracked or broken from its own score. A calm voice walks them through it, word by word.": "Cada pilar del diagnóstico de Sherpas es una parte de la casa: sólida, agrietada o rota según su propia puntuación. Una voz tranquila los guía, palabra a palabra.",
+  "03 · Ask anything": "03 · Pregunta lo que quieras",
+  "Stop the voice.<br>Ask your own question.": "Para la voz.<br>Haz tu propia pregunta.",
+  "Typed or spoken, at any moment. The answer may only use figures from <b>their own plan</b>. Let's follow that question across the wire.": "Escrita o hablada, en cualquier momento. La respuesta solo puede usar cifras de <b>su propio plan</b>. Sigamos esa pregunta por el cable.",
+  "04 · One question, millisecond by millisecond": "04 · Una pregunta, milisegundo a milisegundo",
+  'From a phone to the model<br>and back, <span class="grad-text">checked</span>.': 'Del móvil al modelo<br>y de vuelta, <span class="grad-text">verificada</span>.',
+  "elapsed": "transcurrido",
+  "REQUEST →": "PETICIÓN →",
+  "← RESPONSE": "← RESPUESTA",
+  "guard ✓ figures in plan": "guard ✓ cifras del plan",
+  "Price of this question": "Precio de esta pregunta",
+  "input tokens": "tokens de entrada",
+  "output tokens": "tokens de salida",
+  "$0.30 / $1.20 per 1M": "$0,30 / $1,20 por 1M",
+  "Token count measured from the real prompt our server builds for this question. Hop timings are an illustrative split of the end-to-end time we measured (2.6 to 4.4 s per answer).": "Tokens medidos con el prompt real que nuestro servidor construye para esta pregunta. El reparto de tiempos entre saltos es ilustrativo; el total sí está medido (de 2,6 a 4,4 s por respuesta).",
+  "05 · From plan to action": "05 · Del plan a la acción",
+  'The answer ends<br>in <span class="grad-text">a first step</span>.': 'La respuesta acaba<br>en <span class="grad-text">un primer paso</span>.',
+  "Every repair is a step Sherpas already calculated. They mark it done, that part of the home heals, and the score moves to the figure Sherpas computed. Theirs, not ours.": "Cada reparación es un paso que Sherpas ya calculó. Lo marcan como hecho, esa parte de la casa se repara y la puntuación sube a la cifra que calculó Sherpas. La suya, no la nuestra.",
+  "<b>Answer</b> only from their plan, every figure checked": "<b>Respuesta</b> solo con su plan, cada cifra verificada",
+  "<b>First step</b> into their calendar, check-in in three days": "<b>Primer paso</b> a su calendario, seguimiento a los tres días",
+  "<b>The advisor</b> gets a note: worries, questions, decision": "<b>El asesor</b> recibe una nota: preocupaciones, preguntas, decisión",
+  "Why Sherpas needs this": "Por qué Sherpas lo necesita",
+  'The plan is the product.<br>We make families <span class="grad-text">use it</span>.': 'El plan es el producto.<br>Hacemos que las familias <span class="grad-text">lo usen</span>.',
+  "Today": "Hoy",
+  "A score, five pillars and a report. Strong families feel safe, struggling ones feel judged, and both close the tab.": "Una puntuación, cinco pilares y un informe. Las familias que van bien se confían, las que van mal se sienten juzgadas, y todas cierran la pestaña.",
+  "With Under One Roof": "Con Under One Roof",
+  "They see it, ask it, choose one step, and their advisor starts the next call knowing what they decided.": "Lo ven, preguntan, eligen un paso, y su asesor empieza la siguiente llamada sabiendo qué decidieron.",
+  "per guided tour: narration written once per family, replayed for free": "por recorrido guiado: la narración se escribe una vez por familia y se reproduce gratis",
+  "per live question, measured on Sherpas' own proxy pricing": "por pregunta en directo, con la tarifa del propio proxy de Sherpas",
+  "questions answered for one dollar": "preguntas respondidas por un dólar",
+  "invented figures: the guard blocks any number not in the plan": "cifras inventadas: el guard bloquea cualquier número que no esté en el plan",
+  'One plan. One home. <span class="grad-text">Everyone in it.</span>': 'Un plan. Una casa. <span class="grad-text">Todos dentro.</span>',
+  "Open the live MVP →": "Abrir el MVP en vivo →",
+  "Who is here?": "¿Quién está aquí?",
+  "Voice · tap anywhere to ask": "Voz · toca donde quieras para preguntar",
+  "Ask your plan": "Pregunta a tu plan",
+  "Answers use only your own figures": "Las respuestas solo usan tus cifras",
+  "Your new score": "Tu nueva puntuación",
+};
+function applyStatic() {
+  document.documentElement.lang = LANG;
+  document.title = t("Under One Roof · Pitch", "Under One Roof · Pitch en español");
+  if (ES) document.querySelectorAll("h1, h2, .mono, .lede, li > span, .line, .vs p, .metric span, .tag, .pill, .foot, .q, .voicebar span, .chat-head b, .chat-head small, .cost .rows span, text, .brand small").forEach(el => {
+    const es = STATIC_ES[el.innerHTML.trim()];
+    if (es) el.innerHTML = es;
+  });
+  $(".brand small").textContent = t("· for Sherpas", "· para Sherpas");
+  $("#typing").dataset.ph = t("Ask about your plan…", "Pregunta sobre tu plan…");
+  $("#lang").textContent = ES ? "EN" : "ES";
+}
 const BAND_C = { critical: "var(--broken)", vulnerable: "var(--broken)", stable: "var(--cracked)", strong: "var(--ok)" };
 const PART_C = { solid: "var(--solid)", cracked: "var(--cracked)", broken: "var(--broken)", repaired: "var(--repaired)" };
-const PART_NAME = { foundations: "Foundations", roof: "Roof", walls: "Walls", plumbing: "Plumbing", garden: "Garden" };
+const PART_NAME = ES
+  ? { foundations: "Cimientos", roof: "Techo", walls: "Paredes", plumbing: "Tuberías", garden: "Jardín" }
+  : { foundations: "Foundations", roof: "Roof", walls: "Walls", plumbing: "Plumbing", garden: "Garden" };
+// words the narration uses for each part, to point at it while it is read
+const PART_WORDS = { foundations: /\b(foundations|cimientos)\b/i, roof: /\b(roof|techo)\b/i, walls: /\b(walls|paredes)\b/i,
+  plumbing: /(plumbing|tuberías)/i, garden: /(garden|jardín)/i };
+const STATE_NAME = ES ? { solid: "sólida", cracked: "agrietada", broken: "rota" } : { solid: "solid", cracked: "cracked", broken: "broken" };
 const stateOf = s => s >= 70 ? "solid" : s >= 40 ? "cracked" : "broken";
 
 const state = { fam: D.families.find(f => f.slug === "michael-carter") || D.families[0], mode: "complete", style: "story", touched: {} };
@@ -473,13 +556,13 @@ const styleKey = () => state.mode === "simple" ? "simple" : state.style;
 
 /* ---------------- chapters & timing ---------------- */
 const CH = [
-  { id: "hook",  label: "Problem",  dur: 13, dark: true },
-  { id: "enter", label: "Open",     dur: 15, phone: "scrPick" },
-  { id: "tour",  label: "Walk",     dur: 20, phone: "scrTour" },
-  { id: "ask",   label: "Ask",      dur: 8,  phone: "scrChat" },
-  { id: "wire",  label: "The wire", dur: 23, dark: true },
-  { id: "act",   label: "Act",      dur: 20, phone: "scrChat" },
-  { id: "why",   label: "Why",      dur: 21, dark: true },
+  { id: "hook",  label: t("Problem", "Problema"),  dur: 13, dark: true },
+  { id: "enter", label: t("Open", "Abrir"),        dur: 15, phone: "scrPick" },
+  { id: "tour",  label: t("Walk", "Recorrer"),     dur: 20, phone: "scrTour" },
+  { id: "ask",   label: t("Ask", "Preguntar"),     dur: 8,  phone: "scrChat" },
+  { id: "wire",  label: t("The wire", "El cable"), dur: 23, dark: true },
+  { id: "act",   label: t("Act", "Actuar"),        dur: 20, phone: "scrChat" },
+  { id: "why",   label: t("Why", "Por qué"),       dur: 21, dark: true },
 ];
 const TOTAL = CH.reduce((a, c) => a + c.dur, 0);
 let cur = 0, playing = true, run = 0, chT = 0;
@@ -617,36 +700,37 @@ const markNums = t => t.replace(/(\$[\d,.]+[MK]?|\b\d+%|\b\d[\d,]*\b)/g, "<mark>
 /* ---------------- chapter scripts ---------------- */
 const SCRIPTS = {
   async hook() {
-    const sam = D.families.find(f => f.slug === "samantha-lewis");
-    if (sam) {
+    const raw = D.families.find(f => f.slug === "samantha-lewis");
+    if (raw) {
+      const sam = loc(raw);
       $("#hookScore").innerHTML = `${sam.score}<small>${sam.band}</small>`;
       $("#hookName").textContent = sam.names[0];
-      const m = sam.answer.story.match(/run out (at \d+)/);
-      if (m) $("#hookAge").textContent = "run out " + m[1];
+      const m = raw.answer.story.match(/run out at (\d+)/);   // her timeline scene, in English
+      if (m) $("#hookAge").textContent = t("run out at ", "se agotan a los ") + m[1];
     }
     const lines = document.querySelectorAll(".hook .line");
     lines.forEach(l => l.classList.remove("on"));
     const at = [200, 900, 2600, 4600, 7000];
-    let t = 0;
-    for (let k = 0; k < lines.length; k++) { await wait(at[k] - t); t = at[k]; lines[k].classList.add("on"); }
+    let ts = 0;
+    for (let k = 0; k < lines.length; k++) { await wait(at[k] - ts); ts = at[k]; lines[k].classList.add("on"); }
   },
 
   async enter() {
     lit("#enterTicks", 0);
     state.touched = {};
     const steps = [
-      { q: "Who is here?", opts: D.families.map(f => ({ v: f.slug, t: f.names.join(" & "), d: `${f.household.length} at home · ${f.band}`, n: f.score, av: f.names.map(n => n[0]).join("") })),
+      { q: t("Who is here?", "¿Quién está aquí?"), opts: D.families.map(loc).map(f => ({ v: f.slug, t: f.names.join(" & "), d: `${f.household.length} ${t("at home", "en casa")} · ${f.band}`, n: f.score, av: f.names.map(n => n[0]).join("") })),
         get: () => state.fam.slug, set: v => state.fam = D.families.find(f => f.slug === v), key: "fam" },
-      { q: "How much detail?", opts: [{ v: "simple", t: "Simply", d: "Short sentences and big buttons. The voice leads." }, { v: "complete", t: "In full", d: "Every figure, and a home you can turn around." }],
+      { q: t("How much detail?", "¿Cuánto detalle?"), opts: [{ v: "simple", t: t("Simply", "Sencillo"), d: t("Short sentences and big buttons. The voice leads.", "Frases cortas y botones grandes. La voz te guía.") }, { v: "complete", t: t("In full", "Completo"), d: t("Every figure, and a home you can turn around.", "Todas las cifras, y una casa que puedes girar.") }],
         get: () => state.mode, set: v => state.mode = v, key: "mode" },
-      { q: "How should we explain it?", opts: [{ v: "story", t: "As a story", d: "Your plan told as your home." }, { v: "numbers", t: "Numbers first", d: "The figure, then what it means." }],
+      { q: t("How should we explain it?", "¿Cómo te lo explicamos?"), opts: [{ v: "story", t: t("As a story", "Como una historia"), d: t("Your plan told as your home.", "Tu plan contado como tu casa.") }, { v: "numbers", t: t("Numbers first", "Cifras primero"), d: t("The figure, then what it means.", "La cifra, y luego qué significa.") }],
         get: () => state.style, set: v => state.style = v, key: "style" },
     ];
     const picked = [];
     for (let k = 0; k < steps.length; k++) {
       const s = steps[k];
       if (k === 2 && state.mode === "simple") { lit("#enterTicks", 3); break; }
-      $("#qStep").textContent = `${k + 1} of 3`; $("#qText").textContent = s.q;
+      $("#qStep").textContent = `${k + 1} ${t("of", "de")} 3`; $("#qText").textContent = s.q;
       $("#opts").innerHTML = s.opts.map(o => `<button class="opt" data-v="${o.v}">${o.av ? `<span class="av">${o.av}</span>` : ""}<span><span class="t">${o.t}</span><br><span class="d">${o.d}</span></span>${o.n != null ? `<span class="n">${o.n}</span>` : ""}</button>`).join("");
       let chosen;
       const done = new Promise(res => $("#opts").onclick = e => {
@@ -669,22 +753,24 @@ const SCRIPTS = {
   },
 
   async tour() {
-    const f = state.fam;
-    $("#tourWho").innerHTML = `${f.names.join(" & ")}<small>${state.mode === "simple" ? "Simply" : "In full"} · ${state.mode === "simple" ? "voice leads" : state.style === "story" ? "as a story" : "numbers first"}</small>`;
+    const f = loc(state.fam);
+    const how = state.mode === "simple" ? t("Simply · voice leads", "Sencillo · la voz guía")
+      : t("In full · ", "Completo · ") + (state.style === "story" ? t("as a story", "como historia") : t("numbers first", "cifras primero"));
+    $("#tourWho").innerHTML = `${f.names.join(" & ")}<small>${how}</small>`;
     $("#tourScore").textContent = f.score;
-    $("#tourBand").textContent = f.band; $("#tourBand").style.setProperty("--c", BAND_C[f.band] || "var(--ink-3)");
+    $("#tourBand").textContent = f.band; $("#tourBand").style.setProperty("--c", BAND_C[f.bandKey] || "var(--ink-3)");
     $("#houseWrap").innerHTML = houseSVG(f);
     const order = ["foundations", "roof", "walls", "plumbing", "garden"];
-    const bySc = Object.fromEntries(f.pillars.map(p => [p.part, p]));
+    const bySc = Object.fromEntries(f.pillars.map((p, i) => [p.part, { ...p, label: f.pillarNames[i] }]));
     $("#pillarList").innerHTML = order.filter(p => bySc[p]).map(p => {
       const pl = bySc[p];
-      return `<li data-part="${p}"><span><b>${PART_NAME[p]}</b> = ${pl.name.toLowerCase()} · <b style="color:${PART_C[pl.state]}">${pl.score}</b> ${pl.state}</span></li>`;
+      return `<li data-part="${p}"><span><b>${PART_NAME[p]}</b> = ${pl.label} · <b style="color:${PART_C[pl.state]}">${pl.score}</b> ${STATE_NAME[pl.state]}</span></li>`;
     }).join("");
     lit("#pillarList", 0);
     // two lines, read at whatever pace fits the chapter: the presenter talks over it
     const lines = (f.tour[styleKey()] || f.tour.story).slice(0, 2);
     const wps = Math.max(3.6, lines.join(" ").split(/\s+/).length / 15);
-    const partOf = text => order.find(p => new RegExp(`\\b${p}\\b`, "i").test(text));
+    const partOf = text => order.find(p => PART_WORDS[p].test(text));
     for (let k = 0; k < lines.length; k++) {
       const part = partOf(lines[k]);
       focusPart($("#houseWrap"), part);
@@ -697,7 +783,7 @@ const SCRIPTS = {
   },
 
   async ask() {
-    const f = state.fam;
+    const f = loc(state.fam);
     $("#chatAv").textContent = f.names[0][0];
     $("#chat").innerHTML = ""; $("#typing").textContent = "";
     await wait(600);
@@ -712,15 +798,15 @@ const SCRIPTS = {
   async wire() { await wireRun(); },
 
   async act() {
-    const f = state.fam;
+    const f = loc(state.fam);
     lit("#actTicks", 0);
     $("#chat").innerHTML = `<div class="bub me">${f.question}</div>`;
     const ans = f.answer[styleKey()] || f.answer.story;
-    $("#chat").insertAdjacentHTML("beforeend", `<div class="bub ai">${markNums(ans)}<div class="src">✓ every figure is in ${f.names[0]}'s plan</div></div>`);
+    $("#chat").insertAdjacentHTML("beforeend", `<div class="bub ai">${markNums(ans)}<div class="src">✓ ${t(`every figure is in ${f.names[0]}'s plan`, `todas las cifras están en el plan de ${f.names[0]}`)}</div></div>`);
     lit("#actTicks", 1);
     await wait(5200);
-    const steps = f.chosen;
-    $("#chat").insertAdjacentHTML("beforeend", `<div class="step-card"><div class="mono">Your first step${steps.length > 1 ? "s" : ""}</div><b>${steps.join(" + ")}</b><button id="doneBtn">I've done this</button></div>`);
+    const steps = f.chosen, many = steps.length > 1;
+    $("#chat").insertAdjacentHTML("beforeend", `<div class="step-card"><div class="mono">${many ? t("Your first steps", "Tus primeros pasos") : t("Your first step", "Tu primer paso")}</div><b>${steps.join(" + ")}</b><button id="doneBtn">${t("I've done this", "Ya lo he hecho")}</button></div>`);
     $("#chat").scrollTop = 1e4;
     lit("#actTicks", 2);
     await wait(1400);
@@ -735,17 +821,18 @@ const SCRIPTS = {
     await wait(700);
     $("#houseWrap2").innerHTML = houseSVG(f, f.chosen_parts);
     [...new Set(f.chosen_parts)].forEach(p => sparkAt($("#houseWrap2"), p));
-    $("#houseWrap2").insertAdjacentHTML("beforeend", `<div class="healed">✓ ${[...new Set(f.chosen_parts)].map(p => PART_NAME[p]).join(" + ")} repaired</div>`);
+    const fixed = [...new Set(f.chosen_parts)].map(p => PART_NAME[p]).join(" + ");
+    $("#houseWrap2").insertAdjacentHTML("beforeend", `<div class="healed">✓ ${t(`${fixed} repaired`, `Reparado: ${fixed}`)}</div>`);
     await countRing(f.score, f.final, 1600);
-    $("#ringBand").textContent = "after this step" + (steps.length > 1 ? "s" : "");
-    $("#delta").innerHTML = `+${f.final - f.score} points<span>${f.score} → ${f.final}, as calculated by Sherpas</span>`;
+    $("#ringBand").textContent = many ? t("after these steps", "tras estos pasos") : t("after this step", "tras este paso");
+    $("#delta").innerHTML = `+${f.final - f.score} ${t("points", "puntos")}<span>${f.score} → ${f.final}, ${t("as calculated by Sherpas", "según el cálculo de Sherpas")}</span>`;
     $("#delta").classList.add("on");
     lit("#actTicks", 3);
   },
 
   async why() {
-    const avg = D.families.reduce((a, f) => a + f.cost, 0) / D.families.length;
-    $("#mCost").textContent = "$" + avg.toFixed(4);
+    const avg = D.families.reduce((a, f) => a + loc(f).cost, 0) / D.families.length;
+    $("#mCost").textContent = "$" + dec(avg, 4);
     $("#mPerDollar").textContent = fmt(Math.floor(1 / avg / 10) * 10) + "+";
     document.querySelectorAll(".metric").forEach(m => m.classList.remove("on")); $("#cta").classList.remove("on");
     await wait(3500);
@@ -767,10 +854,10 @@ async function countRing(from, to, ms) {
 
 /* ---------------- the wire ---------------- */
 const NODES = [
-  { x: 110, t: "Family's phone", s: ["any browser", "no app"], icon: "M-8 -14h16v28h-16z M-3 10h6" },
-  { x: 400, t: "Under One Roof", s: ["FastAPI · brief", "guard · voice"], icon: "M-12 2 0 -10 12 2v10h-24z" },
-  { x: 690, t: "Sherpas LLM proxy", s: ["team key · spend", "OpenAI-compatible"], icon: "M-12 -6h24v12h-24z M-6 -6v12 M6 -6v12" },
-  { x: 960, t: "Model provider", s: ["", "temperature 0"], icon: "M0 -12 10 -6v12L0 12l-10-6v-12z" },
+  { x: 110, t: t("Family's phone", "Móvil de la familia"), s: [t("any browser", "cualquier navegador"), t("no app", "sin app")], icon: "M-8 -14h16v28h-16z M-3 10h6" },
+  { x: 400, t: "Under One Roof", s: ["FastAPI · brief", t("guard · voice", "guard · voz")], icon: "M-12 2 0 -10 12 2v10h-24z" },
+  { x: 690, t: t("Sherpas LLM proxy", "Proxy de Sherpas"), s: [t("team key · spend", "clave · gasto"), t("OpenAI-compatible", "compatible OpenAI")], icon: "M-12 -6h24v12h-24z M-6 -6v12 M6 -6v12" },
+  { x: 960, t: t("Model provider", "Proveedor IA"), s: ["", "temperature 0"], icon: "M0 -12 10 -6v12L0 12l-10-6v-12z" },
 ];
 const W = 160;
 function drawNodes() {
@@ -788,15 +875,15 @@ const EDGE = i => ({ right: NODES[i].x + W / 2, left: NODES[i].x - W / 2 });
 function wirePlan(f) {
   return [
     { r: 0.6, ms: 0, node: 0, txt: `POST /ask/stream · "${f.question}"` },
-    { r: 2.0, ms: 34, node: 1, txt: `Brief built: ${fmt(f.tokens_in)} tokens of ${f.names[0]}'s plan + closed list of scenes`, tin: true },
-    { r: 3.6, ms: 61, node: 1, txt: "→ Sherpas proxy, team key stays on our server" },
-    { r: 5.2, ms: 118, node: 2, txt: `→ provider · ${D.model}` },
-    { r: 6.6, ms: 140, node: 3, txt: "Model reads the plan, picks one scene", think: true },
-    { r: 9.0, ms: 2460, node: 3, txt: "First token back", stream: true },
-    { r: 10.6, ms: 2790, node: 2, txt: `${f.tokens_out} tokens out · proxy logs the spend`, cost: true },
-    { r: 12.2, ms: 2836, node: 1, txt: "Guard: every figure checked against the plan ✓", guard: true, ok: true },
-    { r: 13.6, ms: 2858, node: 1, txt: "Stream to phone · voice made on request" },
-    { r: 15.4, ms: 3050, node: 0, txt: "Answer on screen, voice playing", ok: true, end: true },
+    { r: 2.0, ms: 34, node: 1, txt: t(`Brief built: ${fmt(f.tokens_in)} tokens of ${f.names[0]}'s plan + closed list of scenes`, `Brief listo: ${fmt(f.tokens_in)} tokens del plan de ${f.names[0]} + lista cerrada de escenas`), tin: true },
+    { r: 3.6, ms: 61, node: 1, txt: t("→ Sherpas proxy, team key stays on our server", "→ proxy de Sherpas; la clave no sale de nuestro servidor") },
+    { r: 5.2, ms: 118, node: 2, txt: `→ ${t("provider", "proveedor")} · ${D.model}` },
+    { r: 6.6, ms: 140, node: 3, txt: t("Model reads the plan, picks one scene", "El modelo lee el plan y elige una escena"), think: true },
+    { r: 9.0, ms: 2460, node: 3, txt: t("First token back", "Primer token de vuelta"), stream: true },
+    { r: 10.6, ms: 2790, node: 2, txt: t(`${f.tokens_out} tokens out · proxy logs the spend`, `${f.tokens_out} tokens de salida · el proxy apunta el gasto`), cost: true },
+    { r: 12.2, ms: 2836, node: 1, txt: t("Guard: every figure checked against the plan ✓", "Guard: cada cifra comprobada contra el plan ✓"), guard: true, ok: true },
+    { r: 13.6, ms: 2858, node: 1, txt: t("Stream to phone · voice made on request", "Envío al móvil · la voz se genera al pedirla") },
+    { r: 15.4, ms: 3050, node: 0, txt: t("Answer on screen, voice playing", "Respuesta en pantalla, la voz suena"), ok: true, end: true },
   ];
 }
 // packets: [from x, to x, lane y, start r, end r, colour, count]
@@ -812,10 +899,10 @@ function wireHops(f) {
   ];
 }
 async function wireRun() {
-  const f = state.fam, plan = wirePlan(f), hops = wireHops(f);
+  const f = loc(state.fam), plan = wirePlan(f), hops = wireHops(f);
   drawNodes();
   $("#log").innerHTML = ""; $("#per").className = "per"; $("#per").textContent = "";
-  $("#usd").textContent = "$0.000000"; $("#tin").textContent = "0"; $("#tout").textContent = "0";
+  $("#usd").textContent = "$" + dec(0, 6); $("#tin").textContent = "0"; $("#tout").textContent = "0";
   $("#rate").textContent = D.model; $("#guardBadge").classList.remove("on"); $("#think").classList.remove("on");
   $("#ms").textContent = "0 ms";
   const pk = $("#packets"); pk.innerHTML = "";
@@ -857,7 +944,7 @@ async function wireRun() {
       if (ev.cost) rollCost(f.cost, 1000);
       if (ev.guard) $("#guardBadge").classList.add("on");
       if (ev.end) {
-        $("#per").innerHTML = `${fmt(f.tokens_in)} × $${D.price_in.toFixed(2)}/M + ${f.tokens_out} × $${D.price_out.toFixed(2)}/M · <b>≈ ${fmt(Math.floor(1 / f.cost))} questions per $1</b>`;
+        $("#per").innerHTML = `${fmt(f.tokens_in)} × $${dec(D.price_in, 2)}/M + ${f.tokens_out} × $${dec(D.price_out, 2)}/M · <b>≈ ${fmt(Math.floor(1 / f.cost))} ${t("questions per $1", "preguntas por $1")}</b>`;
         $("#per").classList.add("on");
         return res();
       }
@@ -871,7 +958,7 @@ function roll(el, a, b, ms) {
 }
 function rollCost(v, ms) {
   const t0 = performance.now(), el = $("#usd");
-  (function s(now) { const k = Math.min(1, (now - t0) / ms); el.textContent = "$" + (v * k).toFixed(6); if (k < 1) requestAnimationFrame(s); })(t0);
+  (function s(now) { const k = Math.min(1, (now - t0) / ms); el.textContent = "$" + dec(v * k, 6); if (k < 1) requestAnimationFrame(s); })(t0);
 }
 
 /* ---------------- controls ---------------- */
@@ -890,7 +977,8 @@ addEventListener("keydown", e => {
   else if (e.key === "r" || e.key === "R") { playing = true; setPlayIcon(); go(0); }
 });
 
-buildSegs(); setPlayIcon();
+$("#lang").onclick = () => { const q = new URLSearchParams(location.search); q.set("lang", ES ? "en" : "es"); q.delete("ch"); location.search = q; };
+applyStatic(); buildSegs(); setPlayIcon();
 const start = new URLSearchParams(location.search).get("ch");
 go(Math.max(0, CH.findIndex(c => c.id === start)));
 requestAnimationFrame(frame);
