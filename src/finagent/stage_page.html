@@ -619,8 +619,14 @@ async function offerPartnerNote() {
 let spanish = null;
 const spanishHere = () => !WHERE || (WHERE[2] === api.family && WHERE[3] === MODE);   // this page's own track only
 const spanishReady = import(SITE + "web/spanish.js")
-  .then(({ create }) => create({ scenes: () => P.scenes, onChange: () => { stopVoice(); narrate(active, 0); } }))
+  .then(({ create }) => create({ scenes: () => P.scenes, onChange: (on) => { if (styles) styles.pause(on); stopVoice(); narrate(active, 0); } }))
   .then((made) => (spanish = made)).catch(() => null);
+// Another way of explaining the same scenes ("numbers first"): a second track of words and voice, and each adult
+// keeps their own choice (web/styles.js, src/finagent/styles.py). In English only: Spanish holds the story.
+let styles = null;
+const stylesReady = import(SITE + "web/styles.js")
+  .then(({ create }) => create({ scenes: () => P.scenes, household: () => P.client_name, onChange: () => { stopVoice(); narrate(active, 0); } }))
+  .then((made) => (styles = made)).catch(() => null);
 // Captions: each word of the narration lights up as the voice says it (web/captions.js).
 import(SITE + "web/captions.js").then(({ create }) => create({ voice: player, scenes: P.scenes })).catch(() => {});
 document.querySelectorAll("[data-sound]").forEach((b) => b.addEventListener("click", () => {
@@ -679,11 +685,13 @@ function build() {
       box.append(b);
     });
     opts.append(box);
+    return box;
   };
-  if (adults.length > 1) segment("I am", adults.map((p) => [p.first_name, p.first_name]), person, (name) => { person = name; store.set("uor-person-" + P.client_name, name); });
-  segment("Guide me", [["simple", "Simply"], ["complete", "In full"]], MODE, (mode) => { if (mode !== MODE) switchTo(api.family, mode); });
+  if (adults.length > 1) segment("I am", adults.map((p) => [p.first_name, p.first_name]), person, (name) => { person = name; store.set("uor-person-" + P.client_name, name); if (styles) styles.forPerson(name); });
+  const guide = segment("Guide me", [["simple", "Simply"], ["complete", "In full"]], MODE, (mode) => { if (mode !== MODE) switchTo(api.family, mode); });
   offerKidsNote(opts, data.people || []);
-  spanishReady.then((made) => { if (made && spanishHere()) made.mount(opts); });
+  spanishReady.then((made) => { if (made && spanishHere()) { made.mount(opts); if (styles) styles.pause(made.on); } });
+  stylesReady.then((made) => { if (made && spanishHere()) { made.mount(opts, guide); made.pause(Boolean(spanish && spanish.on)); made.forPerson(person); } });
 
   chapters = [];
   const root = $("chapters");
