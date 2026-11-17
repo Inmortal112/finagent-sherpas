@@ -30,8 +30,11 @@ Three ideas hold the project together:
 
 - **Everything comes from the plan.** No figure is invented. Every number said or shown is a fact read from the
   family's diagnostic, and a check (`guard`) stops anything else before it reaches the screen or the voice.
-- **Anyone can follow it.** On opening, each person picks a mode: *Simply* (short sentences, big buttons, the voice
-  leads) or *In full* (every figure). In a couple, each adult sees their own part.
+- **Anyone can follow it.** An opening screen asks three things, one tap each: who is here, how much detail
+  (*Simply*: short sentences, big buttons, the voice leads; or *In full*: every figure) and how to explain it
+  (*As a story*, the plan told as their home, or *Numbers first*, the figure and then what it means). Nothing is
+  locked: *Change*, in the top bar, brings the screen back from any chapter. In a couple, each adult sees their own
+  part and keeps their own way of hearing it.
 - **It ends in an action.** Every repair is a step Sherpas already calculated, with the score before and after.
 
 It runs on a phone, from a link: nothing to install and no account to create.

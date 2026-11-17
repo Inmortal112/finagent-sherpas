@@ -91,6 +91,16 @@ rule above: 1 or 2 short sentences, 28 words at most, with one figure at most. E
 """
 
 
+# How this person asked to have the plan explained (narrator.STYLES); the story needs no extra words.
+STYLES = {
+    "numbers": """
+Numbers first. This person asked for the figures before the picture. Open the answer with the figure that
+answers the question, said the way people say it aloud, then one short sentence on what it means for them.
+Name the part of the home once at most, and skip any warm-up. Same length rule, same facts.
+""",
+}
+
+
 CONVERSATION = """
 The model has no memory, so "conversation" tells you what was said before: what worries this person, the
 parts of the home they asked about most, the step they chose, and the previous question with its answer.
@@ -104,12 +114,13 @@ scene's own facts, even if the previous answer quoted another one.
 
 def answer(presentation: Presentation, diagnostic: dict, question: str,
            complete: Callable[[str, str], str] | None = None, mode: str = "complete",
-           person: str | None = None, context: dict | None = None) -> Answer:
+           person: str | None = None, context: dict | None = None, style: str | None = None) -> Answer:
     """Answer one question about `presentation`. `complete(system, user) -> str` is the model call.
 
     `mode` is "complete" or "simple" (shorter, one figure at most). `person` is the adult who is asking,
     when the plan belongs to a couple: the answer speaks to them and can use their own part of the home.
     `context` is the conversation so far (`sessions.context_for`); None answers the question on its own.
+    `style` is how they chose to have the plan explained ("numbers"); the simple mode has one way only.
     """
     question = " ".join(question.split())
     if not question:
@@ -119,7 +130,7 @@ def answer(presentation: Presentation, diagnostic: dict, question: str,
     brief = dict(narrator._brief(presentation, diagnostic), question=question)
     if person:
         brief["asked_by"] = person
-    system = SYSTEM_PROMPT + (SIMPLE_MODE if mode == "simple" else "")
+    system = SYSTEM_PROMPT + (SIMPLE_MODE if mode == "simple" else STYLES.get(style or "", ""))
     if context:
         brief["conversation"] = context
         system += CONVERSATION

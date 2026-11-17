@@ -3,6 +3,20 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-17 02:00 — feat/brain-ask-style (4 ramas apiladas) — Claude Code
+- **Hecho:** el plan de `estilo-de-explicacion.md`, entero. Pantalla de inicio (`web/welcome.js`): quién, cuánto
+  detalle y cómo explicarlo (**As a story** / **Numbers first**), un toque cada una; «Change» en la barra la reabre
+  y al cambiar de modo se vuelve al mismo capítulo. El método es una segunda pista (`styles.py`, `web/styles.js`,
+  `styles.json`): texto, voz y subtítulos cambian sin recargar, y cada adulto guarda el suyo. `/ask` lo sigue.
+- **Estado:** `bash check.sh` pasa (237). Navegador: Weah y Michael, escritorio y 375 px. Sin probar: iPhone real.
+- **Decisiones:** solo en «In full» y solo en inglés (con «Español» suena la historia). Voz gratuita; Matilda, no.
+- **Para Samuel:** toco tu etapa: `narrator.py` (`--style`, `STYLES`, `styled`), clave `numbers` en las cuatro
+  `narrations/*.json` (seis escenas retocadas a mano), `ask.py` (`style=`), `server.py` y `sessions.py` (campo `style`).
+  **Render:** hay que redesplegar para que el enlace tenga la pista nueva (el `Dockerfile` ya la genera con `--all`).
+- **Para Raúl:** toco tu escena: enganches en `stage_page.html` (`takeChoices`, `resumeChapter`, `switchTo` lleva el
+  capítulo) y `web/welcome.js` nuevo. Para capturas o el vídeo sin la pantalla: `?welcome=0`; para enseñarla: `?welcome=1`.
+- **Siguiente:** probar en iPhone; decidir si se graba «Numbers first» con Matilda (~10.600 caracteres).
+
 ## 2026-11-16 23:50 — docs/explanation-style-plan — Claude Code
 - **Hecho:** solo un plan, sin código: `02-DOCS/ftd/estilo-de-explicacion.md`. Al abrir, cada persona elige quién es,
   **cómo prefiere que se lo expliquen** y cuánto detalle (Simply / In full), y puede cambiarlo después.

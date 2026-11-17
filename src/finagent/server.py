@@ -21,7 +21,8 @@
     GET  /chat                          a plain chat page for the team (also /try)
     /                                   the page in out/, when it exists
 
-`mode` is "complete" or "simple"; `person` is the adult using it when the plan belongs to a couple.
+`mode` is "complete" or "simple"; `person` is the adult using it when the plan belongs to a couple;
+`style` ("story" or "numbers", on /ask, /ask/stream and /worry) is how they chose to have it explained.
 """
 import asyncio
 import hashlib
@@ -41,7 +42,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from contracts.schemas import Presentation
-from finagent import ask, brain, calendar_invite, house, kids_note, partner_note, sessions, voice, welcome_back
+from finagent import ask, brain, calendar_invite, house, kids_note, partner_note, sessions, styles, voice, welcome_back
 
 ROOT = Path(__file__).resolve().parents[2]
 CASES = ROOT / "cases"
@@ -67,6 +68,7 @@ class Worry(BaseModel):
     session_id: str | None = None
     person: str | None = None
     mode: str | None = None
+    style: str | None = None
 
 
 class FollowUp(BaseModel):
@@ -88,6 +90,15 @@ def _mode(mode: str | None) -> str:
     if mode not in brain.MODES:
         raise HTTPException(422, f"mode must be one of {list(brain.MODES)}")
     return mode
+
+
+def _style(style: str | None) -> str | None:
+    """How the person wants the plan explained (web/styles.js sends it), or None when the page did not say."""
+    if style in (None, ""):
+        return None
+    if style not in styles.names():
+        raise HTTPException(422, f"style must be one of {styles.names()}")
+    return style
 
 
 def _person(diagnostic: dict, person: str | None) -> str | None:
@@ -119,11 +130,12 @@ def _allow_question(session: dict) -> None:
 
 
 async def _prepare(family: str, question: str | None, session_id: str | None, file: UploadFile | None,
-                   mode: str | None, person: str | None) -> tuple[dict, Presentation, dict, str, str]:
+                   mode: str | None, person: str | None,
+                   style: str | None = None) -> tuple[dict, Presentation, dict, str, str]:
     """Everything that can refuse a question, before any model call: (diagnostic, plan, session, question, heard_from)."""
     diagnostic = _diagnostic(family)
     person = _person(diagnostic, person)
-    session = sessions.start(family, session_id, person, mode and _mode(mode))
+    session = sessions.start(family, session_id, person, mode and _mode(mode), _style(style))
     plan = brain.build(diagnostic, mode=_mode(session["mode"]))
     heard_from = "text"
     if not (question or "").strip() and file is not None:
@@ -139,7 +151,8 @@ async def _answer(diagnostic: dict, plan: Presentation, session: dict, question:
                   kind: str = "question") -> dict:
     """Ask the model, keep the turn in the history and return it. The audio is made later, on request."""
     answer = await asyncio.to_thread(ask.answer, plan, diagnostic, question, None,
-                                     _mode(session["mode"]), session["person"], sessions.context_for(session))
+                                     _mode(session["mode"]), session["person"], sessions.context_for(session),
+                                     session.get("style"))
     turn = sessions.add_turn(session, {**answer.as_dict(), "kind": kind, "heard_from": heard_from,
                                        "language": plan.language})
     turn["audio_url"] = f"/answers/{session['session_id']}/{turn['turn_id']}.mp3"
@@ -182,22 +195,23 @@ def presentation(family: str, mode: str | None = None) -> dict:
 @app.post("/ask")
 async def ask_question(family: str = Form(...), question: str | None = Form(None),
                        session_id: str | None = Form(None), file: UploadFile | None = File(None),
-                       mode: str | None = Form(None), person: str | None = Form(None)) -> dict:
-    return await _answer(*await _prepare(family, question, session_id, file, mode, person))
+                       mode: str | None = Form(None), person: str | None = Form(None),
+                       style: str | None = Form(None)) -> dict:
+    return await _answer(*await _prepare(family, question, session_id, file, mode, person, style))
 
 
 @app.post("/ask/stream")
 async def ask_stream(family: str = Form(...), question: str | None = Form(None),
                      session_id: str | None = Form(None), file: UploadFile | None = File(None),
                      mode: str | None = Form(None), person: str | None = Form(None),
-                     pace_ms: int = Form(90)) -> StreamingResponse:
+                     style: str | None = Form(None), pace_ms: int = Form(90)) -> StreamingResponse:
     """The answer, written little by little. Events: `thinking`, `turn` (where the home turns), `delta`
     (a few words each), `done` (the whole turn, as /ask returns it).
 
     Only text that `guard` has already accepted is streamed: the model's words are never shown as they
     come out, because an invented figure would be on screen before it could be stopped.
     """
-    prepared = await _prepare(family, question, session_id, file, mode, person)
+    prepared = await _prepare(family, question, session_id, file, mode, person, style)
     pace = min(max(pace_ms, 0), 400) / 1000
 
     async def events():
@@ -222,7 +236,7 @@ async def worry(body: Worry) -> dict:
     if not text:
         raise HTTPException(422, "Tell us what worries you, in your own words.")
     diagnostic, plan, session, text, heard_from = await _prepare(
-        body.family, text, body.session_id, None, body.mode, body.person)
+        body.family, text, body.session_id, None, body.mode, body.person, body.style)
     turn = await _answer(diagnostic, plan, session, text, heard_from, kind="worry")
     sessions.add_worry(session, text, turn["house_part"])
     return turn

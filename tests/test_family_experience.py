@@ -222,3 +222,27 @@ def test_mode_and_person_are_checked(client):
     people = {f["family"]: f["people"] for f in client.get("/families").json()}
     assert people[WEAH] == ["Timothy", "Melanie"] and people[SAMANTHA] == ["Samantha"]
     assert client.get("/chat").status_code == 200 and "/ask/stream" in client.get("/try").text
+
+
+def test_the_answers_follow_the_way_of_explaining_they_chose(client):
+    """The page says which style is on (web/styles.js); the session remembers it and the advisor sees it."""
+    turn = client.post("/ask", data={"family": WEAH, "question": "When do we retire?", "style": "numbers"}).json()
+    assert "Numbers first" in client.calls[-1]["system"]
+    session_id = turn["session_id"]
+    client.post("/ask", data={"family": WEAH, "question": "And then?", "session_id": session_id})
+    assert "Numbers first" in client.calls[-1]["system"], "the session remembers it"
+    assert client.get("/advisor-note", params={"session_id": session_id}).json()["style"] == "numbers"
+
+    client.post("/worry", json={"family": WEAH, "worry": "College", "session_id": session_id, "style": "story"})
+    assert "Numbers first" not in client.calls[-1]["system"], "back to the story when they switch back"
+    client.post("/ask/stream", data={"family": WEAH, "question": "When?", "session_id": session_id,
+                                     "style": "numbers", "mode": "simple", "pace_ms": "0"})
+    system = client.calls[-1]["system"]
+    assert "Simple mode" in system and "Numbers first" not in system, "the simple mode has one way only"
+    assert client.post("/ask", data={"family": WEAH, "question": "When?", "style": "loud"}).status_code == 422
+
+
+def test_every_style_the_page_offers_has_its_words_for_the_answers():
+    assert set(ask.STYLES) == set(narrator.STYLES)
+    page = (Path(server.__file__).with_name("stage_page.html")).read_text(encoding="utf-8")
+    assert 'form.append("style", styleNow())' in page and "style: styleNow()" in page

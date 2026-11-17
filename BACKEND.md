@@ -32,9 +32,9 @@ Sessions are files in `data/sessions/`, so a host without a disk forgets them on
 |---|---|
 | `GET /families` | The four families: name, adults, score and band |
 | `GET /presentation/{family}?mode=` | Facts and scenes (the contract's `Presentation`) in `complete` or `simple` mode |
-| `POST /ask` | Form: `family`, `question` or `file` (a recording), `session_id`, `mode`, `person` → the answer |
+| `POST /ask` | Form: `family`, `question` or `file` (a recording), `session_id`, `mode`, `person`, `style` → the answer |
 | `POST /ask/stream` | Same form (+ `pace_ms`) → the answer piece by piece, as server-sent events |
-| `POST /worry` | JSON `{family, worry, session_id?, person?, mode?}`: what worries them, before the tour |
+| `POST /worry` | JSON `{family, worry, session_id?, person?, mode?, style?}`: what worries them, before the tour |
 | `GET /history?session_id=` | Every question and answer of the session, oldest first, to read them again |
 | `POST /decision` | JSON `{family, scene_id, session_id?}`: the step they chose (`move_N`) |
 | `GET /reminders?session_id=&today=` | What to say when they come back; `today` (YYYY-MM-DD) travels in time |
@@ -83,6 +83,9 @@ the conversation is, so a long session does not cost more per question. It is ba
   their life cover against the recommended range. Send `person` and the answers speak to them by name.
 - `mode=simple` gives shorter sentences with one figure at most, both in the narration (saved in `narrations/`)
   and in the answers. The session remembers the mode and the person.
+- `style=numbers` (full mode only) makes the answers open with the figure, as the person chose for the tour
+  (`story` is the default; see "Two ways of explaining" in `VOICE.md`). The session remembers it and the advisor's
+  note shows it. An unknown style is refused with 422.
 
 ## Reminders
 
