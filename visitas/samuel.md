@@ -1,5 +1,16 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-17 — feat/pitch-web — Claude Code
+- **Hecho:** `pitch/index.html`, la web para proyectar en el pitch: 7 capítulos que se reproducen solos en 2:00
+  (problema → elegir familia, modo y estilo → la casa → pregunta → el viaje del paquete en ms con su precio →
+  score nuevo → por qué Sherpas lo necesita). Cifras de `pitch/data.js`, generado por `scripts/build_pitch.py`.
+- **Estado:** `./check.sh` pasa (241). Chromium headless en tiempo real: 2:00 justos, sin errores. Ficha `pitch-web.md`.
+- **Decisiones:** los ms por salto son un reparto ilustrativo del total medido (2,6–4,4 s) y lo dice la nota al pie;
+  tokens y precio sí son reales (prompt de `ask.answer`, tarifa del brief).
+- **Para David y Raúl:** `python -m http.server -d pitch` y abrid `localhost:8000`. Espacio pausa, ← → saltan,
+  R reinicia. Si queréis otra familia por defecto, tocadla en el teléfono del capítulo «Open».
+- **Siguiente:** ensayar el pitch con la página y grabar el vídeo de 2 min.
+
 ## 2026-11-17 — chore/repo-cleanup — Claude Code
 - **Hecho:** limpieza para la entrega. Borrado `examples/voice/` (ejemplo Node de Sherpas, sin uso) y 3 capturas
   duplicadas. Movidos a `02-DOCS/ideas/`: `ideas.md`, `idea-david.md`, `idea-raul.md`, `nota-idea.md` y

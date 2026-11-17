@@ -96,6 +96,9 @@ PYTHONPATH=src:. .venv/bin/python -m finagent.run --all   # the four families in
 scripts/serve.sh                                          # http://localhost:8000
 ```
 
+The two-minute pitch page is [`pitch/index.html`](pitch/index.html): open it with any static server
+(`python -m http.server -d pitch`). Its figures come from `PYTHONPATH=src:. .venv/bin/python scripts/build_pitch.py`.
+
 Windows (PowerShell; `check.sh` and `scripts/serve.sh` from Git Bash):
 
 ```powershell
