@@ -12,6 +12,7 @@ COPY contracts contracts
 COPY src src
 COPY cases cases
 COPY narrations narrations
+COPY pitch pitch
 
 # Every family in both modes (out/families/<family>/<mode>/), narrated with the free edge voice: no key is
 # needed, only network during the build. If edge cannot be reached the voice stage falls back to silent mock

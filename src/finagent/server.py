@@ -416,5 +416,9 @@ def chat_page() -> FileResponse:
 # What the page loads when asked for the home in 3D (?house=3d): house3d.js and three.js, kept in the repo.
 app.mount("/web", StaticFiles(directory=Path(__file__).with_name("web")), name="web")
 
+# The 2-minute pitch page (pitch/index.html + data.js), static, so the demo opens from any computer at /pitch/.
+if (ROOT / "pitch").is_dir():
+    app.mount("/pitch", StaticFiles(directory=ROOT / "pitch", html=True), name="pitch")
+
 if (ROOT / "out").is_dir():  # last, so it never hides the routes above
     app.mount("/", StaticFiles(directory=ROOT / "out", html=True), name="page")
