@@ -5,7 +5,7 @@
 >
 > 1. Repo link (public): https://github.com/Inmortal112/finagent-sherpas
 > 2. Working MVP: a link they can open, or run steps in the README ("Run it" section). **Link: https://finagent-sherpas.onrender.com** (free hosting: the first visit after a quiet spell takes about a minute)
-> 3. 2-minute video, YouTube unlisted or Google Drive. **Link: TODO**
+> 3. 2-minute video, YouTube unlisted or Google Drive. **Link: https://drive.google.com/file/d/1NnKy-Rc9Qcfdzp4yZ9JAy-4x5MNUxCTj/view?usp=sharing** (1:53, a screen recording of the live site narrated by the Matilda voice)
 > 4. Half a page to one page on what we built and why: the text below the line.
 >
 > Keep it true to what the demo shows on the day: if a feature is cut, cut its sentence too.
