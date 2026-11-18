@@ -132,4 +132,3 @@ for i,name in enumerate(types):
  treesizes.append([round(size,4),round((lo+hi)/2,4)])
  atlas.render.filepath=os.path.join(out,'plant-%s.webp'%i);bpy.ops.render.render(scene=atlas.name,write_still=True);bpy.data.objects.remove(ob,do_unlink=True)
 with open(os.path.join(out,'villa.json'),'w') as f:json.dump({'batches':meta,'plants':plants,'sizes':treesizes},f,separators=(',',':'))
-

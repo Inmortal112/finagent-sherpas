@@ -20,7 +20,6 @@ body { background: var(--paper); }
 .hero-in { max-width: 36rem; width: 40%; }
 body:not(.h3d) .hero { place-items: center; text-align: center; background: radial-gradient(ellipse at 50% 40%, #e3edff, transparent 70%), var(--paper); }
 body:not(.h3d) .hero-in { width: 100%; max-width: 38rem; }
-body:not(.h3d) .hero .ring { float: none; width: 110px; margin: 1.7rem auto 1rem; }
 body:not(.h3d) .hero .opts { justify-content: center; }
 body:not(.h3d) .hero .lede { margin-inline: auto; }
 body:not(.h3d) .illustration-note { display: none; }
@@ -32,11 +31,6 @@ body:not(.h3d) .illustration-note { display: none; }
 .hero .lede strong { font-weight: 500; font-size: 1.22rem; line-height: 1.4; display: block; color: var(--ink); }
 .hero-plan-fact { display: block; margin-top: .5rem; font-size: .76rem; line-height: 1.7; color: var(--ink-2); }
 .hero-plan-fact[hidden] { display: none; }
-.ring { width: 86px; margin: 1.7rem 0 .8rem; }
-.ring .num b { font-size: 1.9rem; font-weight: 500; }
-.ring .num span, body.h3d .ring .num span { font-size: .53rem; color: var(--ink-3); margin: .1rem 0 0; }
-.ring .track, body.h3d .ring .track { stroke: #dce1d6; }
-.ring .value { stroke: var(--blue); }
 .band, body.h3d .band { color: var(--ink-2); background: none; border: 0; backdrop-filter: none; padding: 0; font-size: .8rem; }
 .opts { justify-content: flex-start; gap: .5rem; margin-top: 1.25rem; }
 .seg, body.h3d .seg { background: rgba(255,254,251,.65); border-color: var(--line); backdrop-filter: none; }
@@ -100,8 +94,6 @@ body.h3d .scene-top .score-chip { background: rgba(255,255,255,.87); padding: .5
   .hero { padding-top: 6rem; }
   .hero-in { max-width: 30rem; }
   .hero h1, body.h3d .hero h1 { font-size: 3.3rem; }
-  .ring { width: 66px; margin-top: 1rem; }
-  .ring .num b { font-size: 1.5rem; }
   .hero .lede { font-size: 1rem; }
 }
 @media (max-width: 860px) {
@@ -112,8 +104,6 @@ body.h3d .scene-top .score-chip { background: rgba(255,255,255,.87); padding: .5
   .hero-in { width: 100%; max-width: 34rem; }
   .hero h1, body.h3d .hero h1 { font-size: clamp(2.6rem, 9vw, 4rem); margin-top: .7rem; max-width: 95%; }
   .hero .lede { margin-top: .75rem; font-size: .95rem; }
-  .ring { position: relative; float: right; width: 64px; margin: .8rem 0 .5rem 1rem; }
-  .ring .num b { font-size: 1.45rem; }
   .band { margin-top: 1rem; max-width: 72%; }
   .opts { margin-top: .8rem; }
   .hero .pill { margin-top: 1rem; padding: .75rem 1rem; }
@@ -168,7 +158,6 @@ body.h3d .scene-top .score-chip { background: rgba(255,255,255,.87); padding: .5
 .journey-nav span { color: var(--ink-3); font-size: .69rem; text-align: center; }
 .overview-details { margin-top: 1rem; border-block: 1px solid var(--line); padding: .75rem 0; font-size: .8rem; }
 .overview-details summary { cursor: pointer; color: var(--blue); }
-.hero .ring .num span, body.h3d .hero .ring .num span { font-size: .62rem; }
 .chapter:not(.on) .card, body.h3d .chapter:not(.on) .card { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(12px); }
 .chapter.on .card { visibility: visible; transition: opacity .35s, transform .45s ease; }
 .toast { bottom: 5.5rem; max-width: 90%; }
@@ -334,7 +323,6 @@ body, body.h3d {
 .steps button.chosen > span:last-child { background: #ffffff22; }
 .final-chapter .card { border: 1px solid #d7d4eb; background: linear-gradient(140deg,#fff,#f2effc); }
 .final-chapter .card h2 { color: #363263; }
-.year-num { color: #5956ad; }
 .chart { background: #f7f8fc; border: 1px solid #e6e8f2; border-radius: 14px; }
 .due, .progress, .first-move { background: #f0f2fb; border-radius: 14px; }
 .chat { box-shadow: -16px 0 70px #0d18364a; border-left: 1px solid #8491bb40; }
