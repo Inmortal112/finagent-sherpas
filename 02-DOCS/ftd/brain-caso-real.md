@@ -31,7 +31,7 @@ Sin LLM todavía: frases de plantilla en inglés, para que la tubería completa 
 - Los pasos (`top_moves`) citan solo la nota antes y después, no los importes del texto `action`.
 
 ## Añadido después (pedido por Samuel)
-- [x] `guard` usa formato inglés: el punto es el decimal y la coma solo agrupa millares («6,800» = 6800) → 
+- [x] `guard` usa formato inglés: el punto es el decimal y la coma solo agrupa millares («6,800» = 6800) →
   `test_guard_reads_point_as_decimal_and_comma_as_thousands`; `./check.sh` → `10 passed`.
 
 ## Evidencia

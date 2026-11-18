@@ -336,7 +336,6 @@ export async function mount(host, { onFail = () => {}, onPick = () => {}, onAnch
     parts[name] = { whole, crk, dmg, halo, pin, size: made.halo[3], state: null, heal: null, pinY: made.pin[1] };
   }
 
-
   // The picture follows the pointer a little, so the home feels within reach.
   const pointer = { x: 0, y: 0, nowX: 0, nowY: 0 };
   const follow = (event) => { pointer.x = (event.clientX / innerWidth) * 2 - 1; pointer.y = (event.clientY / innerHeight) * 2 - 1; };

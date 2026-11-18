@@ -1,5 +1,14 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-18 — chore/final-cleanup — Claude Code
+- **Hecho:** repaso completo para la entrega. Borrados `countTo` (sin uso) y el CSS del anillo antiguo `.ring` y
+  `.year-num` (`stage_page.html`, `web/architectural.css`). Quitados espacios al final, líneas en blanco
+  repetidas y saltos de más al final de 7 archivos. Ficha `limpieza-final.md`.
+- **Estado:** `./check.sh` pasa (241). Chromium a 1280 y 375 px: sin errores de JS, el héroe se ve igual.
+- **Decisiones:** los JSON de Sherpas y las fichas FTD no se tocan (en `samantha-lewis/persona.md` solo quito líneas en blanco dobles); `voice_listen_test.py` se queda (lo cita `VOICE.md`).
+- **Para Raúl:** toco tu escena: solo CSS y JS sin uso, nada visible.
+- **Siguiente:** grabar el vídeo y poner su enlace en `SUBMISSION.md`.
+
 ## 2026-11-17 — feat/pitch-spanish — Claude Code
 - **Hecho:** el pitch se puede hacer en español. `pitch/index.html` sale en español por defecto (`?lang=en` o el
   botón EN para inglés), con la narración de `narrations/es/`. Guion de 2 min y 12 preguntas del jurado
@@ -163,7 +172,6 @@
 - **Bloqueos:** ninguno.
 - **Para Raúl y David:** la forma de `/ask`, `/ask/stream` y sus eventos no cambia. Mandad siempre el `session_id`.
 - **Siguiente:** comprobar la casa interactiva de extremo a extremo.
-
 
 ## 2026-11-15 — feat/stage-house-journey — Claude Code — la escena real
 - **Hecho:** `stage.py` deja de ser un mock: genera `out/index.html` desde `stage_page.html` (nuevo). Nota primero,

@@ -171,4 +171,3 @@ export function coastalHome({ manifest, packed, plants }, environment) {
   return {root,surfaces,update,weather,animate(t){breeze.value=t;waterTime.value=t;clearing.value+=(clearWanted-clearing.value)*Math.min(1,Math.max(0,t-lastTime)*3);lastTime=t;},
     focus(name){clearWanted=name==="foundations"?1:0;},dispose(){plants.forEach(t=>t.dispose());}};
 }
-
