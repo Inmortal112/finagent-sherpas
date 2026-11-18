@@ -74,6 +74,7 @@ def _digits(text: str) -> list[str]:
     text = re.sub(r"\b(?:January|February|March|April|May|June|July|August|September|October|"
                   r"November|December)( \d+,)? \d{4}\b", "", text)
     text = re.sub(r"\b(?:401\(k\)|403\(b\)|529)s?", "", text)
+    text = re.sub(r"(?<![\d.])(\d+)\.0+%", r"\1%", text)   # 80.0% is said 80%: same value
     return re.findall(r"\d+", text)
 
 
@@ -131,3 +132,9 @@ def test_spelling_keeps_every_value():
 
     for n in (1000, 1001, 16530, 19900, 110015, 999999, 1000000, 1166000, 2371901, 20000000, 1234567890):
         assert back(number_in_words(n)) == n
+
+
+def test_whole_percent_drops_the_point_zero():
+    # Matilda said "eighty point percent" for 80.0% (Whisper and Scribe agree); other decimals stay.
+    assert to_speech("an 80.0% target, which is 6.0%.") == "an 80% target, which is 6%."
+    assert to_speech("85.1% and 10.05%") == "85.1% and 10.05%"

@@ -111,6 +111,8 @@ _RULES: list[tuple[re.Pattern, object]] = [
     (re.compile(rf"(?<![\w.,])({_NUM}%?)\s?[–-]\s?(\$?{_NUM})(?![\w-])"), r"\1 to \2"),
     # -$8,336, -2.1% -> minus ... (a dash glued to a number, not after a word).
     (re.compile(r"(?<![\w$%)])-(?=\$?\d)"), "minus "),
+    # 80.0% -> 80%: Matilda (ElevenLabs) drops the zero and says "eighty point percent" (Whisper and Scribe, 18 nov).
+    (re.compile(r"(?<![\d.])(\d+)\.0+%"), r"\1%"),
     # 22/30 -> 22 out of 30 (only bare numbers: not dates like 11/14/2026).
     (re.compile(r"(?<![\d/])(\d+)/(\d+)(?![\d/])"), r"\1 out of \2"),
     # $15,032/year, /yr, /mo -> a year, a month.

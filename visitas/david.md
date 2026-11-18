@@ -3,6 +3,15 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-18 21:40 — feat/voice-whole-percent — Claude Code
+- **Hecho:** «Numbers first» grabado con **Matilda** en las 4 familias (46 escenas, en local: `out/` no va a git).
+  Coste: 14.009 caracteres de la cuenta de estudiante. «As a story» ya estaba en caché.
+- **Revisado:** Whisper y Scribe sobre las 46 escenas. Solo falla «80.0%» → «eighty point percent». Arreglo en
+  `speech_text`: `80.0%` se dice `80%` (3 escenas regrabadas). Test nuevo; `_digits` lo trata como el mismo valor.
+- **Estado:** `bash check.sh` pasa (238). Navegador: Samantha, «Numbers first», suenan `styles/numbers/audio/*.mp3`.
+- **Decisiones:** después de la congelación (18:00), pero es un arreglo de la voz de la demo. Render sigue con edge.
+- **Siguiente:** grabar el vídeo en local con Matilda (`?welcome=0`) y poner el enlace en `SUBMISSION.md`.
+
 ## 2026-11-17 02:00 — feat/brain-ask-style (4 ramas apiladas) — Claude Code
 - **Hecho:** el plan de `estilo-de-explicacion.md`, entero. Pantalla de inicio (`web/welcome.js`): quién, cuánto
   detalle y cómo explicarlo (**As a story** / **Numbers first**), un toque cada una; «Change» en la barra la reabre
