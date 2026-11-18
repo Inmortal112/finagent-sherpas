@@ -1,5 +1,14 @@
 # Visitas — Samuel (cerebro: `brain.py`, `guard.py`)
 
+## 2026-11-18 — feat/pitch-on-render — Claude Code
+- **Hecho:** la web del pitch se sirve en Render: https://finagent-sherpas.onrender.com/pitch/ (`COPY pitch` en el
+  `Dockerfile` y `app.mount("/pitch")` en `server.py`). Test `test_pitch_served.py`.
+- **Estado:** `./check.sh` pasa (243).
+- **Decisiones:** el Demo Day se hace desde otro ordenador; así basta un enlace. Plan B: copiar `pitch/` a un USB y
+  abrir `index.html` (no hace peticiones, funciona con `file://`).
+- **Para David y Raúl:** abrid `/pitch/` 1-2 min antes para despertar Render.
+- **Siguiente:** comprobar `/pitch/` en Render tras el deploy.
+
 ## 2026-11-18 — chore/final-cleanup — Claude Code
 - **Hecho:** repaso completo para la entrega. Borrados `countTo` (sin uso) y el CSS del anillo antiguo `.ring` y
   `.year-num` (`stage_page.html`, `web/architectural.css`). Quitados espacios al final, líneas en blanco
