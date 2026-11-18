@@ -12,7 +12,7 @@ from pathlib import Path
 from finagent import brain, guard, spanish, stage, styles, voice
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CASE = ROOT / "cases" / "samantha-lewis" / "financial-health.json"
+DEFAULT_CASE = ROOT / "cases" / "michael-carter" / "financial-health.json"
 
 
 def main(diagnostic_path: Path, out_dir: Path, mode: str = "complete") -> Path:
