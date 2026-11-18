@@ -3,6 +3,13 @@
 <!-- Añade tu entrada más reciente justo debajo de esta línea. Plantilla en visitas/README.md -->
 <!-- Las entradas del 12 nov vienen tal cual de `comunicacion.md`, sustituido por esta carpeta. -->
 
+## 2026-11-18 23:00 — docs/video-link — Claude Code
+- **Hecho:** vídeo demo hecho y subido a Drive (público con enlace); enlace en `SUBMISSION.md`, el último `TODO`.
+- **Cómo:** grabación de pantalla de Render (Samantha, 1:53) sin su audio + 10 frases en inglés con Matilda,
+  colocadas en el momento en que se ve cada cosa. Montado con PyAV (H.264 + AAC). 1.314 caracteres de ElevenLabs.
+- **Estado:** `bash check.sh` pasa. Whisper oye el guion entero y a tiempo. El MP4 no va a git (50 MB).
+- **Siguiente:** enviar `/entregar` antes de las 23:59; pitch el 19.
+
 ## 2026-11-18 21:40 — feat/voice-whole-percent — Claude Code
 - **Hecho:** «Numbers first» grabado con **Matilda** en las 4 familias (46 escenas, en local: `out/` no va a git).
   Coste: 14.009 caracteres de la cuenta de estudiante. «As a story» ya estaba en caché.
