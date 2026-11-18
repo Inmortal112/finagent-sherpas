@@ -9,6 +9,11 @@
 - **Para David y Raúl:** abrid `/pitch/` 1-2 min antes para despertar Render.
 - **Siguiente:** comprobar `/pitch/` en Render tras el deploy.
 
+## 2026-11-18 23:20 — feat/default-michael — Claude Code
+- **Hecho:** la web entra con Michael (26, «critical») como primera familia: `DEFAULT_CASE` de `run.py` apunta a `michael-carter`.
+- **Estado:** `./check.sh` pasa (243). `out/index.html` sale como «Michael · Under One Roof», con sus 10 escenas con audio.
+- **Decisiones:** solo cambia la portada; las otras familias siguen en el selector.
+
 ## 2026-11-18 — chore/final-cleanup — Claude Code
 - **Hecho:** repaso completo para la entrega. Borrados `countTo` (sin uso) y el CSS del anillo antiguo `.ring` y
   `.year-num` (`stage_page.html`, `web/architectural.css`). Quitados espacios al final, líneas en blanco
